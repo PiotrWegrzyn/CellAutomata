@@ -1,4 +1,3 @@
-from CellAutomaton import CellularAutomaton
+from frontend import MyPaintApp
 
-ca = CellularAutomaton(20, 30, number_of_ones=1)
-ca.print_rows(10)
+MyPaintApp().run()

@@ -2,9 +2,11 @@ class CellularAutomaton:
 
     def __init__(self, size, rule, number_of_ones=1):
         self.size = size
-        self.previous_state = []
         self.number_of_ones = number_of_ones
-        self.current_state = self.set_initial_state()
+
+        self.previous_state = []
+        self.current_state = self.get_initial_state()
+
         self.rule = rule
         self.binary_rule = self.set_binary_rule()
 
@@ -43,15 +45,18 @@ class CellularAutomaton:
     def _set_cell(self, cell_index):
         self.current_state.append(self.apply_rule(cell_index))
 
-    def set_initial_state(self):
+    def get_initial_state(self):
         if self.number_of_ones > int(self.size / 2):
             self.number_of_ones = int(self.size / 2)
         return [0] * int(self.size / 2) + [1] * self.number_of_ones + [0] * (int(self.size / 2) - self.number_of_ones)
+
+    def get_current_state(self):
+        return self.current_state
 
     def print_rows(self, rows):
         print(self.current_state)
         for i in range(0, rows):
             self.calculate_next()
             print(self.current_state)
-        self.current_state = self.set_initial_state()
+        self.current_state = self.get_initial_state()
 

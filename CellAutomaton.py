@@ -66,7 +66,7 @@ class CellularAutomaton:
     def print_stats(self):
         print("Size: " + self.size.__str__())
         print("Rule: " + self.rule.__str__())
-        print("Current state: " + self.current_state.__str__())
+        # print("Current state: " + self.current_state.__str__())
 
     def set_initial_ones(self):
         if self.number_of_ones > int(self.size / 2):
@@ -78,3 +78,7 @@ class CellularAutomaton:
     def set_rule(self, rule):
         self.rule = rule
         self._set_binary_rule()
+
+    def set_size(self, size):
+        self.size = size
+

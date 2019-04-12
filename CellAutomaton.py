@@ -1,6 +1,10 @@
 import random
 
 
+def generate_empty_2d_list_of_list(size):
+    return [[] for i in range(0, size)]
+
+
 class CellularAutomaton:
     modes = {
         "1D": 1,
@@ -69,7 +73,12 @@ class CellularAutomaton:
 
     @staticmethod
     def convert_from_binary_array_to_int(binary_array):
-        return int(''.join(str(e) for e in binary_array), 2)
+        # generates a string array from array of ints
+        # joins the array into empty string
+        # converts to int base10 from base2
+        # all in one line
+        # python is beautiful
+        return int(''.join(str(one_or_zero) for one_or_zero in binary_array), 2)
 
     def _set_binary_rule(self):
         self.binary_rule = list(reversed(self.binary_array_from_int(self.rule)))
@@ -164,4 +173,6 @@ class CellularAutomaton:
         if self.mode is self.modes['1D']:
            self.current_state=[]
         if self.mode is self.modes['2D']:
-            self.current_state = [[]for i in range(0, self.size)]
+            self.current_state = generate_empty_2d_list_of_list(self.size)
+
+

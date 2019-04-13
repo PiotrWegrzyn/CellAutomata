@@ -1,4 +1,5 @@
 import random
+from multiprocessing.pool import ThreadPool
 
 
 def generate_empty_2d_list_of_list(size):
@@ -15,6 +16,8 @@ class CellularAutomaton:
 
         self.mode = mode
         self.size = size
+        self.size_x = size
+        self.size_y = size
         self.number_of_ones = 0
         self.percentage_of_ones = 0
         self.set_percent_of_ones(percentage_of_ones)
@@ -156,15 +159,21 @@ class CellularAutomaton:
 
     def set_size(self, size):
         self.size = size
+        self.size_x = size
+        self.size_y = size
 
     def _set_cells(self):
         if self.mode is self.modes['1D']:
-            for cell_index in range(0, self.size):
+            for cell_index in range(0, self.size_x):
                 self._set_cell(cell_index)
         if self.mode is self.modes['2D']:
-            for cell_row in range(0, self.size):
-                for cell_index in range(0, self.size):
-                    self._set_cell(cell_index, cell_row)
+            pool = ThreadPool(int(self.size_y/10))
+            pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.size_y)])
+            pool.close()
+
+    def set_cells_in_row(self, cell_row):
+        for cell_index in range(0, self.size_x):
+            self._set_cell(cell_index, cell_row)
 
     def _get_cell_previous_value(self, cell_row, cell_index):
         return self.previous_state[cell_row][cell_index]

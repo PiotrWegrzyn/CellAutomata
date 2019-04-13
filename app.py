@@ -53,16 +53,8 @@ class CellAutomatonWidget(Widget):
         self._draw_graphic_rows()
 
     def _draw_graphic_rows(self):
-        # for row in range(0, len(self.data_frame)):
-        #     if row % 3 is 0:
-        #         self.canvas.add(Color(0, 1, 0))
-        #     if row % 3 is 1:
-        #         self.canvas.add(Color(0, 0, 0))
-        #     if row % 3 is 2:
-        #         self.canvas.add(Color(1, 0, 0))
-
         self.canvas.add(Color(1, 0, 0))
-        pool = ThreadPool(len(self.data_frame))
+        pool = ThreadPool(int(len(self.data_frame)/10))
         pool.map(self._draw_graphic_columns, [col for col in range(0, len(self.data_frame))])
         pool.close()
 
@@ -104,82 +96,6 @@ class CellAutomatonWidget(Widget):
         self.fetch_data_frame()
         self.draw_graphics()
 
-    def _draw_graphic_controller(self, instance):
-        self.create_graphics()
-
-    def _add_10_rule_and_draw_controller(self, instance):
-        self.cell_automaton.set_rule((self.cell_automaton.rule+10) % 255)
-        self.rule_label.text = "Rule: " + self.cell_automaton.rule.__str__()
-        self.create_graphics()
-
-    def _sub_10_rule_and_draw_controller(self, instance):
-        self.cell_automaton.set_rule((self.cell_automaton.rule-10) % 255)
-        self.rule_label.text = "Rule: " + self.cell_automaton.rule.__str__()
-        self.create_graphics()
-
-    def _draw_next_iteration_controller(self, instance):
-        self.cell_automaton.calculate_next_iteration()
-        self.create_graphics()
-
-    def _play_iterations_controller(self, instance):
-        self.create_graphics()
-        self.stop_iterations()
-        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 0.02)
-
-    def _stop_iterations_controller(self, instance):
-        self.stop_iterations()
-
-    def _change_mode_controller(self, instance):
-        self.stop_iterations()
-        self.canvas.clear()
-        self.current_canvas_graphic_items=[]
-
-        if self.automaton_mode is CellularAutomaton.modes["1D"]:
-            self.automaton_mode = CellularAutomaton.modes["2D"]
-        elif self.automaton_mode is CellularAutomaton.modes["2D"]:
-            self.automaton_mode = CellularAutomaton.modes["1D"]
-
-        self.set_cell_automon()
-        self._draw_initial_menu()
-
-    def size_text_input_controller(self, instance, value):
-        if value is not "":
-            try:
-                if int(value) > 1:
-                    self.cell_automaton.size = int(value)
-                    self.cell_automaton.set_initial_state()
-                    self.size_label.text = "Size: " + self.cell_automaton.size.__str__()
-            except ValueError:
-                self.size_label.text = "Size:\nOnly positive\nintegers."
-
-    def iterations_text_input_controller(self, instance, value):
-        if value is not "":
-            try:
-                if int(value) > 1:
-                    self.iterations = int(value)
-                    self.cell_automaton.set_initial_state()
-                    self.iterations_label.text = "Iterations: " + self.iterations.__str__()
-            except ValueError:
-                self.iterations_label.text = "Iterations:\nOnly positive\nintegers."
-
-    def rule_text_input_controller(self, instance, value):
-        if value is not "":
-            try:
-                if 1 < int(value) < 255:
-                    self.cell_automaton.set_rule(int(value))
-                    self.cell_automaton.set_initial_state()
-                    self.rule_label.text = "Rule: " + self.cell_automaton.rule.__str__()
-            except ValueError:
-                self.rule_label.text = "Rule:\nOnly positive\nintegers."
-
-    def _percentage_of_ones_input_controller(self, instance, value):
-        if value is not "":
-            try:
-                if 0 < int(value) < 100:
-                    self.cell_automaton.set_percent_of_ones(float(int(value)/100))
-                    self.percentage_of_ones_label.text = "Alive cells: " + float(self.cell_automaton.percentage_of_ones*100).__str__()+"%"
-            except ValueError:
-                self.rule_label.text = "Rule:\nOnly positive\nintegers."
 
     def _draw_menu(self):
         if self.automaton_mode is CellularAutomaton.modes["1D"]:
@@ -331,20 +247,103 @@ class CellAutomatonWidget(Widget):
             pass
 
     def set_cell_automon(self):
+        try:
+            current_alive_percentage = self.cell_automaton.percentage_of_ones
+        except AttributeError:
+            current_alive_percentage = 0.2
+
         if self.automaton_mode is CellularAutomaton.modes["1D"]:
             self.cell_automaton = CellularAutomaton(
                 mode=self.automaton_mode,
                 size=self.max_graphic_columns,
                 rule=self.rule,
-                percentage_of_ones=0.1
+                percentage_of_ones=current_alive_percentage
             )
 
         if self.automaton_mode is CellularAutomaton.modes["2D"]:
             self.cell_automaton = CellularAutomaton(
                 mode=self.automaton_mode,
                 size=self.max_graphic_rows,
-                percentage_of_ones=0.3
+                percentage_of_ones=current_alive_percentage
             )
+
+    # todo move all controllers to a different class
+    def _draw_graphic_controller(self, instance):
+        self.create_graphics()
+
+    def _add_10_rule_and_draw_controller(self, instance):
+        self.cell_automaton.set_rule((self.cell_automaton.rule+10) % 255)
+        self.rule_label.text = "Rule: " + self.cell_automaton.rule.__str__()
+        self.create_graphics()
+
+    def _sub_10_rule_and_draw_controller(self, instance):
+        self.cell_automaton.set_rule((self.cell_automaton.rule-10) % 255)
+        self.rule_label.text = "Rule: " + self.cell_automaton.rule.__str__()
+        self.create_graphics()
+
+    def _draw_next_iteration_controller(self, instance):
+        self.cell_automaton.calculate_next_iteration()
+        self.create_graphics()
+
+    def _play_iterations_controller(self, instance):
+        self.create_graphics()
+        self.stop_iterations()
+        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 0.02)
+
+    def _stop_iterations_controller(self, instance):
+        self.stop_iterations()
+
+    def _change_mode_controller(self, instance):
+        self.stop_iterations()
+        self.canvas.clear()
+        self.current_canvas_graphic_items=[]
+
+        if self.automaton_mode is CellularAutomaton.modes["1D"]:
+            self.automaton_mode = CellularAutomaton.modes["2D"]
+        elif self.automaton_mode is CellularAutomaton.modes["2D"]:
+            self.automaton_mode = CellularAutomaton.modes["1D"]
+
+        self.set_cell_automon()
+        self._draw_initial_menu()
+
+    def size_text_input_controller(self, instance, value):
+        if value is not "":
+            try:
+                if int(value) > 1:
+                    self.cell_automaton.size = int(value)
+                    self.cell_automaton.set_initial_state()
+                    self.size_label.text = "Size: " + self.cell_automaton.size.__str__()
+            except ValueError:
+                self.size_label.text = "Size:\nOnly positive\nintegers."
+
+    def iterations_text_input_controller(self, instance, value):
+        if value is not "":
+            try:
+                if int(value) > 1:
+                    self.iterations = int(value)
+                    self.cell_automaton.set_initial_state()
+                    self.iterations_label.text = "Iterations: " + self.iterations.__str__()
+            except ValueError:
+                self.iterations_label.text = "Iterations:\nOnly positive\nintegers."
+
+    def rule_text_input_controller(self, instance, value):
+        if value is not "":
+            try:
+                if 1 < int(value) < 255:
+                    self.cell_automaton.set_rule(int(value))
+                    self.cell_automaton.set_initial_state()
+                    self.rule_label.text = "Rule: " + self.cell_automaton.rule.__str__()
+            except ValueError:
+                self.rule_label.text = "Rule:\nOnly positive\nintegers."
+
+    def _percentage_of_ones_input_controller(self, instance, value):
+        if value is not "":
+            try:
+                if 0 < int(value) < 100:
+                    self.cell_automaton.set_percent_of_ones(float(int(value)/100))
+                    self.percentage_of_ones_label.text = "Alive cells: " + float(self.cell_automaton.percentage_of_ones*100).__str__()+"%"
+            except ValueError:
+                self.rule_label.text = "Rule:\nOnly positive\nintegers."
 
 
 class CellAutomatonApp(App):

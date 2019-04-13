@@ -1,12 +1,11 @@
-import threading
 from app import *
 from CellAutomaton import CellularAutomaton
-import sys
+from multiprocessing import Pool as ThreadPool
 
-sys.setrecursionlimit(100000)
-threading.stack_size(200000000)
-thread = threading.Thread(target=CellAutomatonApp().run())
-thread.start()
 
-# cell_automaton = CellularAutomaton(mode=2, size=10, rule=90, number_of_ones=60)
-# cell_automaton.print_iterations(10)
+
+if __name__ == '__main__':
+    CellAutomatonApp().run()
+    cell_automaton = CellularAutomaton(mode=2, size=10, rule=90, percentage_of_ones=0.3)
+
+

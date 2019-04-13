@@ -1,4 +1,6 @@
 import random
+import threading
+from multiprocessing.pool import ThreadPool
 
 from kivy.clock import Clock
 from kivy.uix.label import Label
@@ -51,15 +53,18 @@ class CellAutomatonWidget(Widget):
         self._draw_graphic_rows()
 
     def _draw_graphic_rows(self):
-        for row in range(0, len(self.data_frame)):
-            if row % 3 is 0:
-                self.canvas.add(Color(0, 1, 0))
-            if row % 3 is 1:
-                self.canvas.add(Color(0, 0, 0))
-            if row % 3 is 2:
-                self.canvas.add(Color(1, 0, 0))
+        # for row in range(0, len(self.data_frame)):
+        #     if row % 3 is 0:
+        #         self.canvas.add(Color(0, 1, 0))
+        #     if row % 3 is 1:
+        #         self.canvas.add(Color(0, 0, 0))
+        #     if row % 3 is 2:
+        #         self.canvas.add(Color(1, 0, 0))
 
-            self._draw_graphic_columns(row)
+        self.canvas.add(Color(1, 0, 0))
+        pool = ThreadPool(len(self.data_frame))
+        pool.map(self._draw_graphic_columns, [col for col in range(0, len(self.data_frame))])
+        pool.close()
 
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):
@@ -118,7 +123,8 @@ class CellAutomatonWidget(Widget):
 
     def _play_iterations_controller(self, instance):
         self.create_graphics()
-        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 0.3)
+        self.stop_iterations()
+        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 0.02)
 
     def _stop_iterations_controller(self, instance):
         self.stop_iterations()

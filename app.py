@@ -21,6 +21,7 @@ class CellAutomatonWidget(Widget):
         Window.size = (window_width, window_height)
 
         self.automaton_mode = 2
+        self.rule = rule
 
         self.menu_item_width = 100
         self.menu_item_height = 50
@@ -40,13 +41,14 @@ class CellAutomatonWidget(Widget):
             mode=self.automaton_mode,
             size=self.graphic_rows,
             rule=rule,
-            number_of_ones=int(self.graphic_rows*self.graphic_rows*0.3)
+            percentage_of_ones=0.3
         )
 
         self.set_initial_display()
 
     def set_initial_display(self):
-        self._draw_menu()
+        self._draw_initial_menu()
+        self.create_graphics()
 
     def draw_graphics(self):
         self._draw_graphic_rows()
@@ -101,7 +103,6 @@ class CellAutomatonWidget(Widget):
         self.draw_graphics()
 
     def _draw_graphic_controller(self, instance=None):
-        self.auto_iterations.cancel()
         self.create_graphics()
 
     def _add_10_rule_and_draw_controller(self, instance):
@@ -121,10 +122,27 @@ class CellAutomatonWidget(Widget):
 
     def _play_iterations_controller(self, instance):
         self.create_graphics()
-        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 0.5)
+        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 1)
 
     def _stop_iterations_controller(self, instance):
         self.auto_iterations.cancel()
+
+    def _change_mode_controller(self, instance):
+        self.canvas.clear()
+        self.current_canvas_graphic_items=[]
+        if self.automaton_mode is CellularAutomaton.modes["1D"]:
+            self.automaton_mode = CellularAutomaton.modes["2D"]
+        elif self.automaton_mode is CellularAutomaton.modes["2D"]:
+            self.automaton_mode = CellularAutomaton.modes["1D"]
+
+        self.cell_automaton=CellularAutomaton(
+            mode=self.automaton_mode,
+            size=self.graphic_rows,
+            rule=self.rule,
+            percentage_of_ones=0.3
+        )
+
+        self._draw_initial_menu()
 
     def size_text_input_controller(self, instance, value):
         if value is not "":
@@ -158,99 +176,10 @@ class CellAutomatonWidget(Widget):
                 self.rule_label.text = "Rule:\nOnly positive\nintegers."
 
     def _draw_menu(self):
-        # todo refactor cuz ugly as hell
-        draw_btn = kb.Button(
-            text="Draw",
-            pos=(0, self.get_menu_item_pos_y(2)),
-            size=(self.menu_item_width, self.menu_item_height * 2)
-        )
-        draw_btn.bind(on_press=self._draw_graphic_controller)
-        self.add_widget(draw_btn)
-
-        rule_sub10_btn = kb.Button(
-            text="Rule\n-10",
-            pos=(0, self.get_menu_item_pos_y(4)),
-            size=(int(self.menu_item_width / 2), self.menu_item_height * 2)
-        )
-        rule_sub10_btn.bind(on_press=self._sub_10_rule_and_draw_controller)
-        self.add_widget(rule_sub10_btn)
-
-        rule_plus10_btn = kb.Button(
-            text="Rule\n+10",
-            pos=(int(self.menu_item_width / 2), self.get_menu_item_pos_y(4)),
-            size=(int(self.menu_item_width / 2), self.menu_item_height * 2)
-        )
-        rule_plus10_btn.bind(on_press=self._add_10_rule_and_draw_controller)
-        self.add_widget(rule_plus10_btn)
-
-        self.rule_label = Label(
-            text="Rule: " + self.cell_automaton.rule.__str__(),
-            pos=(0, self.get_menu_item_pos_y(5)),
-            size=(self.menu_item_width, self.menu_item_height)
-        )
-        self.rule_label.color = [1, 0, 0, 1]
-        self.add_widget(self.rule_label)
-
-        rule_input = TextInput(
-            pos=(0, self.get_menu_item_pos_y(6)),
-            size=(self.menu_item_width, self.menu_item_height)
-        )
-        rule_input.bind(text=self.rule_text_input_controller)
-        self.add_widget(rule_input)
-
-        self.size_label = Label(
-            text="Size: " + self.graphic_columns.__str__(),
-            pos=(0, self.get_menu_item_pos_y(7)),
-            size=(self.menu_item_width, self.menu_item_height)
-        )
-        self.size_label.color = [1, 0, 0, 1]
-        self.add_widget(self.size_label)
-
-        size_input = TextInput(
-            pos=(0, self.get_menu_item_pos_y(8)),
-            size=(self.menu_item_width, self.menu_item_height)
-        )
-        size_input.bind(text=self.size_text_input_controller)
-        self.add_widget(size_input)
-
-        self.iterations_label = Label(
-            text="Iterations: " + self.graphic_rows.__str__(),
-            pos=(0, self.get_menu_item_pos_y(9)),
-            size=(self.menu_item_width, self.menu_item_height)
-        )
-        self.iterations_label.color = [1, 0, 0, 1]
-        self.add_widget(self.iterations_label)
-
-        iterations_input = TextInput(
-            pos=(0, self.get_menu_item_pos_y(10)),
-            size=(self.menu_item_width, self.menu_item_height)
-        )
-        iterations_input.bind(text=self.iterations_text_input_controller)
-        self.add_widget(iterations_input)
-
-        next_iteration_btn = kb.Button(
-            text="Next\niteration",
-            pos=(0, self.get_menu_item_pos_y(12)),
-            size=(self.menu_item_width, self.menu_item_height * 2)
-        )
-        next_iteration_btn.bind(on_press=self._draw_next_iteration_controller)
-        self.add_widget(next_iteration_btn)
-
-        play_btn = kb.Button(
-            text='Play',
-            pos=(0, self.get_menu_item_pos_y(14)),
-            size=(int(self.menu_item_width/2), self.menu_item_height * 2)
-        )
-        play_btn.bind(on_press=self._play_iterations_controller)
-        self.add_widget(play_btn)
-
-        stop_btn = kb.Button(
-            text='Stop',
-            pos=(int(self.menu_item_width/2), self.get_menu_item_pos_y(14)),
-            size=(int(self.menu_item_width/2), self.menu_item_height * 2)
-        )
-        stop_btn.bind(on_press=self._stop_iterations_controller)
-        self.add_widget(stop_btn)
+        if self.automaton_mode is CellularAutomaton.modes["1D"]:
+            self.draw_1d_menu()
+        if self.automaton_mode is CellularAutomaton.modes["2D"]:
+            self.draw_2d_menu()
 
     def _reset_data_frame(self):
         self.data_frame = generate_empty_2d_list_of_list(size=self.graphic_rows)
@@ -265,6 +194,114 @@ class CellAutomatonWidget(Widget):
         if self.automaton_mode is CellularAutomaton.modes["2D"]:
             self.data_frame=self.cell_automaton.get_current_state()
             self.cell_automaton.calculate_next_iteration()
+
+    def draw_mode_menu(self):
+        change_mode_btn= kb.Button(
+            text="Change\nMode",
+            pos=(0, self.get_menu_item_pos_y(2)),
+            size=(self.menu_item_width, self.menu_item_height * 2)
+        )
+        change_mode_btn.bind(on_press=self._change_mode_controller)
+        self.add_widget(change_mode_btn)
+
+    def draw_1d_menu(self):
+        draw_btn = kb.Button(
+            text="Draw",
+            pos=(0, self.get_menu_item_pos_y(4)),
+            size=(self.menu_item_width, self.menu_item_height * 2)
+        )
+        draw_btn.bind(on_press=self._draw_graphic_controller)
+        self.add_widget(draw_btn)
+
+        rule_sub10_btn = kb.Button(
+            text="Rule\n-10",
+            pos=(0, self.get_menu_item_pos_y(6)),
+            size=(int(self.menu_item_width / 2), self.menu_item_height * 2)
+        )
+        rule_sub10_btn.bind(on_press=self._sub_10_rule_and_draw_controller)
+        self.add_widget(rule_sub10_btn)
+
+        rule_plus10_btn = kb.Button(
+            text="Rule\n+10",
+            pos=(int(self.menu_item_width / 2), self.get_menu_item_pos_y(6)),
+            size=(int(self.menu_item_width / 2), self.menu_item_height * 2)
+        )
+        rule_plus10_btn.bind(on_press=self._add_10_rule_and_draw_controller)
+        self.add_widget(rule_plus10_btn)
+
+        self.rule_label = Label(
+            text="Rule: " + self.cell_automaton.rule.__str__(),
+            pos=(0, self.get_menu_item_pos_y(7)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        self.rule_label.color = [1, 0, 0, 1]
+        self.add_widget(self.rule_label)
+
+        rule_input = TextInput(
+            pos=(0, self.get_menu_item_pos_y(8)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        rule_input.bind(text=self.rule_text_input_controller)
+        self.add_widget(rule_input)
+
+        self.size_label = Label(
+            text="Size: " + self.graphic_columns.__str__(),
+            pos=(0, self.get_menu_item_pos_y(9)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        self.size_label.color = [1, 0, 0, 1]
+        self.add_widget(self.size_label)
+
+        size_input = TextInput(
+            pos=(0, self.get_menu_item_pos_y(10)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        size_input.bind(text=self.size_text_input_controller)
+        self.add_widget(size_input)
+
+        self.iterations_label = Label(
+            text="Iterations: " + self.graphic_rows.__str__(),
+            pos=(0, self.get_menu_item_pos_y(11)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        self.iterations_label.color = [1, 0, 0, 1]
+        self.add_widget(self.iterations_label)
+
+        iterations_input = TextInput(
+            pos=(0, self.get_menu_item_pos_y(12)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        iterations_input.bind(text=self.iterations_text_input_controller)
+        self.add_widget(iterations_input)
+
+    def draw_2d_menu(self):
+        play_btn = kb.Button(
+            text='Play',
+            pos=(0, self.get_menu_item_pos_y(4)),
+            size=(int(self.menu_item_width / 2), self.menu_item_height * 2)
+        )
+        play_btn.bind(on_press=self._play_iterations_controller)
+        self.add_widget(play_btn)
+
+        stop_btn = kb.Button(
+            text='Stop',
+            pos=(int(self.menu_item_width / 2), self.get_menu_item_pos_y(4)),
+            size=(int(self.menu_item_width / 2), self.menu_item_height * 2)
+        )
+        stop_btn.bind(on_press=self._stop_iterations_controller)
+        self.add_widget(stop_btn)
+
+        next_iteration_btn = kb.Button(
+            text="Next\niteration",
+            pos=(0, self.get_menu_item_pos_y(6)),
+            size=(self.menu_item_width, self.menu_item_height * 2)
+        )
+        next_iteration_btn.bind(on_press=self._draw_next_iteration_controller)
+        self.add_widget(next_iteration_btn)
+
+    def _draw_initial_menu(self):
+        self.draw_mode_menu()
+        self._draw_menu()
 
 
 class CellAutomatonApp(App):

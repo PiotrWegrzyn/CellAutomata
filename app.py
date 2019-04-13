@@ -348,5 +348,5 @@ class CellAutomatonWidget(Widget):
 
 class CellAutomatonApp(App):
     def build(self):
-        return CellAutomatonWidget(4, 1, window_width=800, window_height=700)
+        return CellAutomatonWidget(9, 1, window_width=800, window_height=700)
 

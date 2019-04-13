@@ -114,12 +114,11 @@ class CellAutomatonWidget(Widget):
 
     def _draw_next_iteration_controller(self, instance):
         self.cell_automaton.calculate_next_iteration()
-        self.cell_automaton.print_current_state()
         self.create_graphics()
 
     def _play_iterations_controller(self, instance):
         self.create_graphics()
-        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 1)
+        self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 0.3)
 
     def _stop_iterations_controller(self, instance):
         self.stop_iterations()

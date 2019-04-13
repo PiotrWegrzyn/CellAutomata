@@ -33,17 +33,14 @@ class CellAutomatonWidget(Widget):
         self.current_canvas_graphic_items = []
         self.auto_iterations = None
 
-        self.graphic_columns = int((Window.size[0] - self.menu_item_width) / self.ellipse_box_size)
-        self.graphic_rows = int(Window.size[1]/self.ellipse_box_size)
-        self.data_frame = generate_empty_2d_list_of_list(size=self.graphic_rows)
+        self.max_graphic_columns = int((Window.size[0] - self.menu_item_width) / self.ellipse_box_size)
+        self.max_graphic_rows = int(Window.size[1] / self.ellipse_box_size)
+        self.data_frame = generate_empty_2d_list_of_list(size=self.max_graphic_rows)
 
-        self.cell_automaton = CellularAutomaton(
-            mode=self.automaton_mode,
-            size=self.graphic_rows,
-            rule=rule,
-            percentage_of_ones=0.3
-        )
+        self.iterations = int(Window.size[1]/self.ellipse_box_size)
 
+        self.cell_automaton = None
+        self.set_cell_automon()
         self.set_initial_display()
 
     def set_initial_display(self):
@@ -102,7 +99,7 @@ class CellAutomatonWidget(Widget):
         self.fetch_data_frame()
         self.draw_graphics()
 
-    def _draw_graphic_controller(self, instance=None):
+    def _draw_graphic_controller(self, instance):
         self.create_graphics()
 
     def _add_10_rule_and_draw_controller(self, instance):
@@ -125,33 +122,28 @@ class CellAutomatonWidget(Widget):
         self.auto_iterations = Clock.schedule_interval(self._draw_next_iteration_controller, 1)
 
     def _stop_iterations_controller(self, instance):
-        self.auto_iterations.cancel()
+        self.stop_iterations()
 
     def _change_mode_controller(self, instance):
+        self.stop_iterations()
         self.canvas.clear()
         self.current_canvas_graphic_items=[]
+
         if self.automaton_mode is CellularAutomaton.modes["1D"]:
             self.automaton_mode = CellularAutomaton.modes["2D"]
         elif self.automaton_mode is CellularAutomaton.modes["2D"]:
             self.automaton_mode = CellularAutomaton.modes["1D"]
 
-        self.cell_automaton=CellularAutomaton(
-            mode=self.automaton_mode,
-            size=self.graphic_rows,
-            rule=self.rule,
-            percentage_of_ones=0.3
-        )
-
+        self.set_cell_automon()
         self._draw_initial_menu()
 
     def size_text_input_controller(self, instance, value):
         if value is not "":
             try:
                 if int(value) > 1:
-                    self.graphic_columns = int(value)
                     self.cell_automaton.size = int(value)
                     self.cell_automaton.set_initial_state()
-                    self.size_label.text = "Size: " + self.graphic_columns.__str__()
+                    self.size_label.text = "Size: " + self.cell_automaton.size.__str__()
             except ValueError:
                 self.size_label.text = "Size:\nOnly positive\nintegers."
 
@@ -159,9 +151,9 @@ class CellAutomatonWidget(Widget):
         if value is not "":
             try:
                 if int(value) > 1:
-                    self.graphic_rows = int(value)
+                    self.iterations = int(value)
                     self.cell_automaton.set_initial_state()
-                    self.iterations_label.text = "Iterations: " + self.graphic_rows.__str__()
+                    self.iterations_label.text = "Iterations: " + self.iterations.__str__()
             except ValueError:
                 self.iterations_label.text = "Iterations:\nOnly positive\nintegers."
 
@@ -175,6 +167,15 @@ class CellAutomatonWidget(Widget):
             except ValueError:
                 self.rule_label.text = "Rule:\nOnly positive\nintegers."
 
+    def _percentage_of_ones_input_controller(self, instance, value):
+        if value is not "":
+            try:
+                if 0 < int(value) < 100:
+                    self.cell_automaton.set_percent_of_ones(float(int(value)/100))
+                    self.percentage_of_ones_label.text = "Alive cells: " + float(self.cell_automaton.percentage_of_ones*100).__str__()+"%"
+            except ValueError:
+                self.rule_label.text = "Rule:\nOnly positive\nintegers."
+
     def _draw_menu(self):
         if self.automaton_mode is CellularAutomaton.modes["1D"]:
             self.draw_1d_menu()
@@ -182,11 +183,11 @@ class CellAutomatonWidget(Widget):
             self.draw_2d_menu()
 
     def _reset_data_frame(self):
-        self.data_frame = generate_empty_2d_list_of_list(size=self.graphic_rows)
+        self.data_frame = generate_empty_2d_list_of_list(size=self.iterations)
 
     def fetch_data_frame(self):
         if self.automaton_mode is CellularAutomaton.modes["1D"]:
-            for iteration in range(0,self.graphic_rows):
+            for iteration in range(0, self.iterations):
                 self.data_frame[iteration] = self.cell_automaton.get_current_state()
                 self.cell_automaton.calculate_next_iteration()
             self.cell_automaton.set_initial_state()
@@ -196,7 +197,7 @@ class CellAutomatonWidget(Widget):
             self.cell_automaton.calculate_next_iteration()
 
     def draw_mode_menu(self):
-        change_mode_btn= kb.Button(
+        change_mode_btn = kb.Button(
             text="Change\nMode",
             pos=(0, self.get_menu_item_pos_y(2)),
             size=(self.menu_item_width, self.menu_item_height * 2)
@@ -245,7 +246,7 @@ class CellAutomatonWidget(Widget):
         self.add_widget(rule_input)
 
         self.size_label = Label(
-            text="Size: " + self.graphic_columns.__str__(),
+            text="Size: " + self.cell_automaton.size.__str__(),
             pos=(0, self.get_menu_item_pos_y(9)),
             size=(self.menu_item_width, self.menu_item_height)
         )
@@ -260,7 +261,7 @@ class CellAutomatonWidget(Widget):
         self.add_widget(size_input)
 
         self.iterations_label = Label(
-            text="Iterations: " + self.graphic_rows.__str__(),
+            text="Iterations: " + self.iterations.__str__(),
             pos=(0, self.get_menu_item_pos_y(11)),
             size=(self.menu_item_width, self.menu_item_height)
         )
@@ -273,6 +274,21 @@ class CellAutomatonWidget(Widget):
         )
         iterations_input.bind(text=self.iterations_text_input_controller)
         self.add_widget(iterations_input)
+
+        self.percentage_of_ones_label = Label(
+            text="Alive cells: " + int(self.cell_automaton.percentage_of_ones*100).__str__()+"%",
+            pos=(0, self.get_menu_item_pos_y(13)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        self.percentage_of_ones_label.color = [1, 0, 0, 1]
+        self.add_widget(self.percentage_of_ones_label)
+
+        percentage_of_ones_input = TextInput(
+            pos=(0, self.get_menu_item_pos_y(14)),
+            size=(self.menu_item_width, self.menu_item_height)
+        )
+        percentage_of_ones_input.bind(text=self._percentage_of_ones_input_controller)
+        self.add_widget(percentage_of_ones_input)
 
     def draw_2d_menu(self):
         play_btn = kb.Button(
@@ -302,6 +318,28 @@ class CellAutomatonWidget(Widget):
     def _draw_initial_menu(self):
         self.draw_mode_menu()
         self._draw_menu()
+
+    def stop_iterations(self):
+        try:
+            self.auto_iterations.cancel()
+        except AttributeError:
+            pass
+
+    def set_cell_automon(self):
+        if self.automaton_mode is CellularAutomaton.modes["1D"]:
+            self.cell_automaton = CellularAutomaton(
+                mode=self.automaton_mode,
+                size=self.max_graphic_columns,
+                rule=self.rule,
+                percentage_of_ones=0.1
+            )
+
+        if self.automaton_mode is CellularAutomaton.modes["2D"]:
+            self.cell_automaton = CellularAutomaton(
+                mode=self.automaton_mode,
+                size=self.max_graphic_rows,
+                percentage_of_ones=0.3
+            )
 
 
 class CellAutomatonApp(App):

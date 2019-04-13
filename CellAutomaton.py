@@ -16,8 +16,8 @@ class CellularAutomaton:
         self.mode = mode
         self.size = size
         self.number_of_ones = 0
-        self.percentage_of_ones = percentage_of_ones
-        self.set_number_of_ones()
+        self.percentage_of_ones = 0
+        self.set_percent_of_ones(percentage_of_ones)
 
         self.previous_state = []
         self.current_state = []
@@ -128,8 +128,10 @@ class CellularAutomaton:
     def print_stats(self):
         print("Mode: " + self.mode.__str__())
         print("Size: " + self.size.__str__())
-        if self.rule is not None:
+        try:
             print("Rule: " + self.rule.__str__())
+        except AttributeError:
+            pass
         # print("Current state: " + self.current_state.__str__())
 
     def set_initial_ones(self):
@@ -179,10 +181,12 @@ class CellularAutomaton:
         if self.mode is self.modes['2D']:
             self.current_state = generate_empty_2d_list_of_list(self.size)
 
-    def set_number_of_ones(self):
+    def _set_number_of_ones(self):
         if self.mode is self.modes['1D']:
             self.number_of_ones = int(self.size*self.percentage_of_ones)
         if self.mode is self.modes['2D']:
             self.number_of_ones = int(self.size * self.size * self.percentage_of_ones)
 
-
+    def set_percent_of_ones(self, percent):
+        self.percentage_of_ones = percent
+        self._set_number_of_ones()

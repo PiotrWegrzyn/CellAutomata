@@ -47,7 +47,7 @@ class CellularAutomaton:
 
     def _apply_rule(self, cell_index, cell_row=None):
         apply_rule_method = self.get_apply_rule_method(self.mode)
-        return apply_rule_method(cell_index, cell_row)
+        return apply_rule_method(cell_index=cell_index, cell_row=cell_row)
 
     def _judgement_day(self, is_alive, neighbours_value):
         if is_alive and neighbours_value < 2:
@@ -138,16 +138,17 @@ class CellularAutomaton:
 
     def _prepare_initial_alive_cells(self):
         if self.mode is self.modes["1D"]:
-            if self.number_of_alive_cells > int(self.size / 2):
-                self.number_of_alive_cells = int(self.size / 2)
-            middle = int(self.size / 2)
-            for i in range(middle, middle + self.number_of_alive_cells):
-                self.initial_state[i] = 1
+            for i in range(0, self.number_of_alive_cells):
+                while True:
+                    y = random.randrange(0, self.size_y)
+                    if self.initial_state[y] is not 1:
+                        self.initial_state[y] = 1
+                        break
         if self.mode is self.modes["2D"]:
             for i in range(0, self.number_of_alive_cells):
                 while True:
-                    x = random.randrange(0, self.size)
-                    y = random.randrange(0, self.size)
+                    x = random.randrange(0, self.size_x)
+                    y = random.randrange(0, self.size_y)
                     if self.initial_state[x][y] is not 1:
                         self.initial_state[x][y] = 1
                         break
@@ -217,8 +218,14 @@ class CellularAutomaton:
         self._prepare_initial_state()
         self.set_to_initial_state()
 
+    def get_rule(self):
+        return self.rule
+
+    def get_size(self):
+        return self.size
+
     def change_alive_cells_percentage(self, percentage_of_alive_cells):
-        self.set_percent_of_alive_cells(percentage_of_alive_cells)
+        self.set_percent_of_alive_cells(round(percentage_of_alive_cells, 2))
         self._set_number_of_alive_cells()
         self._prepare_initial_state()
         self.set_to_initial_state()
@@ -229,7 +236,7 @@ class CellularAutomaton:
         if self.mode is self.modes['2D']:
             return self.apply_game_of_life_rules
 
-    def apply_1d_rule(self, cell_index):
+    def apply_1d_rule(self, cell_index, **kwargs):
         previous_triplet = self._get_previous_triplet(cell_index)
         rule_index = self.convert_from_binary_array_to_int(previous_triplet)
         return self.binary_rule[rule_index]
@@ -239,3 +246,5 @@ class CellularAutomaton:
         cell_value = self._get_cell_previous_value(cell_row, cell_index)
         return self._judgement_day(cell_value, sum(previous_neighbours_values))
 
+    def get_alive_cell_percentage(self):
+        return self.percentage_of_alive_cells

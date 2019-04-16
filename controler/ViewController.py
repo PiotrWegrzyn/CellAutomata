@@ -86,29 +86,47 @@ class ViewController:
         self.set_cell_automaton()
 
     def draw_initial_state_controller(self, btn_instance):
-        self.set_cell_automaton()
+        self.cell_automaton.set_to_initial_state()
+        self.set_data_frame()
         self.draw_data_frame()
 
     def set_state_controller(self, btn_instance):
         pass
 
     def sub10_rule_controller(self, btn_instance):
-        pass
+        self.cell_automaton.change_rule((self.cell_automaton.get_rule() - 10) % 255)
+        self.update_rule_label()
 
     def add10_rule_controller(self, btn_instance):
-        pass
+        self.cell_automaton.change_rule((self.cell_automaton.get_rule() + 10) % 255)
+        self.update_rule_label()
 
     def sub10_size_controller(self, btn_instance):
-        pass
+        self.cell_automaton.change_size((self.cell_automaton.get_size() - 10))
+        self.update_size_label()
 
     def add10_size_controller(self, btn_instance):
-        pass
+        self.cell_automaton.change_size((self.cell_automaton.get_size() + 10))
+        self.update_size_label()
 
     def sub10_iterations_controller(self, btn_instance):
-        pass
+        if self.automaton_iterations > 10:
+            self.automaton_iterations -= 10
+        self.update_iterations_label()
 
     def add10_iterations_controller(self, btn_instance):
-        pass
+        self.automaton_iterations += 10
+        self.update_iterations_label()
+
+    def sub01_alive_cells_controller(self, btn_instance):
+        if self.cell_automaton.get_alive_cell_percentage() > 0.1:
+            self.cell_automaton.change_alive_cells_percentage(self.cell_automaton.get_alive_cell_percentage()-0.1)
+        self.update_alive_cells_label()
+
+    def add01_alive_cells_controller(self,btn_instance):
+        if self.cell_automaton.get_alive_cell_percentage() < 0.9:
+            self.cell_automaton.change_alive_cells_percentage(self.cell_automaton.get_alive_cell_percentage()+0.1)
+        self.update_alive_cells_label()
 
     def get_iterations(self):
         return self.automaton_iterations
@@ -152,3 +170,19 @@ class ViewController:
         if self.automaton_mode is CellularAutomaton.modes["2D"]:
             self.data_frame = self.cell_automaton.get_current_state()
             self.cell_automaton.calculate_next_iteration()
+
+    def update_rule_label(self):
+        self.view.rule_label.text = "Rule: "+self.cell_automaton.get_rule().__str__()
+
+    def update_size_label(self):
+        self.view.size_label.text = "Size: "+self.cell_automaton.get_size().__str__()
+
+    def update_iterations_label(self):
+        self.view.iterations_label.text = "Iterations: "+self.get_iterations().__str__()
+
+    def update_alive_cells_label(self):
+        self.view.alive_cells_label.text = "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.percentage_of_alive_cells*100)
+
+    def get_alive_cell_percentage(self):
+        return self.cell_automaton.get_alive_cell_percentage()
+

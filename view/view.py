@@ -48,7 +48,6 @@ class CellAutomatonApp(App):
     def draw_1d_menu(self):
         self.add_change_mode_to_menu()
         self.add_draw_initial_btn_to_menu()
-        self.add_set_state_btn_to_menu()
         self.add_rule_btns_and_label_to_menu()
         self.add_rows_count_btns_and_label_to_menu()
         self.add_alive_cells_btns_and_label_to_menu()
@@ -56,7 +55,6 @@ class CellAutomatonApp(App):
 
     def draw_2d_menu(self):
         self.add_change_mode_to_menu()
-        self.add_set_state_btn_to_menu()
         self.add_start_stop_btns_to_menu()
         self.add_one_iteration_btn_to_menu()
         self.add_speed_btns_and_label_to_menu()

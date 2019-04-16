@@ -24,8 +24,17 @@ class CellAutomatonApp(App):
         self.column_width= self.controller.cell_box_size
         self.row_height = self.controller.cell_box_size
 
+    def on_touch_down(self, touch):
+        print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
+        self.controller.set_clicked_cell(
+            cell_row=self._get_graphic_cell_row_from_pos(touch.y),
+            cell_index=self._get_graphic_cell_column_from_pos(touch.x)
+        )
+
     def build(self):
         self.grid = Widget()
+
+        self.grid.on_touch_down = self.on_touch_down
 
         self.menu = BoxLayout(size_hint=(None, 1), width=self.controller.get_menu_width(), orientation='vertical')
         self.draw_2d_menu()
@@ -36,23 +45,24 @@ class CellAutomatonApp(App):
 
         return self.root
 
-    def draw_2d_menu(self):
-        self.add_change_mode_to_menu()
-        self.add_start_stop_btns_to_menu()
-        self.add_speed_btns_and_label_to_menu()
-        self.add_next_iteration_btn_to_menu()
-        self.add_set_state_btn_to_menu()
-        self.add_alive_cells_btns_and_label_to_menu()
-        self.add_empty_space_to_menu(0.2)
-
     def draw_1d_menu(self):
         self.add_change_mode_to_menu()
         self.add_draw_initial_btn_to_menu()
         self.add_set_state_btn_to_menu()
         self.add_rule_btns_and_label_to_menu()
-        self.add_size_btns_and_label_to_menu()
+        self.add_rows_count_btns_and_label_to_menu()
         self.add_alive_cells_btns_and_label_to_menu()
         self.add_iterations_btns_and_label_to_menu()
+
+    def draw_2d_menu(self):
+        self.add_change_mode_to_menu()
+        self.add_set_state_btn_to_menu()
+        self.add_start_stop_btns_to_menu()
+        self.add_one_iteration_btn_to_menu()
+        self.add_speed_btns_and_label_to_menu()
+        self.add_alive_cells_btns_and_label_to_menu()
+        self.add_rows_count_btns_and_label_to_menu()
+        self.add_columns_count_btns_and_label_to_menu()
 
     def add_start_stop_btns_to_menu(self):
         self.play_stop_btns_containter = BoxLayout(
@@ -76,7 +86,7 @@ class CellAutomatonApp(App):
 
     def add_speed_btns_and_label_to_menu(self):
         self.speed_label = Label(
-            text="Speed: " + self.controller.get_iteration_speed().__str__(),
+            text="Speed: " + self.controller.get_iteration_speed().__str__() + "fps",
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
 
@@ -103,13 +113,13 @@ class CellAutomatonApp(App):
         )
         self.faster_slower_btns_containter.add_widget(self.faster_btn)
 
-    def add_next_iteration_btn_to_menu(self):
-        next_iteration_btn = kb.Button(
-            text="Next\niteration",
+    def add_one_iteration_btn_to_menu(self):
+        one_iteration_btn = kb.Button(
+            text="One\niteration",
             size_hint=(1, 0.1),
-            on_press=partial(self.controller.draw_next_iteration_controller)
+            on_press=partial(self.controller.draw_one_iteration_controller)
         )
-        self.menu.add_widget(next_iteration_btn)
+        self.menu.add_widget(one_iteration_btn)
 
     def add_empty_space_to_menu(self, size):
         self.empty_menu_space = BoxLayout(
@@ -171,34 +181,61 @@ class CellAutomatonApp(App):
         )
         self.change_rule_btns_containter.add_widget(self.add10rule)
 
-    def add_size_btns_and_label_to_menu(self):
-        self.size_label = Label(
-            text="Size: " + self.controller.get_size().__str__(),
+    def add_rows_count_btns_and_label_to_menu(self):
+        self.rows_count_label = Label(
+            text="Rows: " + self.controller.get_rows_count().__str__(),
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
-
         )
-        self.menu.add_widget(self.size_label)
+        self.menu.add_widget(self.rows_count_label)
 
-        self.change_size_btns_containter = BoxLayout(
+        self.change_rows_count_btns_containter = BoxLayout(
             size_hint=(1, 0.1),
             orientation='horizontal'
         )
-        self.menu.add_widget(self.change_size_btns_containter)
+        self.menu.add_widget(self.change_rows_count_btns_containter)
 
-        self.sub10size = kb.Button(
+        self.sub10rows_count = kb.Button(
             text='-10',
             size_hint=(1, 1),
-            on_press=partial(self.controller.sub10_size_controller)
+            on_press=partial(self.controller.sub10_rows_count_controller)
         )
-        self.change_size_btns_containter.add_widget(self.sub10size)
+        self.change_rows_count_btns_containter.add_widget(self.sub10rows_count)
 
-        self.add10size = kb.Button(
+        self.add10rows_count = kb.Button(
             text='+10',
             size_hint=(1, 1),
-            on_press=partial(self.controller.add10_size_controller)
+            on_press=partial(self.controller.add10_rows_count_controller)
         )
-        self.change_size_btns_containter.add_widget(self.add10size)
+        self.change_rows_count_btns_containter.add_widget(self.add10rows_count)
+
+    def add_columns_count_btns_and_label_to_menu(self):
+        self.columns_count_label = Label(
+            text="Columns: " + self.controller.get_columns_count().__str__(),
+            size_hint=(1, 0.1),
+            color=[1, 0, 0, 1]
+        )
+        self.menu.add_widget(self.columns_count_label)
+
+        self.change_columns_count_btns_containter = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.menu.add_widget(self.change_columns_count_btns_containter)
+
+        self.sub10columns_count = kb.Button(
+            text='-10',
+            size_hint=(1, 1),
+            on_press=partial(self.controller.sub10_columns_count_controller)
+        )
+        self.change_columns_count_btns_containter.add_widget(self.sub10columns_count)
+
+        self.add10columns_count = kb.Button(
+            text='+10',
+            size_hint=(1, 1),
+            on_press=partial(self.controller.add10_columns_count_controller)
+        )
+        self.change_columns_count_btns_containter.add_widget(self.add10columns_count)
 
     def add_iterations_btns_and_label_to_menu(self):
         self.iterations_label = Label(
@@ -243,34 +280,39 @@ class CellAutomatonApp(App):
         )
         self.menu.add_widget(self.change_alive_cells_btns_containter)
 
-        self.sub_01_alive_cells = kb.Button(
-            text='-10',
+        self.sub_5p_alive_cells = kb.Button(
+            text='-5%',
             size_hint=(1, 1),
-            on_press=partial(self.controller.sub01_alive_cells_controller)
+            on_press=partial(self.controller.sub5p_alive_cells_controller)
         )
-        self.change_alive_cells_btns_containter.add_widget(self.sub_01_alive_cells)
+        self.change_alive_cells_btns_containter.add_widget(self.sub_5p_alive_cells)
 
-        self.add_01_alive_cells = kb.Button(
-            text='+10',
+        self.add_5p_alive_cells = kb.Button(
+            text='+5%',
             size_hint=(1, 1),
-            on_press=partial(self.controller.add01_alive_cells_controller)
+            on_press=partial(self.controller.add5p_alive_cells_controller)
         )
-        self.change_alive_cells_btns_containter.add_widget(self.add_01_alive_cells)
+        self.change_alive_cells_btns_containter.add_widget(self.add_5p_alive_cells)
 
     def clear_menu(self):
         self.menu.clear_widgets()
 
     def draw_data_frame(self, data_frame):
-        self.grid.canvas.add(Color(1, 0, 0))
         for row in range(0, len(data_frame)):
             self._draw_graphic_columns(row, data_frame)
 
     def _draw_graphic_columns(self, row, data_frame):
         for column in range(0, len(data_frame[row])):
             if data_frame[row][column] is 1:
-                self._draw_graphic_cell(row, column)
+                self._draw_cell(row, column, Color(1, 0, 0))
+            # else:
+            #     self._draw_cell(row, column)
 
-    def _draw_graphic_cell(self, row, column):
+    def _draw_cell(self, row, column, color=None):
+        if color:
+            self.grid.canvas.add(color)
+        else:
+            self.grid.canvas.add(Color(1, 1, 1))
         ellipse = Rectangle(
             pos=(
                 self._get_graphic_cell_x_pos(column),
@@ -284,7 +326,20 @@ class CellAutomatonApp(App):
         self.grid.canvas.add(ellipse)
 
     def _get_graphic_cell_y_pos(self, row):
-        return Window.size[1] - (row + 1) * self.row_height
+        return Window.size[1] - ((row + 1) * self.row_height)
 
     def _get_graphic_cell_x_pos(self, column):
-        return self.controller.get_menu_width()+column * self.column_width
+        return self.controller.get_menu_width()+(column * self.column_width)
+
+    def _get_graphic_cell_column_from_pos(self, pos_y):
+        return int((pos_y-self.controller.get_menu_width()) / self.column_width)
+
+    def _get_graphic_cell_row_from_pos(self, pos_x):
+        return int(((Window.size[1]-pos_x)/self.row_height))
+
+    def clear_canvas(self):
+        self.grid.canvas.clear()
+
+    def update_cell(self, row, column,color=None):
+        self._draw_cell(row, column, color)
+

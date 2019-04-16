@@ -274,9 +274,12 @@ class ViewController:
 
     def save_current_state_to_file(self):
         iteration = self.cell_automaton.iterations_to_list(1)
-        file = open("awesome_pattern" + datetime.datetime.now().__str__() + ".txt", "w+")
+        file = open(self.generate_file_name(), "w+")
         for row in range(0, len(iteration[0])):
             file.write(iteration[0][row].__str__() + "\n")
+
+    def generate_file_name(self):
+        return "patterns\\awesome_pattern" + datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
 
 
 

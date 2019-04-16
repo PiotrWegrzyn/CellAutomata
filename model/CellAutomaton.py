@@ -124,7 +124,14 @@ class CellularAutomaton:
             print("Iteration: " + i.__str__())
             self.calculate_next_iteration()
             self.print_current_state()
-        self.set_to_initial_state()
+
+    def iterations_to_list(self, iterations):
+        list = generate_empty_2d_list_of_list(iterations)
+        list[0] = self.current_state
+        for i in range(1, iterations):
+            self.calculate_next_iteration()
+            list[i] = self.current_state
+        return list
 
     def print_stats(self):
         print("Mode: " + self.mode.__str__())

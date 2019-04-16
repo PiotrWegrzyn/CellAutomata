@@ -58,6 +58,7 @@ class CellAutomatonApp(App):
         self.add_start_stop_btns_to_menu()
         self.add_one_iteration_btn_to_menu()
         self.add_speed_btns_and_label_to_menu()
+        self.add_print_current_state_btn()
         self.add_alive_cells_btns_and_label_to_menu()
         self.add_rows_count_btns_and_label_to_menu()
         self.add_columns_count_btns_and_label_to_menu()
@@ -303,8 +304,6 @@ class CellAutomatonApp(App):
         for column in range(0, len(data_frame[row])):
             if data_frame[row][column] is 1:
                 self._draw_cell(row, column, Color(1, 0, 0))
-            # else:
-            #     self._draw_cell(row, column)
 
     def _draw_cell(self, row, column, color=None):
         if color:
@@ -340,4 +339,13 @@ class CellAutomatonApp(App):
 
     def update_cell(self, row, column,color=None):
         self._draw_cell(row, column, color)
+
+    def add_print_current_state_btn(self):
+        self.print_current_state = kb.Button(
+            text="Print\nstate",
+            size_hint=(1, 0.1),
+            on_press=partial(self.controller.print_current_state_controller)
+        )
+        self.menu.add_widget(self.print_current_state)
+
 

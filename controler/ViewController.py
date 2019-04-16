@@ -1,3 +1,4 @@
+import datetime
 from functools import partial
 
 from kivy.clock import Clock
@@ -243,7 +244,7 @@ class ViewController:
         return self.cell_automaton.get_rows_count() - dx > 0 and self.cell_automaton.get_columns_count() - dy > 0
 
     def set_clicked_cell(self, cell_row, cell_index):
-        if self.was_clicked_on_grid(cell_row, cell_index):
+        if self.clicked_on_grid(cell_row, cell_index):
             cs = self.cell_automaton.get_current_state()
             if self.automaton_mode is CellularAutomaton.modes["1D"]:
                 if cell_row is 0:
@@ -264,9 +265,18 @@ class ViewController:
                     self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
                 self.cell_automaton.set_cell(new_value, cell_index, cell_row)
 
-    def was_clicked_on_grid(self, cell_row, cell_index):
+    def clicked_on_grid(self, cell_row, cell_index):
         return 0 <= cell_index < self.cell_automaton.get_columns_count() and 0 <= cell_row < self.cell_automaton.get_rows_count()
 
+    def print_current_state_controller(self, btn_instance):
+        self.cell_automaton.print_iterations(1)
+        self.save_current_state_to_file()
+
+    def save_current_state_to_file(self):
+        iteration = self.cell_automaton.iterations_to_list(1)
+        file = open("awesome_pattern" + datetime.datetime.now().__str__() + ".txt", "w+")
+        for row in range(0, len(iteration[0])):
+            file.write(iteration[0][row].__str__() + "\n")
 
 
 

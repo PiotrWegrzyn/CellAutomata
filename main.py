@@ -1,5 +1,4 @@
-from app import *
-from CellAutomaton import CellularAutomaton
+from view.view import *
 
 if __name__ == '__main__':
     CellAutomatonApp().run()

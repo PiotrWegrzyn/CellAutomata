@@ -136,6 +136,7 @@ class CellularAutomaton:
             pass
 
     def _prepare_initial_alive_cells(self):
+        self._set_number_of_alive_cells()
         if self.mode is self.modes["1D"]:
             for i in range(0, self.number_of_alive_cells):
                 while True:
@@ -190,19 +191,20 @@ class CellularAutomaton:
 
     def _set_number_of_alive_cells(self):
         if self.mode is self.modes['1D']:
-            self.number_of_alive_cells = int(self.rows_count*self.percentage_of_alive_cells)
+            self.number_of_alive_cells = int(self.columns_count*self.percentage_of_alive_cells)
         if self.mode is self.modes['2D']:
             self.number_of_alive_cells = int(self.rows_count * self.columns_count * self.percentage_of_alive_cells)
 
     def set_percent_of_alive_cells(self, percent):
         self.percentage_of_alive_cells = percent
+        self._set_number_of_alive_cells()
 
     def set_to_initial_state(self):
         self.current_state = self.initial_state
 
     def _prepare_initial_dead_cells(self):
         if self.mode is self.modes["1D"]:
-            self.initial_state = [0] * self.rows_count
+            self.initial_state = [0] * self.columns_count
         if self.mode is self.modes["2D"]:
             self.initial_state = [[0] * self.columns_count for i in range(0, self.rows_count)]
 

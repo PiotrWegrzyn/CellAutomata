@@ -17,7 +17,7 @@ kivy.require('1.9.0')
 class CellAutomatonApp(App):
     def __init__(self):
         super(CellAutomatonApp, self).__init__()
-        self.controller = ViewController(self, 9, 1, window_width=800, window_height=700)
+        self.controller = ViewController(self)
         Window.clearcolor = (1, 1, 1, 1)
         Window.size = (800, 700)
         self.cell_size = self.controller.cell_size
@@ -49,7 +49,7 @@ class CellAutomatonApp(App):
         self.add_change_mode_to_menu()
         self.add_draw_initial_btn_to_menu()
         self.add_rule_btns_and_label_to_menu()
-        self.add_rows_count_btns_and_label_to_menu()
+        self.add_columns_count_btns_and_label_to_menu()
         self.add_alive_cells_btns_and_label_to_menu()
         self.add_iterations_btns_and_label_to_menu()
 

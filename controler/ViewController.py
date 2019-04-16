@@ -8,12 +8,11 @@ from kivy.core.window import Window
 
 
 class ViewController:
-    def __init__(self, view, cell_size, cell_offset, mode=2, window_width=640, window_height=400, rule=90):
+    def __init__(self, view, cell_size=9, cell_offset=1, mode=2, rule=90):
         self.view = view
         self.cell_size = cell_size
         self.cell_offset = cell_offset
         self.cell_box_size = cell_size + cell_offset
-        # self.set_view_cell_properties()
         self.collect_initial_data_from_view_mode = False
         self.menu_item_width = 100
         self.max_graphic_columns = self.get_view_max_columns()
@@ -115,7 +114,7 @@ class ViewController:
         change_value = 10
         if self.validate_size_change(change_value,0):
             self.cell_automaton.change_size((self.cell_automaton.get_rows_count() - change_value), self.cell_automaton.get_columns_count())
-            self.automaton_columns_count -= change_value
+            self.automaton_rows_count -= change_value
             self.update_rows_count_label()
 
     def add10_rows_count_controller(self, btn_instance):
@@ -125,7 +124,7 @@ class ViewController:
 
     def sub10_columns_count_controller(self, btn_instance):
         change_value = 10
-        if self.validate_size_change(change_value, 0):
+        if self.validate_size_change(0, change_value):
             self.cell_automaton.change_size(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() - change_value))
             self.automaton_columns_count -= change_value
             self.update_columns_count_label()

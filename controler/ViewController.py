@@ -69,6 +69,7 @@ class ViewController:
     def draw_one_iteration_controller(self, instance):
         self.pop_data_to_data_frame()
         self.draw_data_frame()
+        self.update_alive_cells_label()
 
     def slower_iterations_controller(self, instance):
         new_value = self.calculate_new_speed_value(change=0.5)
@@ -268,7 +269,7 @@ class ViewController:
     def clicked_on_grid(self, cell_row, cell_index):
         return 0 <= cell_index < self.cell_automaton.get_columns_count() and 0 <= cell_row < self.cell_automaton.get_rows_count()
 
-    def print_current_state_controller(self, btn_instance):
+    def save_current_state_controller(self, btn_instance):
         self.cell_automaton.print_iterations(1)
         self.save_current_state_to_file()
 
@@ -281,5 +282,11 @@ class ViewController:
     def generate_file_name(self):
         return "patterns\\awesome_pattern" + datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
 
+    def load_state_from_file_controller(self,btn_instance):
+        from ast import literal_eval
+        with open('patter_to_load.txt') as f:
+            saved_state = [list(literal_eval(line)) for line in f]
+        self.cell_automaton.change_size(len(saved_state), len(saved_state[0]))
+        self.cell_automaton.current_state = saved_state
 
 

@@ -176,6 +176,7 @@ class CellularAutomaton:
             pool = ThreadPool(int(self.rows_count/10))
             pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.rows_count)])
             pool.close()
+        self.update_alive_cells()
 
     def set_cells_in_row(self, cell_row):
         for cell_index in range(0, self.columns_count):
@@ -264,3 +265,20 @@ class CellularAutomaton:
             self.current_state[column] = value
         if self.mode is self.modes['2D']:
             self.current_state[row][column] = value
+
+    def update_alive_cells(self):
+        s = 0
+        if self.mode is self.modes['1D']:
+            s += sum(self.current_state)
+        if self.mode is self.modes['2D']:
+            for row in range(0, self.rows_count):
+                s += sum(self.current_state[row])
+        self.number_of_alive_cells = s
+        self._set_alive_cells_percentage()
+
+    def _set_alive_cells_percentage(self):
+        if self.mode is self.modes['1D']:
+            self.percentage_of_alive_cells = round(self.number_of_alive_cells/self.columns_count, 2)
+        if self.mode is self.modes['2D']:
+            self.percentage_of_alive_cells = round(self.number_of_alive_cells/(self.rows_count*self.columns_count), 2)
+

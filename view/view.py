@@ -58,10 +58,11 @@ class CellAutomatonApp(App):
         self.add_start_stop_btns_to_menu()
         self.add_one_iteration_btn_to_menu()
         self.add_speed_btns_and_label_to_menu()
-        self.add_print_current_state_btn()
         self.add_alive_cells_btns_and_label_to_menu()
         self.add_rows_count_btns_and_label_to_menu()
         self.add_columns_count_btns_and_label_to_menu()
+        self.add_save_current_state_btn()
+        self.add_load_state_from_file()
 
     def add_start_stop_btns_to_menu(self):
         self.play_stop_btns_containter = BoxLayout(
@@ -337,15 +338,23 @@ class CellAutomatonApp(App):
     def clear_canvas(self):
         self.grid.canvas.clear()
 
-    def update_cell(self, row, column,color=None):
+    def update_cell(self, row, column, color=None):
         self._draw_cell(row, column, color)
 
-    def add_print_current_state_btn(self):
-        self.print_current_state = kb.Button(
-            text="Print\nstate",
+    def add_save_current_state_btn(self):
+        self.save_current_state = kb.Button(
+            text="Save\nstate",
             size_hint=(1, 0.1),
-            on_press=partial(self.controller.print_current_state_controller)
+            on_press=partial(self.controller.save_current_state_controller)
         )
-        self.menu.add_widget(self.print_current_state)
+        self.menu.add_widget(self.save_current_state)
+
+    def add_load_state_from_file(self):
+        self.load_state_btn = kb.Button(
+            text="Load\nstate",
+            size_hint=(1, 0.1),
+            on_press=partial(self.controller.load_state_from_file_controller)
+        )
+        self.menu.add_widget(self.load_state_btn)
 
 

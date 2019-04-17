@@ -8,3 +8,8 @@ by running the following command *in project's directory* :
 
 To start the app run:
 python main.py
+
+
+Import file is in beta version:
+to load file you need to name it "pattern_to_load.txt"
+and after loading when you change mode to 1D it won't work

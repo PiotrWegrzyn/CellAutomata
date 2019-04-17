@@ -284,7 +284,7 @@ class ViewController:
 
     def load_state_from_file_controller(self,btn_instance):
         from ast import literal_eval
-        with open('patter_to_load.txt') as f:
+        with open('pattern_to_load.txt') as f:
             saved_state = [list(literal_eval(line)) for line in f]
         self.cell_automaton.change_size(len(saved_state), len(saved_state[0]))
         self.cell_automaton.current_state = saved_state

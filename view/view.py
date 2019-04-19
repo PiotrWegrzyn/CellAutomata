@@ -19,7 +19,7 @@ class CellAutomatonApp(App):
         super(CellAutomatonApp, self).__init__()
         self.controller = ViewController(self)
         Window.clearcolor = (1, 1, 1, 1)
-        Window.size = (800, 700)
+        Window.size = (1000, 700)
         self.cell_size = self.controller.cell_size
         self.column_width= self.controller.cell_box_size
         self.row_height = self.controller.cell_box_size
@@ -63,6 +63,10 @@ class CellAutomatonApp(App):
         self.add_columns_count_btns_and_label_to_menu()
         self.add_save_current_state_btn()
         self.add_load_state_from_file()
+
+    def draw_choose_file_menu(self):
+        self.add_back_button()
+        self.add_file_buttons()
 
     def add_start_stop_btns_to_menu(self):
         self.play_stop_btns_containter = BoxLayout(
@@ -353,8 +357,30 @@ class CellAutomatonApp(App):
         self.load_state_btn = kb.Button(
             text="Load\nstate",
             size_hint=(1, 0.1),
-            on_press=partial(self.controller.load_state_from_file_controller)
+            on_press=partial(self.controller.show_load_file_menu_controller)
         )
         self.menu.add_widget(self.load_state_btn)
+
+    def add_back_button(self):
+        self.back_button= kb.Button(
+            text="Back",
+            size_hint=(1, 0.1),
+            on_press=partial(self.controller.back_button_controller)
+        )
+        self.menu.add_widget(self.back_button)
+
+    def add_file_buttons(self):
+        import os
+        for file in os.listdir("patterns"):
+            if file.endswith(".txt"):
+                print(os.path.join("/patterns", file))
+                file_button = kb.Button(
+                    text=file.__str__(),
+                    size_hint=(1, 0.1),
+                    on_press=partial(self.controller.load_state_from_file_controller)
+                )
+                self.menu.add_widget(file_button)
+
+
 
 

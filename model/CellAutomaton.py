@@ -67,7 +67,7 @@ class CellularAutomaton:
         return [
             self.previous_state[(index - 1)],
             self.previous_state[index],
-            self.previous_state[(index + 1) % self.rows_count]
+            self.previous_state[(index + 1) % self.columns_count]
         ]
 
     def _get_neighbour_values(self,row, index):
@@ -170,13 +170,13 @@ class CellularAutomaton:
 
     def _set_cells(self):
         if self.mode is self.modes['1D']:
-            for cell_index in range(0, self.rows_count):
+            for cell_index in range(0, self.columns_count):
                 self._append_cell(cell_index)
         if self.mode is self.modes['2D']:
             pool = ThreadPool(int(self.rows_count/10))
             pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.rows_count)])
             pool.close()
-        self.update_alive_cells()
+            self.update_alive_cells()
 
     def set_cells_in_row(self, cell_row):
         for cell_index in range(0, self.columns_count):

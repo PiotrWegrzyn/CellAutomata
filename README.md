@@ -10,5 +10,6 @@ To start the app run:
 python main.py
 
 
-Import file is in beta version:
-to load file you need to name it "pattern_to_load.txt"
+The saved patterns are in Patterns directory.
+Loading state from files is still a work in progress (like the whole app) 
+so you may find some bugs if you do some unordinary stuff with them.

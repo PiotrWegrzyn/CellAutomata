@@ -1,17 +1,17 @@
 import random
 from multiprocessing.pool import ThreadPool
+from model.CellAutomaton import CellAutomaton
 
 
-def generate_empty_2d_list_of_list(size):
-    return [[] for i in range(0, size)]
+class CellularAutomaton1D(CellAutomaton):
 
-
-class CellAutomaton:
-    def __init__(self,  percentage_of_alive_cells=0.3, initial_data=None):
-
+    def __init__(self, columns_count, rule=None, percentage_of_alive_cells=0.3, initial_data=None):
+        super(CellularAutomaton1D, self).__init__(percentage_of_alive_cells, initial_data)
+        self.columns_count = columns_count
         self.number_of_alive_cells = 0
         self.percentage_of_alive_cells = 0
         self.set_percent_of_alive_cells(percentage_of_alive_cells)
+        self._set_number_of_alive_cells()
 
         self.initial_data = initial_data
         self.initial_state = []
@@ -93,11 +93,9 @@ class CellAutomaton:
             self.current_state[cell_row].append(self._apply_rule(cell_index, cell_row))
 
     def _prepare_initial_state(self):
-        if self.initial_data is None:
-            self._prepare_initial_dead_cells()
-            self._prepare_initial_alive_cells()
-        else:
-            self.initial_state =
+        self._prepare_initial_dead_cells()
+        self._prepare_initial_alive_cells()
+
     def get_current_state(self):
         return self.current_state
 

@@ -10,13 +10,7 @@ class Rule:
     required_dimension = None
     allow_dead_cells = True
 
-    def __init__(self, cell_automaton):
-        self.cell_automaton = cell_automaton
-
-    def apply(self, previous_neighbours):
-        pass
-
-    def get_previous_neighbours(self, cell_column):
+    def apply(self, previous_state, cell_column):
         pass
 
     def get_cell_type(self):
@@ -26,5 +20,5 @@ class Rule:
         return self.required_dimension
 
     def get_dead_cell(self):
-        return Cell.get_dead_state()
+        return self.cell_type.get_dead_state()
 

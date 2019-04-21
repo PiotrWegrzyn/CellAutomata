@@ -36,8 +36,8 @@ class ViewController:
         except AttributeError:
             current_alive_percentage = 0.2
 
-        if self.automaton_mode is CellAutomaton.modes["1D"]:
-            self.cell_automaton = CellAutomaton(
+        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
+            self.cell_automaton = CellAutomaton1D(
                 mode=self.automaton_mode,
                 rows_count=self.automaton_rows_count,
                 columns_count=self.automaton_columns_count,
@@ -45,8 +45,8 @@ class ViewController:
                 percentage_of_alive_cells=current_alive_percentage
             )
 
-        if self.automaton_mode is CellAutomaton.modes["2D"]:
-            self.cell_automaton = CellAutomaton(
+        if self.automaton_mode is CellAutomaton1D.modes["2D"]:
+            self.cell_automaton = CellAutomaton1D(
                 mode=self.automaton_mode,
                 rows_count=self.automaton_rows_count,
                 columns_count=self.automaton_columns_count,
@@ -88,11 +88,11 @@ class ViewController:
         self.view.clear_canvas()
         self.view.clear_menu()
 
-        if self.automaton_mode is CellAutomaton.modes["1D"]:
-            self.automaton_mode = CellAutomaton.modes["2D"]
+        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
+            self.automaton_mode = CellAutomaton1D.modes["2D"]
             self.view.draw_2d_menu()
-        elif self.automaton_mode is CellAutomaton.modes["2D"]:
-            self.automaton_mode = CellAutomaton.modes["1D"]
+        elif self.automaton_mode is CellAutomaton1D.modes["2D"]:
+            self.automaton_mode = CellAutomaton1D.modes["1D"]
             self.view.draw_1d_menu()
         self.set_cell_automaton()
 
@@ -208,24 +208,24 @@ class ViewController:
         self.view.draw_data_frame(self.data_frame)
 
     def set_next_data_frame(self):
-        if self.automaton_mode is CellAutomaton.modes["1D"]:
+        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
             for iteration in range(0, self.automaton_iterations):
                 self.data_frame[iteration] = self.cell_automaton.get_current_state()
                 self.cell_automaton.calculate_next_iteration()
             self.cell_automaton.set_to_initial_state()
 
-        if self.automaton_mode is CellAutomaton.modes["2D"]:
+        if self.automaton_mode is CellAutomaton1D.modes["2D"]:
             self.cell_automaton.calculate_next_iteration()
             self.data_frame = self.cell_automaton.get_current_state()
 
     def set_current_data_frame(self):
-        if self.automaton_mode is CellAutomaton.modes["1D"]:
+        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
             for iteration in range(0, self.automaton_iterations):
                 self.data_frame[iteration] = self.cell_automaton.get_current_state()
                 self.cell_automaton.calculate_next_iteration()
             self.cell_automaton.set_to_initial_state()
 
-        if self.automaton_mode is CellAutomaton.modes["2D"]:
+        if self.automaton_mode is CellAutomaton1D.modes["2D"]:
             self.data_frame = self.cell_automaton.get_current_state()
 
     def update_rule_label(self):
@@ -268,7 +268,7 @@ class ViewController:
     def set_clicked_cell(self, cell_row, cell_index):
         if self.clicked_on_grid(cell_row, cell_index):
             cstate = self.cell_automaton.get_current_state()
-            if self.automaton_mode is CellAutomaton.modes["1D"]:
+            if self.automaton_mode is CellAutomaton1D.modes["1D"]:
                 if cell_row is 0:
                     current_value = cstate[cell_index]
                     new_value = int(not current_value)
@@ -278,7 +278,7 @@ class ViewController:
                         self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
                     self.cell_automaton.set_cell(new_value, cell_index)
 
-            elif self.automaton_mode is CellAutomaton.modes["2D"]:
+            elif self.automaton_mode is CellAutomaton1D.modes["2D"]:
                 current_value = cstate[cell_row][cell_index]
                 new_value = int(not current_value)
                 if new_value is 1:

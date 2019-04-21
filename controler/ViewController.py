@@ -4,7 +4,7 @@ from functools import partial
 from kivy.clock import Clock
 from kivy.graphics.context_instructions import Color
 
-from model.CellAutomaton import *
+from model.CellAutomaton1D import *
 from kivy.core.window import Window
 
 

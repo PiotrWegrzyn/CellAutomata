@@ -52,7 +52,7 @@ class CellAutomaton1D:
         for i in range(0, self._number_of_alive_cells):
             while True:
                 y = random.randrange(0, self.columns_count)
-                if self.initial_state[y] is not 1:
+                if self.initial_state[y].is_dead():
                     self.initial_state[y] = cell_factory.create_random_alive_cell(cell_type)
                     break
 

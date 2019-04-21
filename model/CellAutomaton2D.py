@@ -1,9 +1,9 @@
-from model.CellAutomaton import CellAutomaton1D
+from model.CellAutomaton1D import CellAutomaton1D
 
 
 class CellAutomaton2D(CellAutomaton1D):
-    def __init__(self, rule, columns_count, rows_count, initial_state=None):
-        super().__init__(rule, initial_state)
+    def __init__(self, rule, columns_count, rows_count, percent_of_alive_cells=None, initial_state=None):
+        super().__init__(rule, columns_count, percent_of_alive_cells, initial_state)
         self._set_columns_count(columns_count)
         self._set_rows_count(rows_count)
 

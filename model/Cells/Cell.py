@@ -1,6 +1,6 @@
 import random
 from kivy.graphics.context_instructions import Color
-from model.State import State
+from model.State.State import State
 
 
 class Cell:

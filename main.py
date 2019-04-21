@@ -1,12 +1,13 @@
-from view.view import *
+from model.CellAutomata.CellAutomatonFactory import CellAutomatonFactory
 
 if __name__ == '__main__':
     # CellAutomatonApp().run()
-    from model.BinaryRule import *
-    from model.CellAutomaton1D import *
+    from model.RuleSets.BinaryRule import *
+    from model.CellAutomata.CellAutomaton1D import *
 
-    br = BinaryRule(90)
-    ca = CellAutomaton1D(br, 10, 0.2)
+    br = BinaryRuleSet(90)
+    factory = CellAutomatonFactory()
+    ca = factory.create(br, 10, 0.2)
     ca.print_iterations(10)
     ca.change_size(5)
     ca.print_iterations(10)

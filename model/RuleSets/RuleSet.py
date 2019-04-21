@@ -1,7 +1,7 @@
-from model.Cell import Cell
+from model.Cells.Cell import Cell
 
 
-class Rule:
+class RuleSet:
     dimensions = {
         "1D": 1,
         "2D": 2

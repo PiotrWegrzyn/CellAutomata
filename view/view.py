@@ -37,7 +37,7 @@ class CellAutomatonApp(App):
         self.grid.on_touch_down = self.on_touch_down
 
         self.menu = BoxLayout(size_hint=(None, 1), width=self.controller.get_menu_width(), orientation='vertical')
-        self.draw_2d_menu()
+        self.controller.draw_menu()
 
         self.root = BoxLayout(orientation='horizontal')
         self.root.add_widget(self.menu)
@@ -48,7 +48,7 @@ class CellAutomatonApp(App):
     def draw_1d_menu(self):
         self.add_change_mode_to_menu()
         self.add_draw_initial_btn_to_menu()
-        self.add_rule_btns_and_label_to_menu()
+        self.add_rule_set_btns_and_label_to_menu()
         self.add_columns_count_btns_and_label_to_menu()
         self.add_alive_cells_btns_and_label_to_menu()
         self.add_iterations_btns_and_label_to_menu()
@@ -156,34 +156,34 @@ class CellAutomatonApp(App):
         )
         self.menu.add_widget(self.set_state_btn)
 
-    def add_rule_btns_and_label_to_menu(self):
-        self.rule_label = Label(
-            text="Rule: " + self.controller.get_rule().__str__(),
+    def add_rule_set_btns_and_label_to_menu(self):
+        self.rule_set_label = Label(
+            text="Rule Set: " + self.controller.get_rule_set().__str__(),
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
 
         )
-        self.menu.add_widget(self.rule_label)
+        self.menu.add_widget(self.rule_set_label)
 
-        self.change_rule_btns_containter = BoxLayout(
+        self.change_rule_set_btns_containter = BoxLayout(
             size_hint=(1, 0.1),
             orientation='horizontal'
         )
-        self.menu.add_widget(self.change_rule_btns_containter)
+        self.menu.add_widget(self.change_rule_set_btns_containter)
 
-        self.sub10rule = kb.Button(
+        self.sub10rule_set = kb.Button(
             text='-10',
             size_hint=(1, 1),
-            on_press=partial(self.controller.sub10_rule_controller)
+            on_press=partial(self.controller.sub10_rule_set_controller)
         )
-        self.change_rule_btns_containter.add_widget(self.sub10rule)
+        self.change_rule_set_btns_containter.add_widget(self.sub10rule_set)
 
-        self.add10rule = kb.Button(
+        self.add10rule_set = kb.Button(
             text='+10',
             size_hint=(1, 1),
-            on_press=partial(self.controller.add10_rule_controller)
+            on_press=partial(self.controller.add10_rule_set_controller)
         )
-        self.change_rule_btns_containter.add_widget(self.add10rule)
+        self.change_rule_set_btns_containter.add_widget(self.add10rule_set)
 
     def add_rows_count_btns_and_label_to_menu(self):
         self.rows_count_label = Label(

@@ -1,5 +1,4 @@
-from model.State import State
-from model.Cell import Cell
+from model.Cells.Cell import Cell
 
 
 class BinaryCell(Cell):

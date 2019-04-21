@@ -1,15 +1,14 @@
 import datetime
-from functools import partial
 
 from kivy.clock import Clock
 from kivy.graphics.context_instructions import Color
 
-from model.CellAutomaton1D import *
+from model.CellAutomata.CellAutomaton1D import *
 from kivy.core.window import Window
 
 
 class ViewController:
-    def __init__(self, view, cell_size=9, cell_offset=1, mode=2, rule=90):
+    def __init__(self, view, cell_size=9, cell_offset=1, mode=2, rule_set=90):
         self.view = view
         self.cell_size = cell_size
         self.cell_offset = cell_offset
@@ -22,7 +21,7 @@ class ViewController:
 
         self.data_frame = generate_empty_2d_list_of_list(size=self.max_graphic_rows)
 
-        self.automaton_rule = rule
+        self.automaton_rule_set = rule_set
         self.automaton_mode = mode
         self.automaton_rows_count = self.get_view_max_columns()
         self.automaton_columns_count = self.get_view_max_rows()
@@ -41,7 +40,7 @@ class ViewController:
                 mode=self.automaton_mode,
                 rows_count=self.automaton_rows_count,
                 columns_count=self.automaton_columns_count,
-                rule=self.automaton_rule,
+                rule_set=self.automaton_rule_set,
                 percentage_of_alive_cells=current_alive_percentage
             )
 
@@ -104,15 +103,15 @@ class ViewController:
     def set_state_controller(self, btn_instance):
         self.collect_initial_data_from_view_mode = True
 
-    def sub10_rule_controller(self, btn_instance):
-        self.cell_automaton.change_rule((self.cell_automaton.get_rule() - 10) % 255)
-        self.update_rule_label()
+    def sub10_rule_set_controller(self, btn_instance):
+        self.cell_automaton.change_rule_set((self.cell_automaton.get_rule_set() - 10) % 255)
+        self.update_rule_set_label()
         self.reset_canvas()
 
 
-    def add10_rule_controller(self, btn_instance):
-        self.cell_automaton.change_rule((self.cell_automaton.get_rule() + 10) % 255)
-        self.update_rule_label()
+    def add10_rule_set_controller(self, btn_instance):
+        self.cell_automaton.change_rule_set((self.cell_automaton.get_rule_set() + 10) % 255)
+        self.update_rule_set_label()
         self.reset_canvas()
 
     def sub10_rows_count_controller(self, btn_instance):
@@ -185,8 +184,8 @@ class ViewController:
     def get_iteration_speed(self):
         return self.iteration_speed
 
-    def get_rule(self):
-        return self.automaton_rule
+    def get_rule_set(self):
+        return self.automaton_rule_set
 
     def stop_iterations(self):
         try:
@@ -228,8 +227,8 @@ class ViewController:
         if self.automaton_mode is CellAutomaton1D.modes["2D"]:
             self.data_frame = self.cell_automaton.get_current_state()
 
-    def update_rule_label(self):
-        self.view.rule_label.text = "Rule: "+self.cell_automaton.get_rule().__str__()
+    def update_rule_set_label(self):
+        self.view.rule_set_label.text = "Rule Set: "+self.cell_automaton.get_rule_set().__str__()
 
     def update_rows_count_label(self):
         self.view.rows_count_label.text = "Rows: "+self.cell_automaton.get_rows_count().__str__()

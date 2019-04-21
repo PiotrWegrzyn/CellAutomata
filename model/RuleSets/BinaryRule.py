@@ -1,9 +1,9 @@
-from model.BinaryCell import BinaryCell
-from model.CellFactory import CellFactory
-from model.Rule import Rule
+from model.Cells.BinaryCell import BinaryCell
+from model.Cells.CellFactory import CellFactory
+from model.RuleSets.RuleSet import RuleSet
 
 
-class BinaryRule(Rule):
+class BinaryRuleSet(RuleSet):
     cell_type = BinaryCell
     required_dimension = 1
 

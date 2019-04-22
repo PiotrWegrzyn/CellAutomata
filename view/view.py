@@ -10,63 +10,72 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Ellipse
 import kivy.uix.button as kb
-from controler.ViewController import ViewController
+from controler.MainController import MainController
+
 kivy.require('1.9.0')
 
 
 class CellAutomatonApp(App):
     def __init__(self):
         super(CellAutomatonApp, self).__init__()
-        self.controller = ViewController(self)
         Window.clearcolor = (1, 1, 1, 1)
         Window.size = (1000, 700)
-        self.cell_size = self.controller.cell_size
-        self.column_width= self.controller.cell_box_size
-        self.row_height = self.controller.cell_box_size
-
-    def on_touch_down(self, touch):
-        print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
-        self.controller.set_clicked_cell(
-            cell_row=self._get_graphic_cell_row_from_pos(touch.y),
-            cell_index=self._get_graphic_cell_column_from_pos(touch.x)
-        )
+        self.cell_size
 
     def build(self):
+        self.menu = BoxLayout(size_hint=(None, 1), width=100, orientation='vertical')
+
         self.grid = Widget()
-
-        self.grid.on_touch_down = self.on_touch_down
-
-        self.menu = BoxLayout(size_hint=(None, 1), width=self.controller.get_menu_width(), orientation='vertical')
-        self.controller.draw_menu()
 
         self.root = BoxLayout(orientation='horizontal')
         self.root.add_widget(self.menu)
         self.root.add_widget(self.grid)
+        self.controller = MainController(self)
 
         return self.root
 
-    def draw_1d_menu(self):
-        self.add_change_mode_to_menu()
-        self.add_draw_initial_btn_to_menu()
-        self.add_rule_set_btns_and_label_to_menu()
-        self.add_columns_count_btns_and_label_to_menu()
-        self.add_alive_cells_btns_and_label_to_menu()
-        self.add_iterations_btns_and_label_to_menu()
+    def draw_data_frame(self, data_frame):
+        for row in range(0, len(data_frame)):
+            self._draw_graphic_columns(row, data_frame)
 
-    def draw_2d_menu(self):
-        self.add_change_mode_to_menu()
-        self.add_start_stop_btns_to_menu()
-        self.add_one_iteration_btn_to_menu()
-        self.add_speed_btns_and_label_to_menu()
-        self.add_alive_cells_btns_and_label_to_menu()
-        self.add_rows_count_btns_and_label_to_menu()
-        self.add_columns_count_btns_and_label_to_menu()
-        self.add_save_current_state_btn()
-        self.add_load_state_from_file()
+    def _draw_graphic_columns(self, row, data_frame):
+        for column in range(0, len(data_frame[row])):
+            if data_frame[row][column] is 1:
+                self._draw_cell(row, column, Color(1, 0, 0))
 
-    def draw_choose_file_menu(self):
-        self.add_back_button()
-        self.add_file_buttons()
+    def _draw_cell(self, row, column, color=None):
+        if color:
+            self.grid.canvas.add(color)
+        else:
+            self.grid.canvas.add(Color(1, 1, 1))
+        ellipse = Rectangle(
+            pos=(
+                self._get_graphic_cell_x_pos(column),
+                self._get_graphic_cell_y_pos(row)
+            ),
+            size=(
+                self.cell_size,
+                self.cell_size
+            )
+        )
+        self.grid.canvas.add(ellipse)
+
+    def update_cell(self, row, column, color=None):
+        self._draw_cell(row, column, color)
+
+
+    def _get_graphic_cell_y_pos(self, row):
+        return Window.size[1] - ((row + 1) * self.row_height)
+
+    def _get_graphic_cell_x_pos(self, column):
+        return self.controller.get_menu_width()+(column * self.column_width)
+
+    def _get_graphic_cell_column_from_pos(self, pos_y):
+        return int((pos_y-self.controller.get_menu_width()) / self.column_width)
+
+    def _get_graphic_cell_row_from_pos(self, pos_x):
+        return int(((Window.size[1]-pos_x)/self.row_height))
+
 
     def add_start_stop_btns_to_menu(self):
         self.play_stop_btns_containter = BoxLayout(
@@ -136,7 +145,7 @@ class CellAutomatonApp(App):
         self.change_mode_btn = kb.Button(
             text="Change\nmode",
             size_hint=(1, 0.1),
-            on_press=partial(self.controller.change_mode_controller)
+            on_press=partial(self.controller.choose_mode_controller)
         )
         self.menu.add_widget(self.change_mode_btn)
 
@@ -161,7 +170,6 @@ class CellAutomatonApp(App):
             text="Rule Set: " + self.controller.get_rule_set().__str__(),
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
-
         )
         self.menu.add_widget(self.rule_set_label)
 
@@ -298,53 +306,6 @@ class CellAutomatonApp(App):
         )
         self.change_alive_cells_btns_containter.add_widget(self.add_5p_alive_cells)
 
-    def clear_menu(self):
-        self.menu.clear_widgets()
-
-    def draw_data_frame(self, data_frame):
-        for row in range(0, len(data_frame)):
-            self._draw_graphic_columns(row, data_frame)
-
-    def _draw_graphic_columns(self, row, data_frame):
-        for column in range(0, len(data_frame[row])):
-            if data_frame[row][column] is 1:
-                self._draw_cell(row, column, Color(1, 0, 0))
-
-    def _draw_cell(self, row, column, color=None):
-        if color:
-            self.grid.canvas.add(color)
-        else:
-            self.grid.canvas.add(Color(1, 1, 1))
-        ellipse = Rectangle(
-            pos=(
-                self._get_graphic_cell_x_pos(column),
-                self._get_graphic_cell_y_pos(row)
-            ),
-            size=(
-                self.cell_size,
-                self.cell_size
-            )
-        )
-        self.grid.canvas.add(ellipse)
-
-    def _get_graphic_cell_y_pos(self, row):
-        return Window.size[1] - ((row + 1) * self.row_height)
-
-    def _get_graphic_cell_x_pos(self, column):
-        return self.controller.get_menu_width()+(column * self.column_width)
-
-    def _get_graphic_cell_column_from_pos(self, pos_y):
-        return int((pos_y-self.controller.get_menu_width()) / self.column_width)
-
-    def _get_graphic_cell_row_from_pos(self, pos_x):
-        return int(((Window.size[1]-pos_x)/self.row_height))
-
-    def clear_canvas(self):
-        self.grid.canvas.clear()
-
-    def update_cell(self, row, column, color=None):
-        self._draw_cell(row, column, color)
-
     def add_save_current_state_btn(self):
         self.save_current_state = kb.Button(
             text="Save\nstate",
@@ -362,7 +323,7 @@ class CellAutomatonApp(App):
         self.menu.add_widget(self.load_state_btn)
 
     def add_back_button(self):
-        self.back_button= kb.Button(
+        self.back_button = kb.Button(
             text="Back",
             size_hint=(1, 0.1),
             on_press=partial(self.controller.back_button_controller)
@@ -380,7 +341,3 @@ class CellAutomatonApp(App):
                     on_press=partial(self.controller.load_state_from_file_controller)
                 )
                 self.menu.add_widget(file_button)
-
-
-
-

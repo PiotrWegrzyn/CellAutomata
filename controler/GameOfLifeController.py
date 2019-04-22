@@ -7,7 +7,7 @@ from model.CellAutomata.CellAutomaton1D import *
 from kivy.core.window import Window
 
 
-class ViewController:
+class GameOfLifeController:
     def __init__(self, view, cell_size=9, cell_offset=1, mode=2, rule_set=90):
         self.view = view
         self.cell_size = cell_size
@@ -117,13 +117,13 @@ class ViewController:
     def sub10_rows_count_controller(self, btn_instance):
         change_value = 10
         if self.validate_size_change(change_value,0):
-            self.cell_automaton.change_size((self.cell_automaton.get_rows_count() - change_value), self.cell_automaton.get_columns_count())
+            self.cell_automaton.change_columns_count((self.cell_automaton.get_rows_count() - change_value), self.cell_automaton.get_columns_count())
             self.automaton_rows_count -= change_value
             self.update_rows_count_label()
             self.reset_canvas()
 
     def add10_rows_count_controller(self, btn_instance):
-        self.cell_automaton.change_size((self.cell_automaton.get_rows_count() + 10), self.cell_automaton.get_columns_count())
+        self.cell_automaton.change_columns_count((self.cell_automaton.get_rows_count() + 10), self.cell_automaton.get_columns_count())
         self.automaton_rows_count += 10
         self.update_rows_count_label()
         self.reset_canvas()
@@ -131,13 +131,13 @@ class ViewController:
     def sub10_columns_count_controller(self, btn_instance):
         change_value = 10
         if self.validate_size_change(0, change_value):
-            self.cell_automaton.change_size(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() - change_value))
+            self.cell_automaton.change_columns_count(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() - change_value))
             self.automaton_columns_count -= change_value
             self.update_columns_count_label()
             self.reset_canvas()
 
     def add10_columns_count_controller(self, btn_instance):
-        self.cell_automaton.change_size(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() + 10))
+        self.cell_automaton.change_columns_count(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() + 10))
         self.automaton_columns_count += 10
         self.update_columns_count_label()
         self.reset_canvas()
@@ -311,7 +311,7 @@ class ViewController:
         # print(btn_instance.text)
         with open("./patterns/"+btn_instance.text) as f:
             saved_state = [list(literal_eval(line)) for line in f]
-        self.cell_automaton.change_size(len(saved_state), len(saved_state[0]))
+        self.cell_automaton.change_columns_count(len(saved_state), len(saved_state[0]))
         self.cell_automaton.current_state = saved_state
         self.reset_canvas()
 
@@ -319,8 +319,8 @@ class ViewController:
         self.view.clear_menu()
         self.view.draw_2d_menu()
 
-    def show_load_file_menu_controller(self, btn_instance):
-        self.view.clear_menu()
-        self.view.draw_choose_file_menu()
+
+    def initialize_view(self):
+        pass
 
 

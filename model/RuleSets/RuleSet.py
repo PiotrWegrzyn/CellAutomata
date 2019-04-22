@@ -1,4 +1,5 @@
 from model.Cells.Cell import Cell
+from model.Cells.CellFactory import CellFactory
 
 
 class RuleSet:
@@ -9,6 +10,9 @@ class RuleSet:
     cell_type = Cell
     required_dimension = None
     allow_dead_cells = True
+
+    def __init__(self):
+        self.cell_factory = CellFactory(self.cell_type)
 
     def apply(self, previous_state, cell_column):
         pass

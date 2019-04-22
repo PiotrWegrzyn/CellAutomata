@@ -1,14 +1,18 @@
 
 class CellFactory:
-    def create_dead_cell(self, cell_type):
+    def __init__(self, cell_type):
         if not isinstance(cell_type, type):
             raise ValueError
-        state = cell_type.get_dead_state()
-        return cell_type(state)
+        self.cell_type = cell_type
 
-    def create_random_alive_cell(self, cell_type):
-        if not isinstance(cell_type, type):
-            raise ValueError
-        return cell_type(cell_type.get_random_alive_state())
+    def change_cell_type(self, new_cell_type):
+        self.cell_type = new_cell_type
+
+    def create_dead_cell(self):
+        state = self.cell_type.get_dead_state()
+        return self.cell_type(state)
+
+    def create_random_alive_cell(self):
+        return self.cell_type(self.cell_type.get_random_alive_state())
 
 

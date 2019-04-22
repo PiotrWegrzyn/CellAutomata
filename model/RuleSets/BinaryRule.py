@@ -8,9 +8,9 @@ class BinaryRuleSet(RuleSet):
     required_dimension = 1
 
     def __init__(self, rule_base10):
+        super().__init__()
         self.rule_base10 = rule_base10
         self._set_binary_rule()
-        self.cell_factory = CellFactory()
 
     def apply(self, previous_state, cell_column):
         previous_triplet_value = self.calculate_previous_triplet_value(previous_state, cell_column)
@@ -20,11 +20,11 @@ class BinaryRuleSet(RuleSet):
         previous_triplet = self._get_previous_triplet(previous_state, cell_column)
         return previous_triplet
 
-    def create_cell(self,value):
+    def create_cell(self, value):
         if value is 0:
-            return self.cell_factory.create_dead_cell(self.cell_type)
+            return self.cell_factory.create_dead_cell()
         else:
-            return self.cell_factory.create_random_alive_cell(self.cell_type)
+            return self.cell_factory.create_random_alive_cell()
 
     def calculate_previous_triplet_value(self, previous_state, cell_column):
         previous_triplet = self.get_previous_neighbours(previous_state, cell_column)

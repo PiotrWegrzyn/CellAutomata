@@ -7,57 +7,55 @@ import kivy.uix.button as kb
 class BaseController:
     modes = {}
 
-    def __init__(self, view):
-        self.view = view
-        self.menu_item_width = view.menu.width
-        self.initialize_view()
+    def __init__(self, app):
+        self.app = app
+        self.menu_item_width = 100
+        self.set_initial_view()
+        self.bind_buttons()
+
+    def set_initial_view(self):
+        pass
+
+    def set_view(self, view):
+        self.app.set_view(view)
 
     def draw_menu(self):
-        self.add_change_mode_to_menu()
+        self.app.view.show_menu()
 
+    def bind_change_mode_btn(self):
+        self.app.view.change_mode_btn.bind(on_press=partial(self.choose_mode_controller))
+ 
     def choose_mode_controller(self, btn_instance):
+        print("lol")
         self.clear_menu()
         self.draw_choose_mode_menu()
 
+    def bind_change_mode_menu_buttons(self):
+        self.bind_back_button()
+        for button in self.app.view.mode_buttons:
+            button.bind(on_press=partial(self._change_mode))
+
+    def bind_back_button(self):
+        self.app.view.back_btn.bind(on_press=self.back_button_controller)
+
     def _change_mode(self, btn_instance):
-        self.view.controller = self.modes[btn_instance.text](self.view)
-
-    def add_change_mode_to_menu(self):
-        self.change_mode_btn = kb.Button(
-            text="Change\nmode",
-            size_hint=(1, 0.1),
-            on_press=partial(self.choose_mode_controller)
-        )
-        self.view.menu.add_widget(self.change_mode_btn)
-
+        self.app.controller = self.modes[btn_instance.text](self.app)
 
     def back_button_controller(self, btn_instanc):
         self.clear_menu()
         self.draw_menu()
 
-    def initialize_view(self):
-        self.clear_canvas()
-        self.clear_menu()
-        self.draw_menu()
-        self.view.grid.on_touch_down = self.on_touch_down
-
     def draw_choose_mode_menu(self):
-        for mode_name in self.modes:
-            file_button = kb.Button(
-                text=mode_name,
-                size_hint=(1, 0.1),
-                on_press=partial(self._change_mode)
-            )
-            self.view.menu.add_widget(file_button)
+        self.app.view.show_choose_mode_menu()
 
     def clear_canvas(self):
-        self.view.grid.canvas.clear()
+        self.app.view.grid.canvas.clear()
 
     def clear_grid(self):
-        self.view.grid.clear_widgets()
+        self.app.view.grid.clear_widgets()
 
     def clear_menu(self):
-        self.view.menu.clear_widgets()
+        self.app.view.clear_menu()
 
     def get_menu_width(self):
         return self.menu_item_width
@@ -68,5 +66,12 @@ class BaseController:
     def on_touch_down(self, touch):
         # todo remove print on release
         # print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
+        print(self.app.view)
         print(touch.y, touch.x)
         pass
+
+    def bind_buttons(self):
+        self.bind_change_mode_btn()
+        self.bind_change_mode_menu_buttons()
+
+

@@ -34,3 +34,4 @@ class CellAutomatonApp(App):
         self.view = view
         self.root.clear_widgets()
         self.root.add_widget(view)
+

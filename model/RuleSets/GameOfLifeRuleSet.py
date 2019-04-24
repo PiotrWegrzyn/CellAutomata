@@ -49,3 +49,4 @@ class GameOfLifeRuleSet(RuleSet):
             return self.cell_factory.create_random_alive_cell()
 
         return self.cell_factory.create_dead_cell()
+

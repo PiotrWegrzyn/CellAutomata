@@ -19,3 +19,4 @@ class CellAutomatonFactory:
             return CellAutomaton2D(rule_set, columns, rows, percent_of_alive_cells, initial_state)
         else:
             raise ValueError
+

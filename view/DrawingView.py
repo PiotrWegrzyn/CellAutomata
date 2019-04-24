@@ -79,3 +79,4 @@ class DrawingView(BaseView):
 
     def _get_graphic_cell_row_from_pos(self, pos_x):
         return int(((Window.size[1]-pos_x)/self.cell_box_size))
+

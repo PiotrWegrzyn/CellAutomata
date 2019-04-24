@@ -318,3 +318,4 @@ class GameOfLifeController(BaseController):
     def clicked_on_grid(self, cell_row, cell_index):
         return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.cell_automaton.get_rows()
 
+

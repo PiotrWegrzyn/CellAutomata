@@ -149,4 +149,3 @@ class BinaryRuleSetView(DrawingView):
            size_hint=(1, 0.1),
        )
 
-

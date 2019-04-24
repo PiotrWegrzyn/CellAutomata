@@ -228,8 +228,4 @@ class GameOfLifeView(DrawingView):
 
 
 
-# on_press = partial(self.controller.back_btn_controller)
-
-
-
 

@@ -72,3 +72,4 @@ class BinaryRuleSet(RuleSet):
 
     def __str__(self):
         return "Rule " + self.rule_base10.__str__()
+

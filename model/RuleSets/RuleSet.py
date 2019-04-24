@@ -29,4 +29,3 @@ class RuleSet:
 
     def get_dead_cell(self):
         return self.cell_type.get_dead_state()
-

@@ -20,3 +20,4 @@ class MainController(BaseController):
 
     def set_initial_view(self):
         self.set_view(BaseView(self.modes, self.get_menu_width()))
+

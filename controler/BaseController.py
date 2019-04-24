@@ -70,7 +70,6 @@ class BaseController:
 
     def on_touch_down(self, touch):
         # todo remove print on release
-        # print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
         print(self.app.view)
         print(touch.y, touch.x)
         pass

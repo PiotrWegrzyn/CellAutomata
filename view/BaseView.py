@@ -79,5 +79,3 @@ class BaseView(BoxLayout):
         )
 
 
-
-

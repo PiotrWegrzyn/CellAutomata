@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 virtualenv = "==16.0.0"
 virtualenvwrapper-win = "==1.2.5"
+kb = "*"
 
 [requires]
 python_version = "3.7"

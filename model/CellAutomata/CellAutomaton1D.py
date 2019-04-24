@@ -5,6 +5,10 @@ from model.Cells.CellFactory import CellFactory
 from model.RuleSets.RuleSet import RuleSet
 
 
+def generate_empty_2d_list_of_list(size):
+    return [[] for i in range(0, size)]
+
+
 class CellAutomaton1D:
 
     def __init__(self, rule_set, columns, percent_of_alive_cells=None, initial_state=None):

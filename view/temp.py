@@ -53,7 +53,7 @@ def add_one_iteration_btn_to_menu(self):
     one_iteration_btn = kb.Button(
         text="One\niteration",
         size_hint=(1, 0.1),
-        on_press=partial(self.controller.draw_one_iteration_controller)
+        on_press=partial(self.controller.draw_one_iteration)
     )
     self.menu.add_widget(one_iteration_btn)
 
@@ -122,33 +122,33 @@ def add_rule_set_btns_and_label_to_menu(self):
     self.change_rule_set_btns_containter.add_widget(self.add_rule_set)
 
 
-def add_rows_count_btns_and_label_to_menu(self):
-    self.rows_count_label = Label(
-        text="Rows: " + self.controller.get_rows_count().__str__(),
+def add_rows_btns_and_label_to_menu(self):
+    self.rows_label = Label(
+        text="Rows: " + self.controller.get_rows().__str__(),
         size_hint=(1, 0.1),
         color=[1, 0, 0, 1]
     )
-    self.menu.add_widget(self.rows_count_label)
+    self.menu.add_widget(self.rows_label)
 
-    self.change_rows_count_btns_containter = BoxLayout(
+    self.change_rows_btns_containter = BoxLayout(
         size_hint=(1, 0.1),
         orientation='horizontal'
     )
-    self.menu.add_widget(self.change_rows_count_btns_containter)
+    self.menu.add_widget(self.change_rows_btns_containter)
 
-    self.sub_rows_count = kb.Button(
+    self.sub_rows = kb.Button(
         text='-10',
         size_hint=(1, 1),
-        on_press=partial(self.controller.sub_rows_count_controller)
+        on_press=partial(self.controller.sub_rows_controller)
     )
-    self.change_rows_count_btns_containter.add_widget(self.sub_rows_count)
+    self.change_rows_btns_containter.add_widget(self.sub_rows)
 
-    self.add_rows_count = kb.Button(
+    self.add_rows = kb.Button(
         text='+10',
         size_hint=(1, 1),
-        on_press=partial(self.controller.add_rows_count_controller)
+        on_press=partial(self.controller.add_rows_controller)
     )
-    self.change_rows_count_btns_containter.add_widget(self.add_rows_count)
+    self.change_rows_btns_containter.add_widget(self.add_rows)
 
 
 def add_alive_cells_btns_and_label_to_menu(self):
@@ -198,13 +198,13 @@ def add_load_state_from_file(self):
     self.menu.add_widget(self.load_state_btn)
 
 
-def add_back_button(self):
-    self.back_button = kb.Button(
+def add_back_btn(self):
+    self.back_btn = kb.Button(
         text="Back",
         size_hint=(1, 0.1),
-        on_press=partial(self.controller.back_button_controller)
+        on_press=partial(self.controller.back_btn_controller)
     )
-    self.menu.add_widget(self.back_button)
+    self.menu.add_widget(self.back_btn)
 
 
 def add_file_buttons(self):

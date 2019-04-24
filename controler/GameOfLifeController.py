@@ -1,56 +1,81 @@
 import datetime
+from functools import partial
+from ast import literal_eval
+from itertools import count
 
 from kivy.clock import Clock
 from kivy.graphics.context_instructions import Color
 
-from model.CellAutomata.CellAutomaton1D import *
+from controler.BaseController import BaseController, generate_empty_2d_list_of_list
 from kivy.core.window import Window
 
+from model.CellAutomata.CellAutomaton2D import CellAutomaton2D
+from model.Cells.CellFactory import CellFactory
+from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
+from view.GameOfLifeView import GameOfLifeView
 
-class GameOfLifeController:
-    def __init__(self, view, cell_size=9, cell_offset=1, mode=2, rule_set=90):
-        self.view = view
+
+class GameOfLifeController(BaseController):
+    modes = {
+        # "Binary Rule": BinaryRuleSetController,
+    }
+    rule_set = GameOfLifeRuleSet
+
+    def __init__(self, app, cell_size=9, cell_offset=1):
         self.cell_size = cell_size
         self.cell_offset = cell_offset
         self.cell_box_size = cell_size + cell_offset
-        self.collect_initial_data_from_view_mode = False
-        self.menu_item_width = 100
-        self.max_graphic_columns = self.get_view_max_columns()
-        self.max_graphic_rows = self.get_view_max_rows()
+        super().__init__(app)
+        self.update_labels()
         self.iteration_speed = 8
 
-        self.data_frame = generate_empty_2d_list_of_list(size=self.max_graphic_rows)
+    def set_initial_view(self):
+        self.set_view(GameOfLifeView(self.modes, self.get_menu_width()))
 
-        self.automaton_rule_set = rule_set
-        self.automaton_mode = mode
-        self.automaton_rows_count = self.get_view_max_columns()
-        self.automaton_columns = self.get_view_max_rows()
-        self.automaton_iterations = self.get_view_max_rows()
+    def bind_buttons(self):
+        super().bind_buttons()
+        self.bind_draw_button()
+        self.bind_columns_buttons()
+        self.bind_rows_buttons()
+        self.bind_alive_cells_buttons()
+        self.bind_file_buttons()
+        self.bind_load_btn()
+        self.bind_save_btn()
+        self.bind_speed_elements()
+        self.bind_start_stop_elements()
+
+    def setup(self):
+        self.max_graphic_columns = self.get_view_max_columns()
+        self.max_graphic_rows = self.get_view_max_rows()
+
         self.cell_automaton = None
-        self.set_cell_automaton()
+        self.set_cell_automaton_to_starting_state()
+        self.set_empty_data_frame()
 
-    def set_cell_automaton(self):
-        try:
-            current_alive_percentage = self.cell_automaton.percentage_of_alive_cells
-        except AttributeError:
-            current_alive_percentage = 0.2
+    def set_cell_automaton_to_starting_state(self):
+        self.set_cell_automaton(
+            columns=self.get_view_max_columns(),
+            rows = self.get_view_max_rows(),
+            rule_set=self.rule_set(),
+            p_of_alive=0.2
+        )
 
-        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
-            self.cell_automaton = CellAutomaton1D(
-                mode=self.automaton_mode,
-                rows_count=self.automaton_rows_count,
-                columns=self.automaton_columns,
-                rule_set=self.automaton_rule_set,
-                percentage_of_alive_cells=current_alive_percentage
-            )
+    def set_cell_automaton(self, columns=None, rows=None, rule_set=None, p_of_alive=None):
+        if columns is None:
+            columns = self.cell_automaton.get_columns()
+        if rows is None:
+            rows = self.cell_automaton.get_rows()
+        if rule_set is None:
+            rule_set = self.cell_automaton.get_rule_set()
+        if p_of_alive is None:
+            p_of_alive = self.cell_automaton.get_percent_of_alive_cells()
 
-        if self.automaton_mode is CellAutomaton1D.modes["2D"]:
-            self.cell_automaton = CellAutomaton1D(
-                mode=self.automaton_mode,
-                rows_count=self.automaton_rows_count,
-                columns=self.automaton_columns,
-                percentage_of_alive_cells=current_alive_percentage
-            )
+        self.cell_automaton = CellAutomaton2D(
+            columns=columns,
+            rows = rows,
+            rule_set=rule_set,
+            percent_of_alive_cells=p_of_alive
+        )
 
     def get_view_max_columns(self):
         return int((Window.size[0] - self.menu_item_width) / self.cell_box_size)
@@ -58,134 +83,183 @@ class GameOfLifeController:
     def get_view_max_rows(self):
         return int(Window.size[1] / self.cell_box_size)
 
-    def play_iterations_controller(self, instance):
-        self.clear_and_draw_data_frame()
+    def get_columns(self):
+        return self.cell_automaton.get_columns()
+
+    def get_rows(self):
+        return self.cell_automaton.get_rows()
+
+    def bind_draw_button(self):
+        self.app.view.draw_btn.bind(on_press=partial(self.draw_btn_controller))
+
+    def bind_columns_buttons(self):
+        self.app.view.add_columns.bind(on_press=partial(self.add_columns_controller))
+        self.app.view.sub_columns.bind(on_press=partial(self.sub_columns_controller))
+
+    def bind_rows_buttons(self):
+        self.app.view.sub_rows.bind(on_press=partial(self.sub_rows_controller))
+        self.app.view.add_rows.bind(on_press=partial(self.add_rows_controller))
+
+    def bind_alive_cells_buttons(self):
+        self.app.view.sub_alive_cells.bind(on_press=partial(self.sub_alive_cells_controller))
+        self.app.view.add_alive_cells.bind(on_press=partial(self.add_alive_cells_controller))
+
+    def draw_btn_controller(self, button_instance):
+        self.draw_one_iteration()
+
+    def sub_columns_controller(self, button_instance):
+        delta = -10
+        current_value = self.cell_automaton.get_columns()
+        if self.cell_automaton.get_columns() + delta > 0:
+            self.cell_automaton.change_columns(current_value + delta)
+            self.set_empty_data_frame()
+            self.update_columns_label()
+
+    def add_columns_controller(self, button_instance):
+        delta = 10
+        current_value = self.cell_automaton.get_columns()
+        if current_value + delta > 0:
+            self.cell_automaton.change_columns(current_value + delta)
+            self.set_empty_data_frame()
+            self.update_columns_label()
+
+    def sub_rows_controller(self, button_instance):
+        delta = -10
+        current_value = self.cell_automaton.get_rows()
+        if current_value + delta > 0:
+            self.cell_automaton.change_rows(current_value + delta)
+            self.set_empty_data_frame()
+            self.update_rows_label()
+
+    def add_rows_controller(self, button_instance):
+        delta = 10
+        current_value = self.cell_automaton.get_rows()
+        if current_value + delta > 0:
+            self.cell_automaton.change_rows(current_value + delta)
+            self.set_empty_data_frame()
+            self.update_rows_label()
+
+    def sub_alive_cells_controller(self, button_instance):
+        delta = -0.05
+        current_value = self.cell_automaton.get_percent_of_alive_cells()
+        if current_value + delta > 0:
+            self.cell_automaton.change_alive_cells_percentage(current_value + delta)
+            self.update_alive_cells_label()
+
+    def add_alive_cells_controller(self, button_instance):
+        delta = 0.05
+        current_value = self.cell_automaton.get_percent_of_alive_cells()
+        if current_value + delta > 0:
+            self.cell_automaton.change_alive_cells_percentage(current_value + delta)
+            self.update_alive_cells_label()
+
+    def yield_data_frame(self):
+        self.data_frame = self.cell_automaton.get_current_state()
+        self.cell_automaton.calculate_next_iteration()
+
+    def update_labels(self):
+        self.update_columns_label()
+        self.update_rows_label()
+        self.update_alive_cells_label()
+        self.update_speed_label()
+
+    def update_columns_label(self):
+        self.app.view.columns_label.text = "Columns" + self.cell_automaton.get_columns().__str__()
+
+    def update_rows_label(self):
+        self.app.view.rows_label.text = "Rows: " + self.cell_automaton.get_rows().__str__()
+
+    def update_alive_cells_label(self):
+        self.app.view.alive_cells_label.text = \
+            "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.get_percent_of_alive_cells()*100)
+
+    def set_empty_data_frame(self):
+        self.data_frame = generate_empty_2d_list_of_list(size=self.cell_automaton.get_rows())
+
+    def bind_file_buttons(self):
+        for btn in self.app.view.file_buttons:
+            btn.bind(on_press=partial(self.load_file_controller))
+
+    def bind_load_btn(self):
+        self.app.view.load_btn.bind(on_press=partial(self.load_btn_controller))
+
+    def bind_save_btn(self):
+        self.app.view.save_btn.bind(on_press=partial(self.save_btn_controller))
+
+    def bind_start_stop_elements (self):
+        self.app.view.play_btn.bind(on_press=partial(self.play_btn_controller))
+        self.app.view.stop_btn.bind(on_press=partial(self.stop_btn_controller))
+
+    def bind_speed_elements(self):
+        self.app.view.faster_btn.bind(on_press=partial(self.faster_btn_controller))
+        self.app.view.slower_btn.bind(on_press=partial(self.slower_btn_controller))
+
+    def load_file_controller(self, btn_instance):
+        with open("./patterns/" + btn_instance.text) as f:
+            raw_saved_state = [list(literal_eval(line)) for line in f]
+
+        loaded_state_rows = len(raw_saved_state)
+        loaded_state_columns = len(raw_saved_state[0])
+
+        self.cell_automaton.change_rows(loaded_state_rows)
+        self.cell_automaton.change_columns(loaded_state_columns)
+
+        cell_factory = CellFactory(self.rule_set.get_cell_type())
+        saved_state_cells = generate_empty_2d_list_of_list(loaded_state_rows)
+        for row_index, row_content in zip(range(0,len(raw_saved_state)),raw_saved_state):
+            for value in row_content:
+                saved_state_cells[row_index].append(cell_factory.create_cell_with_values(value))
+        self.cell_automaton.current_state = saved_state_cells
+
+        self.draw_one_iteration()
+
+    def load_btn_controller(self, btn_instance):
+        self.app.view.show_choose_file_menu()
+
+    def save_btn_controller(self, btn_instance):
+        self.cell_automaton.print_iterations(1)
+        self.save_current_state_to_file()
+
+    def play_btn_controller(self, btn_instance):
+        self.draw_one_iteration()
         self.restart_auto_iterations_clock()
 
-    def stop_iterations_controller(self, instance):
+    def stop_btn_controller(self, btn_instance):
         self.stop_iterations()
 
-    def draw_one_iteration_controller(self, instance):
-        self.set_next_data_frame()
-        self.clear_and_draw_data_frame()
-        self.update_alive_cells_label()
+    def slower_btn_controller(self, btn_instance):
+        self.change_iterations_speed(delta=0.5)
 
-    def slower_iterations_controller(self, instance):
-        new_value = self.calculate_new_speed_value(change=0.5)
-        if self.validate_new_speed_value(new_value):
+    def faster_btn_controller(self, btn_instance):
+        self.change_iterations_speed(delta=2)
+
+    def change_iterations_speed(self, delta):
+        current_value = self.iteration_speed
+        new_value = int(current_value * delta)
+        if new_value > 0:
             self.iteration_speed = new_value
             self.restart_auto_iterations_clock()
             self.update_speed_label()
 
-    def faster_iterations_controller(self, instance):
-        self.iteration_speed = self.get_iteration_speed() * 2
-        self.restart_auto_iterations_clock()
-        self.update_speed_label()
+    def save_current_state_to_file(self):
+        iteration = self.cell_automaton.iterations_to_list(1)
+        file = open(self.generate_file_name(), "w+")
+        for row in range(0, len(iteration[0])):
+            file.write([cell.get_value() for cell in iteration[0][row]].__str__() + "\n")
 
-    def change_mode_controller(self, btn_instance):
+    def generate_file_name(self):
+        return "patterns\\CA"+self.cell_automaton.get_rule_set().__str__() \
+               +"-"+ datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
+
+    def draw_one_iteration(self):
+        self.clear_canvas()
+        self.yield_data_frame()
+        self.app.view.draw_data_frame(self.data_frame)
+        # self.cell_automaton.print_rows(self.rows)
+
+    def restart_auto_iterations_clock(self):
         self.stop_iterations()
-        self.view.clear_canvas()
-        self.view.clear_menu()
-
-        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
-            self.automaton_mode = CellAutomaton1D.modes["2D"]
-            self.view.draw_2d_menu()
-        elif self.automaton_mode is CellAutomaton1D.modes["2D"]:
-            self.automaton_mode = CellAutomaton1D.modes["1D"]
-            self.view.draw_1d_menu()
-        self.set_cell_automaton()
-
-    def draw_initial_state_controller(self, btn_instance):
-        self.cell_automaton.set_to_initial_state()
-        self.set_next_data_frame()
-        self.clear_and_draw_data_frame()
-
-    def set_state_controller(self, btn_instance):
-        self.collect_initial_data_from_view_mode = True
-
-    def sub__rule_set_controller(self, btn_instance):
-        self.cell_automaton.change_rule_set((self.cell_automaton.get_rule_set() - 10) % 255)
-        self.update_rule_set_label()
-        self.reset_canvas()
-
-
-    def add__rule_set_controller(self, btn_instance):
-        self.cell_automaton.change_rule_set((self.cell_automaton.get_rule_set() + 10) % 255)
-        self.update_rule_set_label()
-        self.reset_canvas()
-
-    def sub__rows_count_controller(self, btn_instance):
-        change_value = 10
-        if self.validate_size_change(change_value,0):
-            self.cell_automaton.change_columns((self.cell_automaton.get_rows_count() - change_value), self.cell_automaton.get_columns())
-            self.automaton_rows_count -= change_value
-            self.update_rows_count_label()
-            self.reset_canvas()
-
-    def add__rows_count_controller(self, btn_instance):
-        self.cell_automaton.change_columns((self.cell_automaton.get_rows_count() + 10), self.cell_automaton.get_columns())
-        self.automaton_rows_count += 10
-        self.update_rows_count_label()
-        self.reset_canvas()
-
-    def sub__columns_controller(self, btn_instance):
-        change_value = 10
-        if self.validate_size_change(0, change_value):
-            self.cell_automaton.change_columns(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns() - change_value))
-            self.automaton_columns -= change_value
-            self.update_columns_label()
-            self.reset_canvas()
-
-    def add__columns_controller(self, btn_instance):
-        self.cell_automaton.change_columns(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns() + 10))
-        self.automaton_columns += 10
-        self.update_columns_label()
-        self.reset_canvas()
-
-    def sub__iterations_controller(self, btn_instance):
-        value = 10
-        if self.automaton_iterations - value >= 0:
-            self.automaton_iterations -= value
-        self.update_iterations_label()
-        self.automaton_rows_count -= value
-        # self._reset_data_frame()
-        self.reset_canvas()
-
-    def add__iterations_controller(self, btn_instance):
-        self.automaton_iterations += 10
-        self.update_iterations_label()
-        self.automaton_rows_count += 10
-        # self._reset_data_frame()
-        self.reset_canvas()
-
-    def sub_p_alive_cells_controller(self, btn_instance):
-        value = 0.05
-        if self.cell_automaton.get_alive_cell_percentage()-value >= 0:
-            self.cell_automaton.change_alive_cells_percentage(self.cell_automaton.get_alive_cell_percentage()-value)
-        self.update_alive_cells_label()
-        self.reset_canvas()
-
-    def add_p_alive_cells_controller(self,btn_instance):
-        value = 0.05
-        if self.cell_automaton.get_alive_cell_percentage()+value <= 1:
-            self.cell_automaton.change_alive_cells_percentage(self.cell_automaton.get_alive_cell_percentage()+value)
-        self.update_alive_cells_label()
-        self.reset_canvas()
-
-    def get_iterations(self):
-        return self.automaton_iterations
-
-    def get_rows_count(self):
-        return self.automaton_rows_count
-
-    def get_columns(self):
-        return self.automaton_columns
-
-    def get_iteration_speed(self):
-        return self.iteration_speed
-
-    def get_rule_set(self):
-        return self.automaton_rule_set
+        self._start_iterations()
 
     def stop_iterations(self):
         try:
@@ -193,134 +267,31 @@ class GameOfLifeController:
         except AttributeError:
             pass
 
-    def get_menu_width(self):
-        return self.menu_item_width
-
-    def get_data_frame(self):
-        return self.data_frame
-
-    def _reset_data_frame(self):
-        self.data_frame = generate_empty_2d_list_of_list(size=self.automaton_rows_count)
-
-    def clear_and_draw_data_frame(self):
-        self.view.clear_canvas()
-        self.view.draw_data_frame(self.data_frame)
-
-    def set_next_data_frame(self):
-        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
-            for iteration in range(0, self.automaton_iterations):
-                self.data_frame[iteration] = self.cell_automaton.get_current_state()
-                self.cell_automaton.calculate_next_iteration()
-            self.cell_automaton.set_to_initial_state()
-
-        if self.automaton_mode is CellAutomaton1D.modes["2D"]:
-            self.cell_automaton.calculate_next_iteration()
-            self.data_frame = self.cell_automaton.get_current_state()
-
-    def set_current_data_frame(self):
-        if self.automaton_mode is CellAutomaton1D.modes["1D"]:
-            for iteration in range(0, self.automaton_iterations):
-                self.data_frame[iteration] = self.cell_automaton.get_current_state()
-                self.cell_automaton.calculate_next_iteration()
-            self.cell_automaton.set_to_initial_state()
-
-        if self.automaton_mode is CellAutomaton1D.modes["2D"]:
-            self.data_frame = self.cell_automaton.get_current_state()
-
-    def update_rule_set_label(self):
-        self.view.rule_set_label.text = "Rule Set: "+self.cell_automaton.get_rule_set().__str__()
-
-    def update_rows_count_label(self):
-        self.view.rows_count_label.text = "Rows: "+self.cell_automaton.get_rows_count().__str__()
-
-    def update_columns_label(self):
-        self.view.columns_label.text = "Columns: "+self.cell_automaton.get_columns().__str__()
-
-    def update_iterations_label(self):
-        self.view.iterations_label.text = "Iterations: "+self.get_iterations().__str__()
-
-    def update_alive_cells_label(self):
-        self.view.alive_cells_label.text = "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.percentage_of_alive_cells*100)
-
-    def get_alive_cell_percentage(self):
-        return self.cell_automaton.get_alive_cell_percentage()
-
     def _start_iterations(self):
-        self.auto_iterations = Clock.schedule_interval(self.draw_one_iteration_controller, 1 / self.iteration_speed)
-
-    def restart_auto_iterations_clock(self):
-        self.stop_iterations()
-        self._start_iterations()
+        self.auto_iterations = Clock.schedule_interval(self.draw_btn_controller, 1 / self.iteration_speed)
 
     def update_speed_label(self):
-        self.view.speed_label.text = "Speed: " + self.get_iteration_speed().__str__() +"fps"
+        self.app.view.speed_label.text = "Speed: " + self.iteration_speed.__str__() + "fps",
 
-    def calculate_new_speed_value(self, change):
-        return int(self.get_iteration_speed() * change)
+    def on_touch_down(self, touch):
+        def set_clicked_cell(self, cell_row, cell_index):
+            if self.clicked_on_grid(cell_row, cell_index):
+                cstate = self.cell_automaton.get_current_state()
+                if self.automaton_mode is CellAutomaton1D.modes["1D"]:
+                    if cell_row is 0:
+                        current_value = cstate[cell_index]
+                        new_value = int(not current_value)
+                        if new_value is 1:
+                            self.view.update_cell(cell_row, cell_index, Color(0, 0, 1))
+                        else:
+                            self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
+                        self.cell_automaton.set_cell(new_value, cell_index)
 
-    def validate_new_speed_value(self, new_value):
-        return new_value > 0
-
-    def validate_size_change(self, dx, dy):
-        return self.cell_automaton.get_rows_count() - dx > 0 and self.cell_automaton.get_columns() - dy > 0
-
-    def set_clicked_cell(self, cell_row, cell_index):
-        if self.clicked_on_grid(cell_row, cell_index):
-            cstate = self.cell_automaton.get_current_state()
-            if self.automaton_mode is CellAutomaton1D.modes["1D"]:
-                if cell_row is 0:
-                    current_value = cstate[cell_index]
+                elif self.automaton_mode is CellAutomaton1D.modes["2D"]:
+                    current_value = cstate[cell_row][cell_index]
                     new_value = int(not current_value)
                     if new_value is 1:
                         self.view.update_cell(cell_row, cell_index, Color(0, 0, 1))
                     else:
                         self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
-                    self.cell_automaton.set_cell(new_value, cell_index)
-
-            elif self.automaton_mode is CellAutomaton1D.modes["2D"]:
-                current_value = cstate[cell_row][cell_index]
-                new_value = int(not current_value)
-                if new_value is 1:
-                    self.view.update_cell(cell_row, cell_index, Color(0, 0, 1))
-                else:
-                    self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
-                self.cell_automaton.set_cell(new_value, cell_index, cell_row)
-
-    def clicked_on_grid(self, cell_row, cell_index):
-        return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.cell_automaton.get_rows_count()
-
-    def save_current_state_controller(self, btn_instance):
-        self.cell_automaton.print_iterations(1)
-        self.save_current_state_to_file()
-
-    def save_current_state_to_file(self):
-        iteration = self.cell_automaton.iterations_to_list(1)
-        file = open(self.generate_file_name(), "w+")
-        for row in range(0, len(iteration[0])):
-            file.write(iteration[0][row].__str__() + "\n")
-
-    def reset_canvas(self):
-        self.set_current_data_frame()
-        self.clear_and_draw_data_frame()
-
-    def generate_file_name(self):
-        return "patterns\\CA"+self.cell_automaton.mode.__str__() +"-"+ datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
-
-    def load_state_from_file_controller(self, btn_instance):
-        from ast import literal_eval
-        # print(btn_instance.text)
-        with open("./patterns/"+btn_instance.text) as f:
-            saved_state = [list(literal_eval(line)) for line in f]
-        self.cell_automaton.change_columns(len(saved_state), len(saved_state[0]))
-        self.cell_automaton.current_state = saved_state
-        self.reset_canvas()
-
-    def back_button_controller(self, btn_instanc):
-        self.view.clear_menu()
-        self.view.draw_2d_menu()
-
-
-    def initialize_view(self):
-        pass
-
-
+                    self.cell_automaton.set_cell(new_value, cell_index, cell_row)

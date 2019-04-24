@@ -14,11 +14,15 @@ class RuleSet:
     def __init__(self):
         self.cell_factory = CellFactory(self.cell_type)
 
+    def __str__(self):
+        return self.__class__.__name__
+
     def apply(self, previous_state, cell_column):
         pass
 
-    def get_cell_type(self):
-        return self.cell_type
+    @staticmethod
+    def get_cell_type():
+        return RuleSet.cell_type
 
     def get_required_dimension(self):
         return self.required_dimension

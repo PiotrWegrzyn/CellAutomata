@@ -42,10 +42,10 @@ class BaseView(BoxLayout):
 
     def show_choose_mode_menu(self):
         self.clear_menu()
-        self.add_back_button_to_menu()
+        self.add_back_btn_to_menu()
         self.add_mode_buttons_to_menu()
 
-    def add_back_button_to_menu(self):
+    def add_back_btn_to_menu(self):
         self.menu.add_widget(self.back_btn)
 
     def add_mode_buttons_to_menu(self):
@@ -54,7 +54,7 @@ class BaseView(BoxLayout):
 
     def _create_elements(self):
         self._create_menu()
-        self.create_back_button()
+        self.create_back_btn()
         self.create_choose_mode_menu()
 
     def _create_menu(self):
@@ -72,7 +72,7 @@ class BaseView(BoxLayout):
             )
             self.mode_buttons.append(mode_button)
 
-    def create_back_button(self):
+    def create_back_btn(self):
         self.back_btn = kb.Button(
             text="Back",
             size_hint=(1, 0.1),

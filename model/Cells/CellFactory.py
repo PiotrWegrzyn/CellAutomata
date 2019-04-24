@@ -15,4 +15,6 @@ class CellFactory:
     def create_random_alive_cell(self):
         return self.cell_type(self.cell_type.get_random_alive_state())
 
+    def create_cell_with_values(self, value=None, **kwargs):
+        return self.cell_type(self.cell_type.get_state_from_values(value, **kwargs))
 

@@ -4,16 +4,10 @@ from kivy.core.window import Window
 from kivy.uix.label import Label
 
 from controler.GameOfLifeController import GameOfLifeController
-from controler.MainController import BaseController
+from controler.BaseController import BaseController, generate_empty_2d_list_of_list
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
 from model.RuleSets.BinaryRuleSet import BinaryRuleSet
-from view.BaseView import BaseView
 from view.BinaryRuleSetView import BinaryRuleSetView
-from view.DrawingView import DrawingView
-
-
-def generate_empty_2d_list_of_list(size):
-    return [[] for i in range(0, size)]
 
 
 class BinaryRuleSetController(BaseController):
@@ -22,7 +16,7 @@ class BinaryRuleSetController(BaseController):
     }
     rule_set = BinaryRuleSet
 
-    def __init__(self, app, cell_size=9, cell_offset=1, rule=90):
+    def __init__(self, app, cell_size=9, cell_offset=1):
         self.cell_size = cell_size
         self.cell_offset = cell_offset
         self.cell_box_size = cell_size + cell_offset
@@ -34,7 +28,6 @@ class BinaryRuleSetController(BaseController):
 
     def bind_buttons(self):
         super().bind_buttons()
-        self.bind_columns_buttons()
         self.bind_draw_button()
         self.bind_columns_buttons()
         self.bind_iterations_buttons()
@@ -44,30 +37,33 @@ class BinaryRuleSetController(BaseController):
     def setup(self):
         self.max_graphic_columns = self.get_view_max_columns()
         self.max_graphic_rows = self.get_view_max_rows()
-        self.iteration_speed = 8
-
-        self.data_frame = generate_empty_2d_list_of_list(size=self.max_graphic_rows)
 
         self.iterations = self.get_view_max_rows()
+        self.set_empty_data_frame()
+
         self.cell_automaton = None
-        self.set_cell_automaton()
+        self.set_cell_automaton_to_starting_state()
+
+    def set_cell_automaton_to_starting_state(self):
+        self.set_cell_automaton(
+            columns=self.get_view_max_columns(),
+            rule_set=self.rule_set(90),
+            p_of_alive=0.2
+        )
 
     def set_cell_automaton(self, columns=None, rule_set=None, p_of_alive=None):
-        if self.cell_automaton is None:
-            self.set_cell_automaton_to_starting_state()
-        else:
-            if columns is None:
-                columns = self.cell_automaton.get_columns()
-            if rule_set is None:
-                rule_set = self.cell_automaton.get_rule_set()
-            if p_of_alive is None:
-                p_of_alive = self.cell_automaton.get_percent_of_alive_cells()
+        if columns is None:
+            columns = self.cell_automaton.get_columns()
+        if rule_set is None:
+            rule_set = self.cell_automaton.get_rule_set()
+        if p_of_alive is None:
+            p_of_alive = self.cell_automaton.get_percent_of_alive_cells()
 
-            self.cell_automaton = CellAutomaton1D(
-                columns=columns,
-                rule_set=rule_set,
-                percent_of_alive_cells=p_of_alive
-            )
+        self.cell_automaton = CellAutomaton1D(
+            columns=columns,
+            rule_set=rule_set,
+            percent_of_alive_cells=p_of_alive
+        )
 
     def get_view_max_columns(self):
         return int((Window.size[0] - self.menu_item_width) / self.cell_box_size)
@@ -80,15 +76,6 @@ class BinaryRuleSetController(BaseController):
 
     def get_iterations(self):
         return self.iterations
-
-    def add__columns_controller(self, btn_instance):
-        self.cell_automaton.change_columns(self.cell_automaton.get_columns() + 10)
-        self.update_columns_label()
-        self.reset_canvas()
-
-
-    def reset_canvas(self):
-        pass
 
     def bind_draw_button(self):
         self.app.view.draw_btn.bind(on_press=partial(self.draw_graphic))
@@ -134,7 +121,7 @@ class BinaryRuleSetController(BaseController):
         current_value = self.iterations
         if current_value + delta > 0:
             self.iterations = current_value + delta
-            self.data_frame = generate_empty_2d_list_of_list(size=self.iterations)
+            self.set_empty_data_frame()
             self.update_iterations_label()
 
     def add_iterations_controller(self, button_instance):
@@ -142,7 +129,7 @@ class BinaryRuleSetController(BaseController):
         current_value = self.iterations
         if current_value + delta > 0:
             self.iterations = current_value + delta
-            self.data_frame = generate_empty_2d_list_of_list(size=self.iterations)
+            self.set_empty_data_frame()
             self.update_iterations_label()
 
     def sub_rule_controller(self, button_instance):
@@ -177,14 +164,6 @@ class BinaryRuleSetController(BaseController):
             self.cell_automaton.calculate_next_iteration()
         self.cell_automaton.set_to_initial_state()
 
-
-    def set_cell_automaton_to_starting_state(self):
-        self.cell_automaton = CellAutomaton1D(
-            columns=self.get_view_max_columns(),
-            rule_set=self.rule_set(90),
-            percent_of_alive_cells=0.2
-        )
-
     def update_labels(self):
         self.update_columns_label()
         self.update_iterations_label()
@@ -201,7 +180,11 @@ class BinaryRuleSetController(BaseController):
         self.app.view.iterations_label.text = "Iterations: " + self.iterations.__str__()
 
     def update_alive_cells_label(self):
-        self.app.view.alive_cells_label.text = "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.get_percent_of_alive_cells()*100)
+        self.app.view.alive_cells_label.text = \
+            "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.get_percent_of_alive_cells()*100)
+
+    def set_empty_data_frame(self):
+        self.data_frame = generate_empty_2d_list_of_list(size=self.iterations)
 
 
 

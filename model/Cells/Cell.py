@@ -40,5 +40,14 @@ class Cell:
     def get_random_alive_state():
         return random.choice(Cell.alive_states)
 
+    @staticmethod
+    def get_state_from_values(value=None, **kwargs):
+        if value is 0:
+            return Cell.dead_state
+        else:
+            return Cell.get_random_alive_state()
+
+
+
 
 

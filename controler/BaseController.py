@@ -4,6 +4,10 @@ from kivy.properties import partial
 import kivy.uix.button as kb
 
 
+def generate_empty_2d_list_of_list(size):
+    return [[] for i in range(0, size)]
+
+
 class BaseController:
     modes = {}
 
@@ -32,17 +36,17 @@ class BaseController:
         self.draw_choose_mode_menu()
 
     def bind_change_mode_menu_buttons(self):
-        self.bind_back_button()
+        self.bind_back_btn()
         for button in self.app.view.mode_buttons:
             button.bind(on_press=partial(self._change_mode))
 
-    def bind_back_button(self):
-        self.app.view.back_btn.bind(on_press=self.back_button_controller)
+    def bind_back_btn(self):
+        self.app.view.back_btn.bind(on_press=self.back_btn_controller)
 
     def _change_mode(self, btn_instance):
         self.app.controller = self.modes[btn_instance.text](self.app)
 
-    def back_button_controller(self, btn_instanc):
+    def back_btn_controller(self, btn_instanc):
         self.clear_menu()
         self.draw_menu()
 

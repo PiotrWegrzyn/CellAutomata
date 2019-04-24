@@ -9,9 +9,9 @@ def generate_empty_2d_list_of_list(size):
 
 
 class CellAutomaton2D(CellAutomaton1D):
-    def __init__(self, rule_set, columns_count, rows_count, percent_of_alive_cells=None, initial_state=None):
+    def __init__(self, rule_set, columns, rows_count, percent_of_alive_cells=None, initial_state=None):
         self._set_rows_count(rows_count)
-        super().__init__(rule_set, columns_count, percent_of_alive_cells, initial_state)
+        super().__init__(rule_set, columns, percent_of_alive_cells, initial_state)
 
     def _set_rows_count(self, rows_count):
         if rows_count < 0:
@@ -27,7 +27,7 @@ class CellAutomaton2D(CellAutomaton1D):
         self.set_to_initial_state()
 
     def cell_count(self):
-        return self.columns_count * self.rows_count
+        return self.columns * self.rows_count
 
     def print_current_state(self):
         for row in self.current_state:
@@ -39,7 +39,7 @@ class CellAutomaton2D(CellAutomaton1D):
 
     def __str__(self):
         return "Rule Set: " + self.rule_set.__str__() \
-               + "Columns: " + self.columns_count.__str__()\
+               + "Columns: " + self.columns.__str__()\
                + "Rows: " + self.rows_count.__str__()
 
     def create_empty_state(self):
@@ -54,7 +54,7 @@ class CellAutomaton2D(CellAutomaton1D):
         self.update_alive_cells()
 
     def set_cells_in_row(self, cell_row):
-        for cell_index in range(0, self.columns_count):
+        for cell_index in range(0, self.columns):
             self._append_cell(cell_row, cell_index)
 
     def _prepare_initial_alive_cells(self):
@@ -62,14 +62,14 @@ class CellAutomaton2D(CellAutomaton1D):
         for i in range(0, self._number_of_alive_cells):
             while True:
                 x = random.randrange(0, self.rows_count)
-                y = random.randrange(0, self.columns_count)
+                y = random.randrange(0, self.columns)
                 if self.initial_state[x][y].is_dead():
                     self.initial_state[x][y] = self.cell_factory.create_random_alive_cell()
                     break
 
     def _prepare_initial_dead_cells(self):
         self.initial_state = [
-            [self.cell_factory.create_dead_cell()] * self.columns_count for i in range(0, self.rows_count)
+            [self.cell_factory.create_dead_cell()] * self.columns for i in range(0, self.rows_count)
         ]
 
     def update_alive_cells(self):

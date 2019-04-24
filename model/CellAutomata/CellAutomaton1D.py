@@ -7,11 +7,11 @@ from model.RuleSets.RuleSet import RuleSet
 
 class CellAutomaton1D:
 
-    def __init__(self, rule_set, columns_count, percent_of_alive_cells=None, initial_state=None):
+    def __init__(self, rule_set, columns, percent_of_alive_cells=None, initial_state=None):
         self._set_rule_set(rule_set)
         self.cell_factory = CellFactory(rule_set.get_cell_type())
-        self.columns_count = None
-        self._set_columns_count(columns_count)
+        self.columns = None
+        self._set_columns(columns)
         
         self.percentage_of_alive_cells = None
         self.set_percent_of_alive_cells(percent_of_alive_cells)
@@ -30,7 +30,7 @@ class CellAutomaton1D:
         self._set_cells()
 
     def _set_cells(self):
-        for cell_index in range(0, self.columns_count):
+        for cell_index in range(0, self.columns):
             self._append_cell(cell_index)
 
     def _set_rule_set(self, rule_set):
@@ -46,13 +46,13 @@ class CellAutomaton1D:
         self._set_number_of_alive_cells()
         for i in range(0, self._number_of_alive_cells):
             while True:
-                y = random.randrange(0, self.columns_count)
+                y = random.randrange(0, self.columns)
                 if self.initial_state[y].is_dead():
                     self.initial_state[y] = self.cell_factory.create_random_alive_cell()
                     break
 
     def _prepare_initial_dead_cells(self):
-        self.initial_state = [self.cell_factory.create_dead_cell()] * self.columns_count
+        self.initial_state = [self.cell_factory.create_dead_cell()] * self.columns
 
     def _reset_current_state(self):
         self.current_state = self.create_empty_state()
@@ -94,11 +94,11 @@ class CellAutomaton1D:
         return list
 
     def __str__(self):
-        return "Rule Set: " + self.rule_set.__str__() + "Columns: " + self.columns_count.__str__()
+        return "Rule Set: " + self.rule_set.__str__() + "Columns: " + self.columns.__str__()
 
     def print_stats(self):
         print("Rule Set: ", self.rule_set.__str__())
-        print("Columns: ", self.columns_count.__str__())
+        print("Columns: ", self.columns.__str__())
 
     def _set_number_of_alive_cells(self):
         self._number_of_alive_cells = int(self.cell_count() * self.percentage_of_alive_cells)
@@ -110,16 +110,16 @@ class CellAutomaton1D:
             self.percentage_of_alive_cells = percent
         self._set_number_of_alive_cells()
 
-    def _set_columns_count(self, columns_count):
-        if columns_count < 0:
+    def _set_columns(self, columns):
+        if columns < 0:
             raise ValueError
-        self.columns_count = columns_count
+        self.columns = columns
 
-    def get_columns_count(self):
-        return self.columns_count
+    def get_columns(self):
+        return self.columns
 
     def cell_count(self):
-        return self.columns_count
+        return self.columns
 
     # todo change so that it fits old data not creates new
     def _fit_to_size(self):
@@ -128,8 +128,8 @@ class CellAutomaton1D:
     def _append_cell(self, cell_index):
         self.current_state.append(self.rule_set.apply(self.previous_state, cell_index))
 
-    def change_columns_count(self, columns_count):
-        self._set_columns_count(columns_count)
+    def change_columns(self, columns):
+        self._set_columns(columns)
         self._fit_to_size()
         self.set_to_initial_state()
 

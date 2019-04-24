@@ -5,7 +5,7 @@ from model.State.State import State
 
 class Cell:
     dead_state = State(0, Color(1, 1, 1))
-    alive_states = [State(1, Color(0, 0, 1))]
+    alive_states = [State(1, Color(1, 0, 0))]
 
     def __init__(self, state):
         self.state = state
@@ -28,7 +28,7 @@ class Cell:
         return False
 
     def is_alive(self):
-        if self.state in self.alive_states:
+        if self.state is not self.dead_state:
             return True
         return False
 

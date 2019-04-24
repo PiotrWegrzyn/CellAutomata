@@ -21,18 +21,18 @@ class GameOfLifeRuleSet(RuleSet):
     def get_previous_neighbours_values(self, previous_state, cell_row, cell_column):
         # todo refactor this *somehow*
         rows_count = len(previous_state)
-        columns_count = len(previous_state[0])
+        columns = len(previous_state[0])
         return [
             previous_state[(cell_row - 1)][cell_column - 1].get_value(),
             previous_state[(cell_row - 1)][cell_column].get_value(),
-            previous_state[(cell_row - 1)][(cell_column + 1) % columns_count].get_value(),
+            previous_state[(cell_row - 1)][(cell_column + 1) % columns].get_value(),
 
             previous_state[cell_row][cell_column - 1].get_value(),
-            previous_state[cell_row][(cell_column + 1) % columns_count].get_value(),
+            previous_state[cell_row][(cell_column + 1) % columns].get_value(),
 
             previous_state[(cell_row + 1) % rows_count][cell_column - 1].get_value(),
             previous_state[(cell_row + 1) % rows_count][cell_column].get_value(),
-            previous_state[(cell_row + 1) % rows_count][(cell_column + 1) % columns_count].get_value()
+            previous_state[(cell_row + 1) % rows_count][(cell_column + 1) % columns].get_value()
         ]
 
     def _judgement_day(self, cell, neighbours_value):

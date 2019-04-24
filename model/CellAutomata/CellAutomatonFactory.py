@@ -9,13 +9,13 @@ class CellAutomatonFactory:
         "2D": 2
     }
 
-    def create(self, rule_set, columns_count, rows_count=None,percent_of_alive_cells=None, initial_state=None):
+    def create(self, rule_set, columns, rows_count=None,percent_of_alive_cells=None, initial_state=None):
         if not isinstance(rule_set, RuleSet):
             raise TypeError
 
         if rule_set.required_dimension is self.modes["1D"]:
-            return CellAutomaton1D(rule_set, columns_count, percent_of_alive_cells, initial_state)
+            return CellAutomaton1D(rule_set, columns, percent_of_alive_cells, initial_state)
         if rule_set.required_dimension is self.modes["2D"]:
-            return CellAutomaton2D(rule_set, columns_count, rows_count, percent_of_alive_cells, initial_state)
+            return CellAutomaton2D(rule_set, columns, rows_count, percent_of_alive_cells, initial_state)
         else:
             raise ValueError

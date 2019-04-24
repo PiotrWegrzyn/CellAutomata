@@ -29,7 +29,6 @@ class BaseView(BoxLayout):
         self.grid = Widget()
         self.add_widget(self.grid)
         self._create_elements()
-        self._create_menu()
         self.show_menu()
 
     def clear_menu(self):
@@ -40,10 +39,6 @@ class BaseView(BoxLayout):
 
     def add_select_mode_to_menu(self):
         self.menu.add_widget(self.change_mode_btn)
-        self.change_mode_btn.bind(on_press=self.callback)
-
-    def callback(self,btn):
-        print("gowno")
 
     def show_choose_mode_menu(self):
         self.clear_menu()

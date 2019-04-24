@@ -10,8 +10,10 @@ class BaseController:
     def __init__(self, app):
         self.app = app
         self.menu_item_width = 100
+        self.setup()
         self.set_initial_view()
         self.bind_buttons()
+        self.app.view.grid.on_touch_down = self.on_touch_down
 
     def set_initial_view(self):
         pass
@@ -24,9 +26,8 @@ class BaseController:
 
     def bind_change_mode_btn(self):
         self.app.view.change_mode_btn.bind(on_press=partial(self.choose_mode_controller))
- 
+
     def choose_mode_controller(self, btn_instance):
-        print("lol")
         self.clear_menu()
         self.draw_choose_mode_menu()
 
@@ -73,5 +74,8 @@ class BaseController:
     def bind_buttons(self):
         self.bind_change_mode_btn()
         self.bind_change_mode_menu_buttons()
+
+    def setup(self):
+        pass
 
 

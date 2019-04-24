@@ -67,3 +67,8 @@ class BinaryRuleSet(RuleSet):
         # and get the 0 or 1 that it holds - that is the state in the next iteration
         return self.rule_base2[previous_state_index]
 
+    def get_rule_base_10(self):
+        return self.rule_base10
+
+    def __str__(self):
+        return "Rule " + self.rule_base10.__str__()

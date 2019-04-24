@@ -24,7 +24,7 @@ class GameOfLifeController:
         self.automaton_rule_set = rule_set
         self.automaton_mode = mode
         self.automaton_rows_count = self.get_view_max_columns()
-        self.automaton_columns_count = self.get_view_max_rows()
+        self.automaton_columns = self.get_view_max_rows()
         self.automaton_iterations = self.get_view_max_rows()
         self.cell_automaton = None
         self.set_cell_automaton()
@@ -39,7 +39,7 @@ class GameOfLifeController:
             self.cell_automaton = CellAutomaton1D(
                 mode=self.automaton_mode,
                 rows_count=self.automaton_rows_count,
-                columns_count=self.automaton_columns_count,
+                columns=self.automaton_columns,
                 rule_set=self.automaton_rule_set,
                 percentage_of_alive_cells=current_alive_percentage
             )
@@ -48,7 +48,7 @@ class GameOfLifeController:
             self.cell_automaton = CellAutomaton1D(
                 mode=self.automaton_mode,
                 rows_count=self.automaton_rows_count,
-                columns_count=self.automaton_columns_count,
+                columns=self.automaton_columns,
                 percentage_of_alive_cells=current_alive_percentage
             )
 
@@ -103,46 +103,46 @@ class GameOfLifeController:
     def set_state_controller(self, btn_instance):
         self.collect_initial_data_from_view_mode = True
 
-    def sub10_rule_set_controller(self, btn_instance):
+    def sub__rule_set_controller(self, btn_instance):
         self.cell_automaton.change_rule_set((self.cell_automaton.get_rule_set() - 10) % 255)
         self.update_rule_set_label()
         self.reset_canvas()
 
 
-    def add10_rule_set_controller(self, btn_instance):
+    def add__rule_set_controller(self, btn_instance):
         self.cell_automaton.change_rule_set((self.cell_automaton.get_rule_set() + 10) % 255)
         self.update_rule_set_label()
         self.reset_canvas()
 
-    def sub10_rows_count_controller(self, btn_instance):
+    def sub__rows_count_controller(self, btn_instance):
         change_value = 10
         if self.validate_size_change(change_value,0):
-            self.cell_automaton.change_columns_count((self.cell_automaton.get_rows_count() - change_value), self.cell_automaton.get_columns_count())
+            self.cell_automaton.change_columns((self.cell_automaton.get_rows_count() - change_value), self.cell_automaton.get_columns())
             self.automaton_rows_count -= change_value
             self.update_rows_count_label()
             self.reset_canvas()
 
-    def add10_rows_count_controller(self, btn_instance):
-        self.cell_automaton.change_columns_count((self.cell_automaton.get_rows_count() + 10), self.cell_automaton.get_columns_count())
+    def add__rows_count_controller(self, btn_instance):
+        self.cell_automaton.change_columns((self.cell_automaton.get_rows_count() + 10), self.cell_automaton.get_columns())
         self.automaton_rows_count += 10
         self.update_rows_count_label()
         self.reset_canvas()
 
-    def sub10_columns_count_controller(self, btn_instance):
+    def sub__columns_controller(self, btn_instance):
         change_value = 10
         if self.validate_size_change(0, change_value):
-            self.cell_automaton.change_columns_count(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() - change_value))
-            self.automaton_columns_count -= change_value
-            self.update_columns_count_label()
+            self.cell_automaton.change_columns(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns() - change_value))
+            self.automaton_columns -= change_value
+            self.update_columns_label()
             self.reset_canvas()
 
-    def add10_columns_count_controller(self, btn_instance):
-        self.cell_automaton.change_columns_count(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns_count() + 10))
-        self.automaton_columns_count += 10
-        self.update_columns_count_label()
+    def add__columns_controller(self, btn_instance):
+        self.cell_automaton.change_columns(self.cell_automaton.get_rows_count(), (self.cell_automaton.get_columns() + 10))
+        self.automaton_columns += 10
+        self.update_columns_label()
         self.reset_canvas()
 
-    def sub10_iterations_controller(self, btn_instance):
+    def sub__iterations_controller(self, btn_instance):
         value = 10
         if self.automaton_iterations - value >= 0:
             self.automaton_iterations -= value
@@ -151,21 +151,21 @@ class GameOfLifeController:
         # self._reset_data_frame()
         self.reset_canvas()
 
-    def add10_iterations_controller(self, btn_instance):
+    def add__iterations_controller(self, btn_instance):
         self.automaton_iterations += 10
         self.update_iterations_label()
         self.automaton_rows_count += 10
         # self._reset_data_frame()
         self.reset_canvas()
 
-    def sub5p_alive_cells_controller(self, btn_instance):
+    def sub_p_alive_cells_controller(self, btn_instance):
         value = 0.05
         if self.cell_automaton.get_alive_cell_percentage()-value >= 0:
             self.cell_automaton.change_alive_cells_percentage(self.cell_automaton.get_alive_cell_percentage()-value)
         self.update_alive_cells_label()
         self.reset_canvas()
 
-    def add5p_alive_cells_controller(self,btn_instance):
+    def add_p_alive_cells_controller(self,btn_instance):
         value = 0.05
         if self.cell_automaton.get_alive_cell_percentage()+value <= 1:
             self.cell_automaton.change_alive_cells_percentage(self.cell_automaton.get_alive_cell_percentage()+value)
@@ -178,8 +178,8 @@ class GameOfLifeController:
     def get_rows_count(self):
         return self.automaton_rows_count
 
-    def get_columns_count(self):
-        return self.automaton_columns_count
+    def get_columns(self):
+        return self.automaton_columns
 
     def get_iteration_speed(self):
         return self.iteration_speed
@@ -233,8 +233,8 @@ class GameOfLifeController:
     def update_rows_count_label(self):
         self.view.rows_count_label.text = "Rows: "+self.cell_automaton.get_rows_count().__str__()
 
-    def update_columns_count_label(self):
-        self.view.columns_count_label.text = "Columns: "+self.cell_automaton.get_columns_count().__str__()
+    def update_columns_label(self):
+        self.view.columns_label.text = "Columns: "+self.cell_automaton.get_columns().__str__()
 
     def update_iterations_label(self):
         self.view.iterations_label.text = "Iterations: "+self.get_iterations().__str__()
@@ -262,7 +262,7 @@ class GameOfLifeController:
         return new_value > 0
 
     def validate_size_change(self, dx, dy):
-        return self.cell_automaton.get_rows_count() - dx > 0 and self.cell_automaton.get_columns_count() - dy > 0
+        return self.cell_automaton.get_rows_count() - dx > 0 and self.cell_automaton.get_columns() - dy > 0
 
     def set_clicked_cell(self, cell_row, cell_index):
         if self.clicked_on_grid(cell_row, cell_index):
@@ -287,7 +287,7 @@ class GameOfLifeController:
                 self.cell_automaton.set_cell(new_value, cell_index, cell_row)
 
     def clicked_on_grid(self, cell_row, cell_index):
-        return 0 <= cell_index < self.cell_automaton.get_columns_count() and 0 <= cell_row < self.cell_automaton.get_rows_count()
+        return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.cell_automaton.get_rows_count()
 
     def save_current_state_controller(self, btn_instance):
         self.cell_automaton.print_iterations(1)
@@ -311,7 +311,7 @@ class GameOfLifeController:
         # print(btn_instance.text)
         with open("./patterns/"+btn_instance.text) as f:
             saved_state = [list(literal_eval(line)) for line in f]
-        self.cell_automaton.change_columns_count(len(saved_state), len(saved_state[0]))
+        self.cell_automaton.change_columns(len(saved_state), len(saved_state[0]))
         self.cell_automaton.current_state = saved_state
         self.reset_canvas()
 

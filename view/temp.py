@@ -107,19 +107,19 @@ def add_rule_set_btns_and_label_to_menu(self):
     )
     self.menu.add_widget(self.change_rule_set_btns_containter)
 
-    self.sub10rule_set = kb.Button(
+    self.sub_rule_set = kb.Button(
         text='-10',
         size_hint=(1, 1),
-        on_press=partial(self.controller.sub10_rule_set_controller)
+        on_press=partial(self.controller.sub_rule_set_controller)
     )
-    self.change_rule_set_btns_containter.add_widget(self.sub10rule_set)
+    self.change_rule_set_btns_containter.add_widget(self.sub_rule_set)
 
-    self.add10rule_set = kb.Button(
+    self.add_rule_set = kb.Button(
         text='+10',
         size_hint=(1, 1),
-        on_press=partial(self.controller.add10_rule_set_controller)
+        on_press=partial(self.controller.add_rule_set_controller)
     )
-    self.change_rule_set_btns_containter.add_widget(self.add10rule_set)
+    self.change_rule_set_btns_containter.add_widget(self.add_rule_set)
 
 
 def add_rows_count_btns_and_label_to_menu(self):
@@ -136,19 +136,19 @@ def add_rows_count_btns_and_label_to_menu(self):
     )
     self.menu.add_widget(self.change_rows_count_btns_containter)
 
-    self.sub10rows_count = kb.Button(
+    self.sub_rows_count = kb.Button(
         text='-10',
         size_hint=(1, 1),
-        on_press=partial(self.controller.sub10_rows_count_controller)
+        on_press=partial(self.controller.sub_rows_count_controller)
     )
-    self.change_rows_count_btns_containter.add_widget(self.sub10rows_count)
+    self.change_rows_count_btns_containter.add_widget(self.sub_rows_count)
 
-    self.add10rows_count = kb.Button(
+    self.add_rows_count = kb.Button(
         text='+10',
         size_hint=(1, 1),
-        on_press=partial(self.controller.add10_rows_count_controller)
+        on_press=partial(self.controller.add_rows_count_controller)
     )
-    self.change_rows_count_btns_containter.add_widget(self.add10rows_count)
+    self.change_rows_count_btns_containter.add_widget(self.add_rows_count)
 
 
 def add_alive_cells_btns_and_label_to_menu(self):
@@ -168,14 +168,14 @@ def add_alive_cells_btns_and_label_to_menu(self):
     self.sub_5p_alive_cells = kb.Button(
         text='-5%',
         size_hint=(1, 1),
-        on_press=partial(self.controller.sub5p_alive_cells_controller)
+        on_press=partial(self.controller.sub_p_alive_cells_controller)
     )
     self.change_alive_cells_btns_containter.add_widget(self.sub_5p_alive_cells)
 
     self.add_5p_alive_cells = kb.Button(
         text='+5%',
         size_hint=(1, 1),
-        on_press=partial(self.controller.add5p_alive_cells_controller)
+        on_press=partial(self.controller.add_p_alive_cells_controller)
     )
     self.change_alive_cells_btns_containter.add_widget(self.add_5p_alive_cells)
 

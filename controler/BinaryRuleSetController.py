@@ -3,9 +3,10 @@ from functools import partial
 from kivy.core.window import Window
 from kivy.uix.label import Label
 
-from controler.GameOfLifeController import GameOfLifeController
+from controler.GameOfLifeController import GameOfLifeController, create_color
 from controler.BaseController import BaseController, generate_empty_2d_list_of_list
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
+from model.Cells.CellFactory import CellFactory
 from model.RuleSets.BinaryRuleSet import BinaryRuleSet
 from view.BinaryRuleSetView import BinaryRuleSetView
 
@@ -22,6 +23,8 @@ class BinaryRuleSetController(BaseController):
         self.cell_box_size = cell_size + cell_offset
         super().__init__(app)
         self.update_labels()
+        self.app.view.grid.on_touch_down = self.on_touch_down
+
 
     def set_initial_view(self):
         self.set_view(BinaryRuleSetView(self.modes, self.get_menu_width()))
@@ -51,7 +54,7 @@ class BinaryRuleSetController(BaseController):
             p_of_alive=0.2
         )
 
-    def set_cell_automaton(self, columns=None, rule_set=None, p_of_alive=None):
+    def set_cell_automaton(self, columns=None, rule_set=None, p_of_alive=None, initial_state=None):
         if columns is None:
             columns = self.cell_automaton.get_columns()
         if rule_set is None:
@@ -62,7 +65,8 @@ class BinaryRuleSetController(BaseController):
         self.cell_automaton = CellAutomaton1D(
             columns=columns,
             rule_set=rule_set,
-            percent_of_alive_cells=p_of_alive
+            percent_of_alive_cells=p_of_alive,
+            initial_state = initial_state
         )
 
     def get_view_max_columns(self):
@@ -135,13 +139,19 @@ class BinaryRuleSetController(BaseController):
     def sub_rule_controller(self, button_instance):
         delta = -5
         current_value = self.cell_automaton.get_rule_set().get_rule_base_10()
-        self.set_cell_automaton(rule_set=BinaryRuleSet((current_value + delta) % 255))
+        self.set_cell_automaton(
+            rule_set=BinaryRuleSet((current_value + delta) % 255),
+            initial_state=self.cell_automaton.initial_state
+        )
         self.update_rule_label()
 
     def add_rule_controller(self, button_instance):
         delta = 5
         current_value = self.cell_automaton.get_rule_set().get_rule_base_10()
-        self.set_cell_automaton(rule_set=BinaryRuleSet((current_value + delta) % 255))
+        self.set_cell_automaton(
+            rule_set=BinaryRuleSet((current_value + delta) % 255),
+            initial_state=self.cell_automaton.initial_state
+        )
         self.update_rule_label()
 
     def sub_alive_cells_controller(self, button_instance):
@@ -185,6 +195,44 @@ class BinaryRuleSetController(BaseController):
 
     def set_empty_data_frame(self):
         self.data_frame = generate_empty_2d_list_of_list(size=self.iterations)
+
+    def on_touch_down(self, touch):
+        print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
+        self.set_clicked_cell(
+            cell_row=self._get_graphic_cell_row_from_pos(touch.y),
+            cell_index=self._get_graphic_cell_column_from_pos(touch.x)
+        )
+
+    def set_clicked_cell(self, cell_row, cell_index):
+        if cell_row is 0:
+            if self.clicked_on_grid(cell_row, cell_index):
+                current_initial_state = self.cell_automaton.initial_state
+
+                clicked_cell = current_initial_state[cell_index]
+                cell_factory = CellFactory(self.rule_set.get_cell_type())
+                new_cell = cell_factory.create_cell_with_values(int(not clicked_cell.get_value()))
+                self.app.view.update_cell(cell_row, cell_index, create_color(new_cell.get_color()))
+                self.cell_automaton.update_cell(cell_index, new_cell)
+                self.fetch_current_initial_state()
+
+    def _get_graphic_cell_y_pos(self, row):
+        return Window.size[1] - ((row + 1) * self.cell_box_size)
+
+    def _get_graphic_cell_x_pos(self, column):
+        return self.menu_item_width+(column * self.cell_box_size)
+
+    def _get_graphic_cell_column_from_pos(self, pos_y):
+        return int((pos_y-self.menu_item_width) / self.cell_box_size)
+
+    def _get_graphic_cell_row_from_pos(self, pos_x):
+        return int(((Window.size[1]-pos_x)/self.cell_box_size))
+
+    def clicked_on_grid(self, cell_row, cell_index):
+        return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.iterations
+
+    def fetch_current_initial_state(self):
+        self.data_frame[0] = self.cell_automaton.initial_state
+
 
 
 

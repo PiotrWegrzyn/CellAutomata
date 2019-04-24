@@ -1,7 +1,7 @@
-import datetime
+import sys
+from functools import reduce
 
 from kivy.properties import partial
-import kivy.uix.button as kb
 
 
 def generate_empty_2d_list_of_list(size):
@@ -82,4 +82,7 @@ class BaseController:
     def setup(self):
         pass
 
-
+    @staticmethod
+    def str_to_class(class_name):
+        # return reduce(getattr, str.split("."), sys.modules[__name__])
+        return globals()[class_name]

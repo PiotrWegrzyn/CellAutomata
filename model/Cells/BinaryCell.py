@@ -8,7 +8,7 @@ class BinaryCell(Cell):
         #     raise ValueError
 
     def flip_state(self):
-        if self.state is self.dead_state:
+        if self.state.get_value() is self.dead_state.get_value():
             self.state = self.alive_states[0]
         else:
             self.state = self.dead_state

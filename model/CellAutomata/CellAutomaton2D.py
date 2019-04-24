@@ -80,3 +80,6 @@ class CellAutomaton2D(CellAutomaton1D):
 
     def get_rows(self):
         return self.rows
+
+    def update_cell(self, cell_row, cell_index, new_cell):
+        self.current_state[cell_row][cell_index] = new_cell

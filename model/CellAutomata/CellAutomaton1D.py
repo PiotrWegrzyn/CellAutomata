@@ -147,3 +147,6 @@ class CellAutomaton1D:
 
     def get_percent_of_alive_cells(self):
         return self.percentage_of_alive_cells
+
+    def update_cell(self, cell_index, new_cell):
+        self.initial_state[cell_index] = new_cell

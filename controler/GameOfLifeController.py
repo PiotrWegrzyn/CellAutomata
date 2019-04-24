@@ -15,9 +15,14 @@ from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
 from view.GameOfLifeView import GameOfLifeView
 
 
+def create_color(color):
+    rgb = color.rgb
+    return Color(rgb[0], rgb[1], rgb[2])
+
+
 class GameOfLifeController(BaseController):
     modes = {
-        # "Binary Rule": BinaryRuleSetController,
+         "Binary Rule": "BinaryRuleSetController",
     }
     rule_set = GameOfLifeRuleSet
 
@@ -26,8 +31,9 @@ class GameOfLifeController(BaseController):
         self.cell_offset = cell_offset
         self.cell_box_size = cell_size + cell_offset
         super().__init__(app)
-        self.update_labels()
         self.iteration_speed = 8
+        self.update_labels()
+        self.app.view.grid.on_touch_down = self.on_touch_down
 
     def set_initial_view(self):
         self.set_view(GameOfLifeView(self.modes, self.get_menu_width()))
@@ -154,8 +160,11 @@ class GameOfLifeController(BaseController):
             self.update_alive_cells_label()
 
     def yield_data_frame(self):
-        self.data_frame = self.cell_automaton.get_current_state()
+        self.fetch_current_state()
         self.cell_automaton.calculate_next_iteration()
+
+    def fetch_current_state(self):
+        self.data_frame = self.cell_automaton.get_current_state()
 
     def update_labels(self):
         self.update_columns_label()
@@ -206,7 +215,8 @@ class GameOfLifeController(BaseController):
 
         cell_factory = CellFactory(self.rule_set.get_cell_type())
         saved_state_cells = generate_empty_2d_list_of_list(loaded_state_rows)
-        for row_index, row_content in zip(range(0,len(raw_saved_state)),raw_saved_state):
+        # just python magic
+        for row_index, row_content in zip(range(0, loaded_state_rows), raw_saved_state):
             for value in row_content:
                 saved_state_cells[row_index].append(cell_factory.create_cell_with_values(value))
         self.cell_automaton.current_state = saved_state_cells
@@ -255,6 +265,7 @@ class GameOfLifeController(BaseController):
         self.clear_canvas()
         self.yield_data_frame()
         self.app.view.draw_data_frame(self.data_frame)
+        self.update_alive_cells_label()
         # self.cell_automaton.print_rows(self.rows)
 
     def restart_auto_iterations_clock(self):
@@ -271,27 +282,39 @@ class GameOfLifeController(BaseController):
         self.auto_iterations = Clock.schedule_interval(self.draw_btn_controller, 1 / self.iteration_speed)
 
     def update_speed_label(self):
-        self.app.view.speed_label.text = "Speed: " + self.iteration_speed.__str__() + "fps",
+
+        self.app.view.speed_label.text = "Speed:" + self.iteration_speed.__str__() + " fps"
 
     def on_touch_down(self, touch):
-        def set_clicked_cell(self, cell_row, cell_index):
-            if self.clicked_on_grid(cell_row, cell_index):
-                cstate = self.cell_automaton.get_current_state()
-                if self.automaton_mode is CellAutomaton1D.modes["1D"]:
-                    if cell_row is 0:
-                        current_value = cstate[cell_index]
-                        new_value = int(not current_value)
-                        if new_value is 1:
-                            self.view.update_cell(cell_row, cell_index, Color(0, 0, 1))
-                        else:
-                            self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
-                        self.cell_automaton.set_cell(new_value, cell_index)
+        print(self._get_graphic_cell_row_from_pos(touch.y),self._get_graphic_cell_column_from_pos(touch.x))
+        self.set_clicked_cell(
+            cell_row=self._get_graphic_cell_row_from_pos(touch.y),
+            cell_index=self._get_graphic_cell_column_from_pos(touch.x)
+        )
 
-                elif self.automaton_mode is CellAutomaton1D.modes["2D"]:
-                    current_value = cstate[cell_row][cell_index]
-                    new_value = int(not current_value)
-                    if new_value is 1:
-                        self.view.update_cell(cell_row, cell_index, Color(0, 0, 1))
-                    else:
-                        self.view.update_cell(cell_row, cell_index, Color(1, 1, 1))
-                    self.cell_automaton.set_cell(new_value, cell_index, cell_row)
+    def set_clicked_cell(self, cell_row, cell_index):
+        if self.clicked_on_grid(cell_row, cell_index):
+            cstate = self.cell_automaton.get_current_state()
+
+            clicked_cell = cstate[cell_row][cell_index]
+            cell_factory = CellFactory(self.rule_set.get_cell_type())
+            new_cell = cell_factory.create_cell_with_values(int(not clicked_cell.get_value()))
+            self.app.view.update_cell(cell_row, cell_index, create_color(clicked_cell.get_color()))
+            self.cell_automaton.update_cell(cell_row, cell_index, new_cell)
+            self.fetch_current_state()
+
+    def _get_graphic_cell_y_pos(self, row):
+        return Window.size[1] - ((row + 1) * self.cell_box_size)
+
+    def _get_graphic_cell_x_pos(self, column):
+        return self.menu_item_width+(column * self.cell_box_size)
+
+    def _get_graphic_cell_column_from_pos(self, pos_y):
+        return int((pos_y-self.menu_item_width) / self.cell_box_size)
+
+    def _get_graphic_cell_row_from_pos(self, pos_x):
+        return int(((Window.size[1]-pos_x)/self.cell_box_size))
+
+    def clicked_on_grid(self, cell_row, cell_index):
+        return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.cell_automaton.get_rows()
+

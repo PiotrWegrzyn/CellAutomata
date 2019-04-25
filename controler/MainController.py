@@ -9,10 +9,6 @@ from view.BaseView import BaseView
 
 
 class MainController(BaseController):
-    modes = {
-        "Binary Rule": BinaryRuleSetController,
-        "Game of Life": GameOfLifeController,
-    }
 
     def __init__(self, app):
         super().__init__(app)

@@ -1,12 +1,10 @@
 import datetime
 from functools import partial
 from ast import literal_eval
-from itertools import count
 
 from kivy.clock import Clock
-from kivy.graphics.context_instructions import Color
 
-from controler.BaseController import BaseController, generate_empty_2d_list_of_list
+from controler.BaseController import BaseController, generate_empty_2d_list_of_list, create_color
 from kivy.core.window import Window
 
 from model.CellAutomata.CellAutomaton2D import CellAutomaton2D
@@ -15,15 +13,8 @@ from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
 from view.GameOfLifeView import GameOfLifeView
 
 
-def create_color(color):
-    rgb = color.rgb
-    return Color(rgb[0], rgb[1], rgb[2])
-
-
 class GameOfLifeController(BaseController):
-    modes = {
-         "Binary Rule": "BinaryRuleSetController",
-    }
+
     rule_set = GameOfLifeRuleSet
 
     def __init__(self, app, cell_size=9, cell_offset=1):
@@ -34,6 +25,7 @@ class GameOfLifeController(BaseController):
         self.iteration_speed = 8
         self.update_labels()
         self.app.view.grid.on_touch_down = self.on_touch_down
+        self.draw_current_state()
 
     def set_initial_view(self):
         self.set_view(GameOfLifeView(self.modes, self.get_menu_width()))
@@ -111,7 +103,7 @@ class GameOfLifeController(BaseController):
         self.app.view.add_alive_cells.bind(on_press=partial(self.add_alive_cells_controller))
 
     def draw_btn_controller(self, button_instance):
-        self.draw_one_iteration()
+        self.draw_next_iteration()
 
     def sub_columns_controller(self, button_instance):
         delta = -10
@@ -159,9 +151,9 @@ class GameOfLifeController(BaseController):
             self.cell_automaton.change_alive_cells_percentage(current_value + delta)
             self.update_alive_cells_label()
 
-    def yield_data_frame(self):
-        self.fetch_current_state()
+    def yield_next_data_frame(self):
         self.cell_automaton.calculate_next_iteration()
+        self.fetch_current_state()
 
     def fetch_current_state(self):
         self.data_frame = self.cell_automaton.get_current_state()
@@ -221,7 +213,7 @@ class GameOfLifeController(BaseController):
                 saved_state_cells[row_index].append(cell_factory.create_cell_with_values(value))
         self.cell_automaton.current_state = saved_state_cells
 
-        self.draw_one_iteration()
+        self.draw_next_iteration()
 
     def load_btn_controller(self, btn_instance):
         self.app.view.show_choose_file_menu()
@@ -231,7 +223,7 @@ class GameOfLifeController(BaseController):
         self.save_current_state_to_file()
 
     def play_btn_controller(self, btn_instance):
-        self.draw_one_iteration()
+        self.draw_next_iteration()
         self.restart_auto_iterations_clock()
 
     def stop_btn_controller(self, btn_instance):
@@ -261,12 +253,18 @@ class GameOfLifeController(BaseController):
         return "patterns\\CA"+self.cell_automaton.get_rule_set().__str__() \
                +"-"+ datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
 
-    def draw_one_iteration(self):
+    def draw_next_iteration(self):
         self.clear_canvas()
-        self.yield_data_frame()
+        self.yield_next_data_frame()
         self.app.view.draw_data_frame(self.data_frame)
         self.update_alive_cells_label()
         # self.cell_automaton.print_rows(self.rows)
+
+    def draw_current_state(self):
+        self.clear_canvas()
+        self.fetch_current_state()
+        self.app.view.draw_data_frame(self.data_frame)
+        self.update_alive_cells_label()
 
     def restart_auto_iterations_clock(self):
         self.stop_iterations()
@@ -279,6 +277,7 @@ class GameOfLifeController(BaseController):
             pass
 
     def _start_iterations(self):
+        self.draw_current_state()
         self.auto_iterations = Clock.schedule_interval(self.draw_btn_controller, 1 / self.iteration_speed)
 
     def update_speed_label(self):
@@ -286,7 +285,7 @@ class GameOfLifeController(BaseController):
         self.app.view.speed_label.text = "Speed:" + self.iteration_speed.__str__() + " fps"
 
     def on_touch_down(self, touch):
-        print(self._get_graphic_cell_row_from_pos(touch.y),self._get_graphic_cell_column_from_pos(touch.x))
+        print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
         self.set_clicked_cell(
             cell_row=self._get_graphic_cell_row_from_pos(touch.y),
             cell_index=self._get_graphic_cell_column_from_pos(touch.x)
@@ -299,7 +298,7 @@ class GameOfLifeController(BaseController):
             clicked_cell = cstate[cell_row][cell_index]
             cell_factory = CellFactory(self.rule_set.get_cell_type())
             new_cell = cell_factory.create_cell_with_values(int(not clicked_cell.get_value()))
-            self.app.view.update_cell(cell_row, cell_index, create_color(clicked_cell.get_color()))
+            self.app.view.update_cell(cell_row, cell_index, create_color(new_cell.get_color()))
             self.cell_automaton.update_cell(cell_row, cell_index, new_cell)
             self.fetch_current_state()
 
@@ -318,4 +317,6 @@ class GameOfLifeController(BaseController):
     def clicked_on_grid(self, cell_row, cell_index):
         return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.cell_automaton.get_rows()
 
-
+    def change_mode_controller(self, btn_instance):
+        self.app.set_controller(btn_instance.text)
+        self.stop_iterations()

@@ -52,7 +52,7 @@ class DrawingView(BaseView):
             self.grid.canvas.add(color)
         else:
             self.grid.canvas.add(Color(1, 1, 1))
-        ellipse = Rectangle(
+        rectangle = Rectangle(
             pos=(
                 self._get_graphic_cell_x_pos(column),
                 self._get_graphic_cell_y_pos(row)
@@ -63,7 +63,7 @@ class DrawingView(BaseView):
                 self.cell_size
             )
         )
-        self.grid.canvas.add(ellipse)
+        self.grid.canvas.add(rectangle)
 
     def update_cell(self, row, column, color=None):
         self._draw_cell(row, column, color)

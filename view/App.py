@@ -1,22 +1,20 @@
 from kivy.core.window import Window
-from kivy.properties import partial
 from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color, Rectangle
-
-from kivy.uix.label import Label
-
 import kivy
 from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Ellipse
-import kivy.uix.button as kb
-from controler.MainController import MainController
+from controler.MainController import MainController, BinaryRuleSetController, GameOfLifeController
 from view.BaseView import BaseView
-from view.DrawingView import DrawingView
+
 kivy.require('1.9.0')
 
 
 class CellAutomatonApp(App):
+    modes = {
+        "Main Menu": "MainController",
+        "Binary Rule": "BinaryRuleSetController",
+        "Game of Life": "GameOfLifeController",
+    }
+
     def __init__(self):
         super(CellAutomatonApp, self).__init__()
         Window.clearcolor = (1, 1, 1, 1)
@@ -34,4 +32,12 @@ class CellAutomatonApp(App):
         self.view = view
         self.root.clear_widgets()
         self.root.add_widget(view)
+
+    def set_controller(self, mode):
+        self.controller = eval(self.modes[mode])(self)
+
+    def get_modes(self):
+        return self.modes
+
+
 

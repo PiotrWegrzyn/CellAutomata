@@ -1,10 +1,8 @@
 from functools import partial
 
 from kivy.core.window import Window
-from kivy.uix.label import Label
 
-from controler.GameOfLifeController import GameOfLifeController, create_color
-from controler.BaseController import BaseController, generate_empty_2d_list_of_list
+from controler.BaseController import BaseController, generate_empty_2d_list_of_list, create_color
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
 from model.Cells.CellFactory import CellFactory
 from model.RuleSets.BinaryRuleSet import BinaryRuleSet
@@ -12,9 +10,7 @@ from view.BinaryRuleSetView import BinaryRuleSetView
 
 
 class BinaryRuleSetController(BaseController):
-    modes = {
-        "Game of Life": GameOfLifeController,
-    }
+
     rule_set = BinaryRuleSet
 
     def __init__(self, app, cell_size=9, cell_offset=1):
@@ -24,6 +20,7 @@ class BinaryRuleSetController(BaseController):
         super().__init__(app)
         self.update_labels()
         self.app.view.grid.on_touch_down = self.on_touch_down
+        self.draw_graphics()
 
 
     def set_initial_view(self):
@@ -82,7 +79,7 @@ class BinaryRuleSetController(BaseController):
         return self.iterations
 
     def bind_draw_button(self):
-        self.app.view.draw_btn.bind(on_press=partial(self.draw_graphic))
+        self.app.view.draw_btn.bind(on_press=partial(self.draw_button_controller))
 
     def bind_columns_buttons(self):
         self.app.view.add_columns.bind(on_press=partial(self.add_columns_controller))
@@ -100,11 +97,8 @@ class BinaryRuleSetController(BaseController):
         self.app.view.sub_alive_cells.bind(on_press=partial(self.sub_alive_cells_controller))
         self.app.view.add_alive_cells.bind(on_press=partial(self.add_alive_cells_controller))
 
-    def draw_graphic(self, button_instance):
-        self.clear_canvas()
-        self.fetch_data_frame()
-        self.app.view.draw_data_frame(self.data_frame)
-        # self.cell_automaton.print_iterations(self.iterations)
+    def draw_button_controller(self, button_instance):
+        self.draw_graphics()
 
     def sub_columns_controller(self, button_instance):
         delta = -10
@@ -232,6 +226,12 @@ class BinaryRuleSetController(BaseController):
 
     def fetch_current_initial_state(self):
         self.data_frame[0] = self.cell_automaton.initial_state
+
+    def draw_graphics(self):
+        self.clear_canvas()
+        self.fetch_data_frame()
+        self.app.view.draw_data_frame(self.data_frame)
+        # self.cell_automaton.print_iterations(self.iterations)
 
 
 

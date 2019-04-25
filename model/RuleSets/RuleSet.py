@@ -12,7 +12,7 @@ class RuleSet:
     allow_dead_cells = True
 
     def __init__(self):
-        self.cell_factory = CellFactory(self.cell_type)
+        self.cell_factory = CellFactory(self.get_cell_type())
 
     def __str__(self):
         return self.__class__.__name__

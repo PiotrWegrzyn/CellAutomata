@@ -1,10 +1,16 @@
 from model.Cells.BinaryCell import BinaryCell
+from model.Cells.CrystalGrainCell import CrystalGrainCell
 from model.RuleSets.RuleSet import RuleSet
 
 
-class GameOfLifeRuleSet(RuleSet):
-    cell_type = BinaryCell
+class NucleationRuleSet(RuleSet):
+    cell_type = CrystalGrainCell
     required_dimension = 2
+
+
+    @staticmethod
+    def get_cell_type():
+        return NucleationRuleSet.cell_type
 
     def apply(self, previous_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
@@ -51,9 +57,5 @@ class GameOfLifeRuleSet(RuleSet):
         return self.cell_factory.create_dead_cell()
 
     @staticmethod
-    def get_cell_type():
-        return GameOfLifeRuleSet.cell_type
-
-    @staticmethod
     def get_required_dimension():
-        return GameOfLifeRuleSet.required_dimension
+        return NucleationRuleSet.required_dimension

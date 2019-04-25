@@ -12,4 +12,3 @@ class BinaryCell(Cell):
             self.state = self.alive_states[0]
         else:
             self.state = self.dead_state
-

@@ -12,6 +12,10 @@ class BinaryRuleSet(RuleSet):
         self.rule_base10 = rule_base10
         self._set_binary_rule()
 
+    @staticmethod
+    def get_cell_type():
+        return BinaryRuleSet.cell_type
+
     def apply(self, previous_state, cell_column):
         previous_triplet_value = self.calculate_previous_triplet_value(previous_state, cell_column)
         return self.create_cell(self.determine_next_value(previous_triplet_value))
@@ -73,3 +77,6 @@ class BinaryRuleSet(RuleSet):
     def __str__(self):
         return "Rule " + self.rule_base10.__str__()
 
+    @staticmethod
+    def get_required_dimension():
+        return BinaryRuleSet.required_dimension

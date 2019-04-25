@@ -15,7 +15,8 @@ class GameOfLifeController(AutomatonController):
 
     def __init__(self, app, cell_size=9, cell_offset=1):
         self.iteration_speed = 8
-        super().__init__(app,cell_size, cell_offset)
+        super().__init__(app, cell_size, cell_offset)
+        self.app.view.draw_btn.text = "Next\nIteration"     # todo move to view
         self.app.view.grid.on_touch_down = self.on_touch_down
         self.draw_current_state()
 
@@ -197,10 +198,9 @@ class GameOfLifeController(AutomatonController):
             cstate = self.cell_automaton.get_current_state()
 
             clicked_cell = cstate[cell_row][cell_index]
-            cell_factory = CellFactory(self.rule_set.get_cell_type())
-            new_cell = cell_factory.create_cell_with_values(int(not clicked_cell.get_value()))
-            self.app.view.update_cell(cell_row, cell_index, create_color(new_cell.get_color()))
-            self.cell_automaton.update_cell(cell_row, cell_index, new_cell)
+            clicked_cell.flip_state()
+            self.app.view.update_cell(cell_row, cell_index, create_color(clicked_cell.get_color()))
+            self.cell_automaton.update_cell(cell_row, cell_index, clicked_cell)
             self.fetch_current_state()
 
     def get_y_dimension_size(self):

@@ -124,14 +124,10 @@ class AutomatonController(BaseController):
     def update_labels(self):
         self.update_columns_label()
         self.update_iterations_label()
-        self.update_rule_label()
         self.update_alive_cells_label()
 
     def update_columns_label(self):
         self.app.view.columns_label.text = "Columns" + self.cell_automaton.get_columns().__str__()
-
-    def update_rule_label(self):
-        self.app.view.rule_label.text = self.cell_automaton.get_rule_set().__str__()
 
     def update_iterations_label(self):
         self.app.view.iterations_label.text = "Iterations: " + self.iterations.__str__()

@@ -74,7 +74,7 @@ class CellAutomaton1D:
         return self.previous_state
 
     def print_current_state(self):
-            print([cell.get_value() for cell in self.current_state])
+            print([cell.get_state() for cell in self.current_state])
 
     def reset_to_random_state(self):
         self._create_random_initial_state()

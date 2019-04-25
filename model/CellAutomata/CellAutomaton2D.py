@@ -31,7 +31,7 @@ class CellAutomaton2D(CellAutomaton1D):
 
     def print_current_state(self):
         for row in self.current_state:
-            print([cell.get_value() for cell in row])
+            print([cell.get_state() for cell in row])
 
     def print_stats(self):
         super().print_stats()
@@ -75,7 +75,7 @@ class CellAutomaton2D(CellAutomaton1D):
     def update_alive_cells(self):
         alive_sum = 0
         for row in self.current_state:
-            alive_sum += sum([cell.get_value() for cell in row])
+            alive_sum += sum([cell.get_state() for cell in row])
         self.set_percent_of_alive_cells(round(alive_sum/self.cell_count(), 2))
 
     def get_rows(self):

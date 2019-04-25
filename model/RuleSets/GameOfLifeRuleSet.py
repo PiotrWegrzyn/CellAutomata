@@ -8,7 +8,7 @@ class GameOfLifeRuleSet(RuleSet):
 
     def apply(self, previous_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
-        previous_neighbours_values = self.get_previous_neighbours_values(previous_state, cell_row, cell_column)
+        previous_neighbours_values = self.get_previous_neighbours_state(previous_state, cell_row, cell_column)
 
         return self._judgement_day(judged_cell, sum(previous_neighbours_values))
 
@@ -18,21 +18,21 @@ class GameOfLifeRuleSet(RuleSet):
         else:
             return self.cell_factory.create_random_alive_cell(self.cell_type)
 
-    def get_previous_neighbours_values(self, previous_state, cell_row, cell_column):
+    def get_previous_neighbours_state(self, previous_state, cell_row, cell_column):
         # todo refactor this *somehow*
         rows = len(previous_state)
         columns = len(previous_state[0])
         return [
-            previous_state[(cell_row - 1)][cell_column - 1].get_value(),
-            previous_state[(cell_row - 1)][cell_column].get_value(),
-            previous_state[(cell_row - 1)][(cell_column + 1) % columns].get_value(),
+            previous_state[(cell_row - 1)][cell_column - 1].get_state(),
+            previous_state[(cell_row - 1)][cell_column].get_state(),
+            previous_state[(cell_row - 1)][(cell_column + 1) % columns].get_state(),
 
-            previous_state[cell_row][cell_column - 1].get_value(),
-            previous_state[cell_row][(cell_column + 1) % columns].get_value(),
+            previous_state[cell_row][cell_column - 1].get_state(),
+            previous_state[cell_row][(cell_column + 1) % columns].get_state(),
 
-            previous_state[(cell_row + 1) % rows][cell_column - 1].get_value(),
-            previous_state[(cell_row + 1) % rows][cell_column].get_value(),
-            previous_state[(cell_row + 1) % rows][(cell_column + 1) % columns].get_value()
+            previous_state[(cell_row + 1) % rows][cell_column - 1].get_state(),
+            previous_state[(cell_row + 1) % rows][cell_column].get_state(),
+            previous_state[(cell_row + 1) % rows][(cell_column + 1) % columns].get_state()
         ]
 
     def _judgement_day(self, cell, neighbours_value):

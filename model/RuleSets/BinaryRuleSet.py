@@ -32,7 +32,7 @@ class BinaryRuleSet(RuleSet):
 
     def calculate_previous_triplet_value(self, previous_state, cell_column):
         previous_triplet = self.get_previous_neighbours(previous_state, cell_column)
-        binary_array = [cell.get_value() for cell in previous_triplet]
+        binary_array = [cell.get_state() for cell in previous_triplet]
         return self.convert_from_binary_array_to_int(binary_array)
 
     @staticmethod

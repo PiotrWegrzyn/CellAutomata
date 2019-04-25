@@ -35,7 +35,7 @@ class GameOfLifeController(AutomatonController):
     def set_cell_automaton_to_starting_state(self):
         self.set_cell_automaton(
             columns=self.get_view_max_columns(),
-            rows = self.get_view_max_rows(),
+            rows=self.get_view_max_rows(),
             rule_set=self.rule_set(),
             p_of_alive=0.2
         )

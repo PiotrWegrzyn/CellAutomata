@@ -9,7 +9,7 @@ class CellAutomatonFactory:
         "2D": 2
     }
 
-    def create(self, rule_set, columns, rows=None,percent_of_alive_cells=None, initial_state=None):
+    def create(self, rule_set, columns, rows=None, percent_of_alive_cells=None, initial_state=None):
         if not isinstance(rule_set, RuleSet):
             raise TypeError
 

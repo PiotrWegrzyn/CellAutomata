@@ -24,8 +24,9 @@ class RuleSet:
     def get_cell_type():
         return RuleSet.cell_type
 
-    def get_required_dimension(self):
-        return self.required_dimension
+    @staticmethod
+    def get_required_dimension():
+        return RuleSet.required_dimension
 
     def get_dead_cell(self):
         return self.cell_type.get_dead_state()

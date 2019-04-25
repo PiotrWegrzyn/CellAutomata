@@ -1,29 +1,21 @@
 import datetime
 from functools import partial
 from ast import literal_eval
-
 from kivy.clock import Clock
-
-from controler.BaseController import BaseController, generate_empty_2d_list_of_list, create_color
-from kivy.core.window import Window
-
-from model.CellAutomata.CellAutomaton2D import CellAutomaton2D
+from controler.AutomatonController import AutomatonController
+from controler.BaseController import generate_empty_2d_list_of_list, create_color
 from model.Cells.CellFactory import CellFactory
 from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
 from view.GameOfLifeView import GameOfLifeView
 
 
-class GameOfLifeController(BaseController):
+class GameOfLifeController(AutomatonController):
 
     rule_set = GameOfLifeRuleSet
 
     def __init__(self, app, cell_size=9, cell_offset=1):
-        self.cell_size = cell_size
-        self.cell_offset = cell_offset
-        self.cell_box_size = cell_size + cell_offset
-        super().__init__(app)
         self.iteration_speed = 8
-        self.update_labels()
+        super().__init__(app,cell_size, cell_offset)
         self.app.view.grid.on_touch_down = self.on_touch_down
         self.draw_current_state()
 
@@ -32,23 +24,12 @@ class GameOfLifeController(BaseController):
 
     def bind_buttons(self):
         super().bind_buttons()
-        self.bind_draw_button()
-        self.bind_columns_buttons()
         self.bind_rows_buttons()
-        self.bind_alive_cells_buttons()
         self.bind_file_buttons()
         self.bind_load_btn()
         self.bind_save_btn()
         self.bind_speed_elements()
         self.bind_start_stop_elements()
-
-    def setup(self):
-        self.max_graphic_columns = self.get_view_max_columns()
-        self.max_graphic_rows = self.get_view_max_rows()
-
-        self.cell_automaton = None
-        self.set_cell_automaton_to_starting_state()
-        self.set_empty_data_frame()
 
     def set_cell_automaton_to_starting_state(self):
         self.set_cell_automaton(
@@ -58,68 +39,15 @@ class GameOfLifeController(BaseController):
             p_of_alive=0.2
         )
 
-    def set_cell_automaton(self, columns=None, rows=None, rule_set=None, p_of_alive=None):
-        if columns is None:
-            columns = self.cell_automaton.get_columns()
-        if rows is None:
-            rows = self.cell_automaton.get_rows()
-        if rule_set is None:
-            rule_set = self.cell_automaton.get_rule_set()
-        if p_of_alive is None:
-            p_of_alive = self.cell_automaton.get_percent_of_alive_cells()
-
-        self.cell_automaton = CellAutomaton2D(
-            columns=columns,
-            rows = rows,
-            rule_set=rule_set,
-            percent_of_alive_cells=p_of_alive
-        )
-
-    def get_view_max_columns(self):
-        return int((Window.size[0] - self.menu_item_width) / self.cell_box_size)
-
-    def get_view_max_rows(self):
-        return int(Window.size[1] / self.cell_box_size)
-
-    def get_columns(self):
-        return self.cell_automaton.get_columns()
-
     def get_rows(self):
         return self.cell_automaton.get_rows()
-
-    def bind_draw_button(self):
-        self.app.view.draw_btn.bind(on_press=partial(self.draw_btn_controller))
-
-    def bind_columns_buttons(self):
-        self.app.view.add_columns.bind(on_press=partial(self.add_columns_controller))
-        self.app.view.sub_columns.bind(on_press=partial(self.sub_columns_controller))
 
     def bind_rows_buttons(self):
         self.app.view.sub_rows.bind(on_press=partial(self.sub_rows_controller))
         self.app.view.add_rows.bind(on_press=partial(self.add_rows_controller))
 
-    def bind_alive_cells_buttons(self):
-        self.app.view.sub_alive_cells.bind(on_press=partial(self.sub_alive_cells_controller))
-        self.app.view.add_alive_cells.bind(on_press=partial(self.add_alive_cells_controller))
-
-    def draw_btn_controller(self, button_instance):
+    def draw_button_controller(self, button_instance):
         self.draw_next_iteration()
-
-    def sub_columns_controller(self, button_instance):
-        delta = -10
-        current_value = self.cell_automaton.get_columns()
-        if self.cell_automaton.get_columns() + delta > 0:
-            self.cell_automaton.change_columns(current_value + delta)
-            self.set_empty_data_frame()
-            self.update_columns_label()
-
-    def add_columns_controller(self, button_instance):
-        delta = 10
-        current_value = self.cell_automaton.get_columns()
-        if current_value + delta > 0:
-            self.cell_automaton.change_columns(current_value + delta)
-            self.set_empty_data_frame()
-            self.update_columns_label()
 
     def sub_rows_controller(self, button_instance):
         delta = -10
@@ -137,23 +65,12 @@ class GameOfLifeController(BaseController):
             self.set_empty_data_frame()
             self.update_rows_label()
 
-    def sub_alive_cells_controller(self, button_instance):
-        delta = -0.05
-        current_value = self.cell_automaton.get_percent_of_alive_cells()
-        if current_value + delta > 0:
-            self.cell_automaton.change_alive_cells_percentage(current_value + delta)
-            self.update_alive_cells_label()
-
-    def add_alive_cells_controller(self, button_instance):
-        delta = 0.05
-        current_value = self.cell_automaton.get_percent_of_alive_cells()
-        if current_value + delta > 0:
-            self.cell_automaton.change_alive_cells_percentage(current_value + delta)
-            self.update_alive_cells_label()
-
     def yield_next_data_frame(self):
         self.cell_automaton.calculate_next_iteration()
         self.fetch_current_state()
+
+    def fetch_current_data_frame(self):
+        return self.fetch_current_state()
 
     def fetch_current_state(self):
         self.data_frame = self.cell_automaton.get_current_state()
@@ -164,18 +81,8 @@ class GameOfLifeController(BaseController):
         self.update_alive_cells_label()
         self.update_speed_label()
 
-    def update_columns_label(self):
-        self.app.view.columns_label.text = "Columns" + self.cell_automaton.get_columns().__str__()
-
     def update_rows_label(self):
         self.app.view.rows_label.text = "Rows: " + self.cell_automaton.get_rows().__str__()
-
-    def update_alive_cells_label(self):
-        self.app.view.alive_cells_label.text = \
-            "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.get_percent_of_alive_cells()*100)
-
-    def set_empty_data_frame(self):
-        self.data_frame = generate_empty_2d_list_of_list(size=self.cell_automaton.get_rows())
 
     def bind_file_buttons(self):
         for btn in self.app.view.file_buttons:
@@ -260,12 +167,6 @@ class GameOfLifeController(BaseController):
         self.update_alive_cells_label()
         # self.cell_automaton.print_rows(self.rows)
 
-    def draw_current_state(self):
-        self.clear_canvas()
-        self.fetch_current_state()
-        self.app.view.draw_data_frame(self.data_frame)
-        self.update_alive_cells_label()
-
     def restart_auto_iterations_clock(self):
         self.stop_iterations()
         self._start_iterations()
@@ -278,7 +179,7 @@ class GameOfLifeController(BaseController):
 
     def _start_iterations(self):
         self.draw_current_state()
-        self.auto_iterations = Clock.schedule_interval(self.draw_btn_controller, 1 / self.iteration_speed)
+        self.auto_iterations = Clock.schedule_interval(self.draw_button_controller, 1 / self.iteration_speed)
 
     def update_speed_label(self):
 
@@ -302,20 +203,11 @@ class GameOfLifeController(BaseController):
             self.cell_automaton.update_cell(cell_row, cell_index, new_cell)
             self.fetch_current_state()
 
-    def _get_graphic_cell_y_pos(self, row):
-        return Window.size[1] - ((row + 1) * self.cell_box_size)
+    def get_y_dimension_size(self):
+        return self.get_rows()
 
-    def _get_graphic_cell_x_pos(self, column):
-        return self.menu_item_width+(column * self.cell_box_size)
-
-    def _get_graphic_cell_column_from_pos(self, pos_y):
-        return int((pos_y-self.menu_item_width) / self.cell_box_size)
-
-    def _get_graphic_cell_row_from_pos(self, pos_x):
-        return int(((Window.size[1]-pos_x)/self.cell_box_size))
-
-    def clicked_on_grid(self, cell_row, cell_index):
-        return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.cell_automaton.get_rows()
+    def set_y_dimension_size(self, size):
+        self.cell_automaton.change_rows(size)
 
     def change_mode_controller(self, btn_instance):
         self.app.set_controller(btn_instance.text)

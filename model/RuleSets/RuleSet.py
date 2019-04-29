@@ -13,6 +13,7 @@ class RuleSet:
 
     def __init__(self):
         self.cell_factory = CellFactory(self.get_cell_type())
+        self.reverse_colors = False
 
     def __str__(self):
         return self.__class__.__name__

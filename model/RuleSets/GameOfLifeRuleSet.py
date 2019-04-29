@@ -10,8 +10,12 @@ class GameOfLifeRuleSet(RuleSet):
     required_dimension = 2
 
     # Game Of Life code: "B3/23S"
+    # Dot Life: "B3/S023"
+    # EightLife B3/S014567
+    # Bugs B4568 / S04678 (reversed)
     def __init__(self, rule_code="B3/23S"):
         super().__init__()
+        self.reverse_colors = False
         self.decode(rule_code)
 
     def apply(self, previous_state, current_state, cell_row, cell_column):

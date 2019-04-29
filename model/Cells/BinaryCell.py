@@ -17,6 +17,12 @@ class BinaryCell(Cell):
         else:
             return [1, 0, 0]
 
+    def get_reversed_color_representation(self):
+        if self.state is 0:
+            return [1, 0, 0]
+        else:
+            return [1, 1, 1]
+
     @staticmethod
     def get_dead_state():
         return BinaryCell.dead_state

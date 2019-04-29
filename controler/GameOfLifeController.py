@@ -11,7 +11,7 @@ from view.GameOfLifeView import GameOfLifeView
 
 class GameOfLifeController(AutomatonController):
 
-    rule_set = GameOfLifeRuleSet
+    rule_set = GameOfLifeRuleSet()
 
     def __init__(self, app, cell_size=9, cell_offset=1):
         self.iteration_speed = 8
@@ -36,7 +36,7 @@ class GameOfLifeController(AutomatonController):
         self.set_cell_automaton(
             columns=self.get_view_max_columns(),
             rows=self.get_view_max_rows(),
-            rule_set=self.rule_set(),
+            rule_set=self.rule_set,
             p_of_alive=0.2
         )
 
@@ -75,8 +75,13 @@ class GameOfLifeController(AutomatonController):
 
     def fetch_current_state(self):
         new_state = self.cell_automaton.get_current_state()
-        self.data_frame = \
-            [[cell.get_color_representation() for cell in new_state[row]] for row in range(0, self.cell_automaton.get_rows())]
+        if self.rule_set.reverse_colors is False:
+            self.data_frame = \
+                [[cell.get_color_representation() for cell in new_state[row]] for row in range(0, self.cell_automaton.get_rows())]
+        else:
+            self.data_frame = \
+                [[cell.get_reversed_color_representation() for cell in new_state[row]] for row in
+                 range(0, self.cell_automaton.get_rows())]
 
     def update_labels(self):
         self.update_columns_label()

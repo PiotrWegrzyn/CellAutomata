@@ -13,10 +13,16 @@ class GameOfLifeRuleSet(RuleSet):
     # Dot Life: "B3/S023"
     # EightLife B3/S014567
     # Bugs B4568 / S04678 (reversed)
-    def __init__(self, rule_code="B3/23S"):
+    # 123/23 nice
+    # 0/1234578
+    # 36/245 logarithmic oscilator
+    def __init__(self, rule_code="B3/S23", reverse_colors=False):
         super().__init__()
-        self.reverse_colors = False
+        self.reverse_colors = reverse_colors
         self.decode(rule_code)
+
+    def __str__(self):
+        return "B"+"".join([str(b)for b in self.born_conditions])+"S"+"".join([str(s)for s in self.survive_conditions])
 
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = current_state[cell_row][cell_column]

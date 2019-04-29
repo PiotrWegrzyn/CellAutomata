@@ -77,7 +77,7 @@ class CellAutomaton1D:
         print([cell.get_state() for cell in self.current_state])
 
     def reset_to_random_state(self):
-        self.create_random_initial_state()
+        self.initial_state = self.create_random_initial_state()
         self.set_to_initial_state()
 
     def print_iterations(self, iterations):
@@ -155,3 +155,6 @@ class CellAutomaton1D:
 
     def update_cell(self, cell_index, new_cell):
         self.initial_state[cell_index] = new_cell
+
+    def set_to_empty_state(self):
+        self.current_state = self.create_empty_state()

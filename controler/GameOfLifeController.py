@@ -31,6 +31,9 @@ class GameOfLifeController(AutomatonController):
         self.bind_save_btn()
         self.bind_speed_elements()
         self.bind_start_stop_elements()
+        self.bind_rule_input()
+        self.bind_reverse_colors_checkbox()
+        self.bind_clear_button()
 
     def set_cell_automaton_to_starting_state(self):
         self.set_cell_automaton(
@@ -164,7 +167,7 @@ class GameOfLifeController(AutomatonController):
             file.write([cell.get_state() for cell in iteration[0][row]].__str__() + "\n")
 
     def generate_file_name(self):
-        return "patterns\\CA"+self.cell_automaton.get_rule_set().__str__() \
+        return "patterns\\"+self.cell_automaton.get_rule_set().__str__() \
                +"-"+ datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
 
     def draw_next_iteration(self):
@@ -219,3 +222,28 @@ class GameOfLifeController(AutomatonController):
     def change_mode_controller(self, btn_instance):
         self.app.set_controller(btn_instance.text)
         self.stop_iterations()
+
+    def bind_rule_input(self):
+        self.app.view.rule_input.bind(on_text_validate=partial(self.rule_input_controller))
+
+    def rule_input_controller(self, value):
+        self.rule_set = GameOfLifeRuleSet(rule_code=value.text)
+        self.set_cell_automaton(rule_set=self.rule_set)
+
+    def bind_reverse_colors(self):
+        self.app.view.rule_input.bind(on_text_validate=partial(self.rule_input_controller))
+
+    def bind_reverse_colors_checkbox(self):
+        self.app.view.reverse_colors_checkbox.bind(active=partial(self.on_checkbox_active))
+
+    def on_checkbox_active(self, checkbox, value):
+        self.rule_set = GameOfLifeRuleSet(reverse_colors=value)
+        self.set_cell_automaton(rule_set=self.rule_set)
+
+    def bind_clear_button(self):
+        self.app.view.clear_button.bind(on_press=partial(self.clear_state_controller))
+
+    def clear_state_controller(self, instance):
+        self.cell_automaton.set_to_empty_state()
+        self.draw_current_state()
+

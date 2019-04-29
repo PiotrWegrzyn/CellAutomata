@@ -227,8 +227,12 @@ class GameOfLifeController(AutomatonController):
         self.app.view.rule_input.bind(on_text_validate=partial(self.rule_input_controller))
 
     def rule_input_controller(self, value):
-        self.rule_set = GameOfLifeRuleSet(rule_code=value.text)
+        self.rule_set = GameOfLifeRuleSet(
+            rule_code=value.text,
+            reverse_colors=self.rule_set.reverse_colors
+        )
         self.set_cell_automaton(rule_set=self.rule_set)
+        self.clear_canvas()
 
     def bind_reverse_colors(self):
         self.app.view.rule_input.bind(on_text_validate=partial(self.rule_input_controller))
@@ -237,13 +241,19 @@ class GameOfLifeController(AutomatonController):
         self.app.view.reverse_colors_checkbox.bind(active=partial(self.on_checkbox_active))
 
     def on_checkbox_active(self, checkbox, value):
-        self.rule_set = GameOfLifeRuleSet(reverse_colors=value)
+        self.rule_set = GameOfLifeRuleSet(
+            rule_code=self.rule_set.rule_code,
+            reverse_colors=value
+        )
         self.set_cell_automaton(rule_set=self.rule_set)
 
     def bind_clear_button(self):
         self.app.view.clear_button.bind(on_press=partial(self.clear_state_controller))
 
     def clear_state_controller(self, instance):
+       self.clear_ca_state_and_canvas()
+
+    def clear_ca_state_and_canvas(self):
         self.cell_automaton.set_to_empty_state()
         self.draw_current_state()
 

@@ -16,8 +16,10 @@ class GameOfLifeRuleSet(RuleSet):
     # 123/23 nice
     # 0/1234578
     # 36/245 logarithmic oscilator
+    # 4/23468 funny building blocks
     def __init__(self, rule_code="B3/S23", reverse_colors=False):
         super().__init__()
+        self.rule_code = rule_code
         self.reverse_colors = reverse_colors
         self.decode(rule_code)
 

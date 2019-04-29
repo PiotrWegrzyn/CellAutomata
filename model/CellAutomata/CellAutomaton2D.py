@@ -29,6 +29,11 @@ class CellAutomaton2D(CellAutomaton1D):
     # def _append_cell(self, cell_row, cell_index):
     #     self.current_state[cell_row].append(self.rule_set.apply(self.previous_state, ))
 
+    def _move_current_state_to_previous_state(self):
+        for row in range(0, self.rows):
+            for col in range(0, self.columns):
+                self.previous_state[row][col].state = self.current_state[row][col].state
+
     def _apply_rule_to_cell(self, cell_row, cell_index):
         self.rule_set.apply(self.previous_state, cell_row, cell_index)
 
@@ -52,9 +57,6 @@ class CellAutomaton2D(CellAutomaton1D):
         return "Rule Set: " + self.rule_set.__str__() \
                + "Columns: " + self.columns.__str__()\
                + "Rows: " + self.rows.__str__()
-
-    def create_empty_state(self):
-        return generate_empty_2d_list_of_list(self.rows)
 
     def _set_cells(self):
         processes = int(self.rows / 3)
@@ -81,3 +83,11 @@ class CellAutomaton2D(CellAutomaton1D):
     def update_cell(self, cell_row, cell_index, new_cell):
         self.current_state[cell_row][cell_index] = new_cell
 
+    def create_empty_state(self):
+        empty_state = []
+        for row in range(0, self.rows):
+            row = []
+            for col in range(0, self.columns):
+                row.append(self.cell_factory.create_dead_cell())
+            empty_state.append(row)
+        return empty_state

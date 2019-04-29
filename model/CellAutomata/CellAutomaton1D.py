@@ -21,7 +21,7 @@ class CellAutomaton1D:
         self.set_percent_of_alive_cells(percent_of_alive_cells)
         
         self.initial_state = initial_state
-        self.previous_state = None
+        self.previous_state = self.create_empty_state()
         self.current_state = None
         
         if initial_state is None:
@@ -29,9 +29,13 @@ class CellAutomaton1D:
         self.set_to_initial_state()
 
     def calculate_next_iteration(self):
-        self.previous_state = self.current_state
+        self._move_current_state_to_previous_state()
         # self._reset_current_state()
         self._set_cells()
+
+    def _move_current_state_to_previous_state(self):
+        for col in range(0, self.columns):
+            self.previous_state[col].state = self.current_state[col].state
 
     def _set_cells(self):
         for cell_index in range(0, self.columns):
@@ -55,7 +59,10 @@ class CellAutomaton1D:
         self.current_state = self.create_empty_state()
 
     def create_empty_state(self):
-        return []
+        empty_state = []
+        for col in range(0, self.columns):
+            empty_state.append(self.cell_factory.create_dead_cell())
+        return empty_state
 
     def set_to_initial_state(self):
         self.current_state = self.initial_state
@@ -120,6 +127,7 @@ class CellAutomaton1D:
 
     # todo change so that it fits old data not creates new
     def _fit_initial_state_to_size(self):
+        self.previous_state = self.create_empty_state()
         self.initial_state = self.create_random_initial_state()
 
     # def _append_cell(self, cell_index):

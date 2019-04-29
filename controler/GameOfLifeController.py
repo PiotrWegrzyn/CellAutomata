@@ -71,10 +71,12 @@ class GameOfLifeController(AutomatonController):
         self.fetch_current_state()
 
     def fetch_current_data_frame(self):
-        return self.fetch_current_state()
+        self.fetch_current_state()
 
     def fetch_current_state(self):
-        self.data_frame = self.cell_automaton.get_current_state()
+        new_state = self.cell_automaton.get_current_state()
+        self.data_frame = \
+            [[cell.get_color_representation() for cell in new_state[row]] for row in range(0, self.cell_automaton.get_rows())]
 
     def update_labels(self):
         self.update_columns_label()
@@ -115,7 +117,6 @@ class GameOfLifeController(AutomatonController):
 
         cell_factory = CellFactory(self.rule_set.get_cell_type())
         saved_state_cells = generate_empty_2d_list_of_list(loaded_state_rows)
-        # just python magic
         for row_index, row_content in zip(range(0, loaded_state_rows), raw_saved_state):
             for value in row_content:
                 saved_state_cells[row_index].append(cell_factory.create_cell_with_values(value))
@@ -155,7 +156,7 @@ class GameOfLifeController(AutomatonController):
         iteration = self.cell_automaton.iterations_to_list(1)
         file = open(self.generate_file_name(), "w+")
         for row in range(0, len(iteration[0])):
-            file.write([cell.get_value() for cell in iteration[0][row]].__str__() + "\n")
+            file.write([cell.get_state() for cell in iteration[0][row]].__str__() + "\n")
 
     def generate_file_name(self):
         return "patterns\\CA"+self.cell_automaton.get_rule_set().__str__() \
@@ -199,6 +200,7 @@ class GameOfLifeController(AutomatonController):
 
             clicked_cell = cstate[cell_row][cell_index]
             clicked_cell.flip_state()
+
             self.app.view.update_cell(cell_row, cell_index, create_color(clicked_cell.get_color()))
             self.cell_automaton.update_cell(cell_row, cell_index, clicked_cell)
             self.fetch_current_state()

@@ -13,17 +13,28 @@ class CellAutomaton2D(CellAutomaton1D):
         self._set_rows(rows)
         super().__init__(rule_set, columns, percent_of_alive_cells, initial_state)
 
+    def create_random_initial_state(self):
+        self._set_number_of_alive_cells()
+        return self.rule_set.get_initial_random_state(
+            number_of_alive_cells=self._number_of_alive_cells,
+            columns=self.columns,
+            rows=self.rows
+        )
+
     def _set_rows(self, rows):
         if rows < 0:
             raise ValueError
         self.rows = rows
 
-    def _append_cell(self, cell_row, cell_index):
-        self.current_state[cell_row].append(self.rule_set.apply(self.previous_state, cell_row, cell_index))
+    # def _append_cell(self, cell_row, cell_index):
+    #     self.current_state[cell_row].append(self.rule_set.apply(self.previous_state, ))
+
+    def _apply_rule_to_cell(self, cell_row, cell_index):
+        self.rule_set.apply(self.previous_state, cell_row, cell_index)
 
     def change_rows(self, rows):
         self._set_rows(rows)
-        self._fit_to_size()
+        self._fit_initial_state_to_size()
         self.set_to_initial_state()
 
     def cell_count(self):
@@ -55,27 +66,13 @@ class CellAutomaton2D(CellAutomaton1D):
 
     def set_cells_in_row(self, cell_row):
         for cell_index in range(0, self.columns):
-            self._append_cell(cell_row, cell_index)
-
-    def _prepare_initial_alive_cells(self):
-        self._set_number_of_alive_cells()
-        for i in range(0, self._number_of_alive_cells):
-            while True:
-                x = random.randrange(0, self.rows)
-                y = random.randrange(0, self.columns)
-                if self.initial_state[x][y].is_dead():
-                    self.initial_state[x][y] = self.cell_factory.create_random_alive_cell()
-                    break
-
-    def _prepare_initial_dead_cells(self):
-        self.initial_state = [
-            [self.cell_factory.create_dead_cell()] * self.columns for i in range(0, self.rows)
-        ]
+            self._apply_rule_to_cell(cell_row, cell_index)
+            # self._append_cell(cell_row, cell_index)
 
     def update_alive_cells(self):
         alive_sum = 0
         for row in self.current_state:
-            alive_sum += sum([cell.get_state() for cell in row])
+            alive_sum += sum([int(cell.is_alive()) for cell in row])
         self.set_percent_of_alive_cells(round(alive_sum/self.cell_count(), 2))
 
     def get_rows(self):

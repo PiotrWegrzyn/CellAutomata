@@ -120,17 +120,12 @@ class AutomatonController(BaseController):
             self.cell_automaton.change_alive_cells_percentage(current_value + delta)
             self.update_alive_cells_label()
 
-
     def update_labels(self):
         self.update_columns_label()
-        self.update_iterations_label()
         self.update_alive_cells_label()
 
     def update_columns_label(self):
         self.app.view.columns_label.text = "Columns" + self.cell_automaton.get_columns().__str__()
-
-    def update_iterations_label(self):
-        self.app.view.iterations_label.text = "Iterations: " + self.iterations.__str__()
 
     def update_alive_cells_label(self):
         self.app.view.alive_cells_label.text = \

@@ -16,8 +16,7 @@ import kivy.uix.button as kb
 from view.BaseView import BaseView
 
 
-def create_color(color):
-    rgb = color.rgb
+def create_color(rgb):
     return Color(rgb[0], rgb[1], rgb[2])
 
 
@@ -43,8 +42,9 @@ class DrawingView(BaseView):
 
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):
-            if self.data_frame[row][column].is_alive():
-                color = create_color(self.data_frame[row][column].get_color())
+            cell_color = self.data_frame[row][column]
+            if not cell_color == [1, 1, 1]:     # [1,1,1] is white
+                color = create_color(cell_color)
                 self._draw_cell(row, column, color)
 
     def _draw_cell(self, row, column, color=None):

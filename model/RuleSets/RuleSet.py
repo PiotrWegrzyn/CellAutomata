@@ -20,6 +20,9 @@ class RuleSet:
     def apply(self, previous_state, cell_column):
         pass
 
+    def get_initial_random_state(self, number_of_alive_cells, columns, rows=None):
+        pass
+
     @staticmethod
     def get_cell_type():
         return RuleSet.cell_type
@@ -30,3 +33,4 @@ class RuleSet:
 
     def get_dead_cell(self):
         return self.cell_type.get_dead_state()
+

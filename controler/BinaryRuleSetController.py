@@ -105,7 +105,8 @@ class BinaryRuleSetController(AutomatonController):
 
     def fetch_current_data_frame(self):
         for iteration in range(0, self.iterations):
-            self.data_frame[iteration] = self.cell_automaton.get_current_state()
+            new_state = self.cell_automaton.get_current_state()
+            self.data_frame[iteration] = [cell.get_color_representation() for cell in new_state]
             self.cell_automaton.calculate_next_iteration()
         self.cell_automaton.set_to_initial_state()
 

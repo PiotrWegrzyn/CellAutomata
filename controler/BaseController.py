@@ -6,11 +6,14 @@ from kivy.properties import partial
 
 
 def generate_empty_2d_list_of_list(size):
-    return [[] for i in range(0, size)]
+    main_list = []
+    for i in range(0, size):
+        child_list = []
+        main_list.append(child_list)
+    return main_list
 
 
-def create_color(color):
-    rgb = color.rgb
+def create_color(rgb):
     return Color(rgb[0], rgb[1], rgb[2])
 
 

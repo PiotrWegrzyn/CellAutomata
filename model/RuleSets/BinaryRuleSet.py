@@ -1,3 +1,5 @@
+import random
+
 from model.Cells.BinaryCell import BinaryCell
 from model.Cells.CellFactory import CellFactory
 from model.RuleSets.RuleSet import RuleSet
@@ -17,8 +19,9 @@ class BinaryRuleSet(RuleSet):
         return BinaryRuleSet.cell_type
 
     def apply(self, previous_state, cell_column):
-        previous_triplet_value = self.calculate_previous_triplet_value(previous_state, cell_column)
-        return self.create_cell(self.determine_next_value(previous_triplet_value))
+        prev_triplet_val = self.calculate_previous_triplet_value(previous_state, cell_column)
+        new_state = self.determine_next_value(prev_triplet_val)
+        return new_state
 
     def get_previous_neighbours(self, previous_state, cell_column):
         previous_triplet = self._get_previous_triplet(previous_state, cell_column)
@@ -80,3 +83,23 @@ class BinaryRuleSet(RuleSet):
     @staticmethod
     def get_required_dimension():
         return BinaryRuleSet.required_dimension
+
+    def get_initial_random_state(self, number_of_alive_cells, columns, rows=None):
+        initial_state = self._prepare_initial_dead_cells(columns)
+        self._prepare_initial_alive_cells(initial_state, number_of_alive_cells, columns)
+        return initial_state
+
+    def _prepare_initial_dead_cells(self, columns):
+        empty_state =[]
+        for c in range(0,columns):
+            empty_state.append(self.cell_factory.create_dead_cell())
+        return empty_state
+
+    def _prepare_initial_alive_cells(self, initial_state, number_of_alive_cells, columns):
+        for i in range(0, number_of_alive_cells):
+            while True:
+                y = random.randrange(0, columns)
+                if initial_state[y].is_dead():
+                    initial_state[y] = self.cell_factory.create_random_alive_cell()
+                    break
+

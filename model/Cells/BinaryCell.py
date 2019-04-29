@@ -1,7 +1,3 @@
-import random
-
-from kivy.graphics.context_instructions import Color
-
 from model.Cells.Cell import Cell
 
 
@@ -17,9 +13,9 @@ class BinaryCell(Cell):
 
     def get_color_representation(self):
         if self.state is 0:
-            return Color(1, 1, 1)
-        if self.state is 1:
-            return Color(1, 0, 0)
+            return [1, 1, 1]
+        else:
+            return [1, 0, 0]
 
     @staticmethod
     def get_dead_state():
@@ -28,3 +24,11 @@ class BinaryCell(Cell):
     @staticmethod
     def get_random_alive_state():
         return 1
+
+    def die(self):
+        self.state = 0
+
+    def resurrect(self):
+        self.state = 1
+
+

@@ -25,38 +25,31 @@ class CellAutomaton1D:
         self.current_state = None
         
         if initial_state is None:
-            self._create_random_initial_state()
+            self.initial_state = self.create_random_initial_state()
         self.set_to_initial_state()
 
     def calculate_next_iteration(self):
         self.previous_state = self.current_state
-        self._reset_current_state()
+        # self._reset_current_state()
         self._set_cells()
 
     def _set_cells(self):
         for cell_index in range(0, self.columns):
-            self._append_cell(cell_index)
+            self.current_state[cell_index].state = self.rule_set.apply(self.previous_state, cell_index)
+            # self._append_cell(cell_index)
+            # self._apply_rule_to_cell(cell_index)
 
     def _set_rule_set(self, rule_set):
         if not isinstance(rule_set, RuleSet):
             raise TypeError
         self.rule_set = rule_set
 
-    def _create_random_initial_state(self):
-        self._prepare_initial_dead_cells()
-        self._prepare_initial_alive_cells()
-
-    def _prepare_initial_alive_cells(self):
+    def create_random_initial_state(self):
         self._set_number_of_alive_cells()
-        for i in range(0, self._number_of_alive_cells):
-            while True:
-                y = random.randrange(0, self.columns)
-                if self.initial_state[y].is_dead():
-                    self.initial_state[y] = self.cell_factory.create_random_alive_cell()
-                    break
-
-    def _prepare_initial_dead_cells(self):
-        self.initial_state = [self.cell_factory.create_dead_cell()] * self.columns
+        return self.rule_set.get_initial_random_state(
+            number_of_alive_cells=self._number_of_alive_cells,
+            columns=self.columns
+        )
 
     def _reset_current_state(self):
         self.current_state = self.create_empty_state()
@@ -74,10 +67,10 @@ class CellAutomaton1D:
         return self.previous_state
 
     def print_current_state(self):
-            print([cell.get_state() for cell in self.current_state])
+        print([cell.get_state() for cell in self.current_state])
 
     def reset_to_random_state(self):
-        self._create_random_initial_state()
+        self.create_random_initial_state()
         self.set_to_initial_state()
 
     def print_iterations(self, iterations):
@@ -126,15 +119,19 @@ class CellAutomaton1D:
         return self.columns
 
     # todo change so that it fits old data not creates new
-    def _fit_to_size(self):
-        self._create_random_initial_state()
+    def _fit_initial_state_to_size(self):
+        self.initial_state = self.create_random_initial_state()
 
-    def _append_cell(self, cell_index):
-        self.current_state.append(self.rule_set.apply(self.previous_state, cell_index))
+    # def _append_cell(self, cell_index):
+    #     self.current_state.append(self.rule_set.apply(self.previous_state, cell_index))
+
+    def _apply_rule_to_cell(self, cell_index):
+        pass
+        # self.print_current_state()
 
     def change_columns(self, columns):
         self._set_columns(columns)
-        self._fit_to_size()
+        self._fit_initial_state_to_size()
         self.set_to_initial_state()
 
     def get_rule_set(self):

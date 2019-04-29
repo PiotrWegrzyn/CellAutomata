@@ -2,7 +2,11 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 import kivy
 from kivy.app import App
-from controler.MainController import MainController, BinaryRuleSetController, GameOfLifeController
+from controler.MainController import MainController
+from controler.BinaryRuleSetController import BinaryRuleSetController
+from controler.GameOfLifeController import GameOfLifeController
+from controler.NucleationController import NucleationController
+
 from view.BaseView import BaseView
 
 kivy.require('1.9.0')
@@ -13,6 +17,7 @@ class CellAutomatonApp(App):
         "Main Menu": "MainController",
         "Binary Rule": "BinaryRuleSetController",
         "Game of Life": "GameOfLifeController",
+        "Nucleation": "NucleationController"
     }
 
     def __init__(self):

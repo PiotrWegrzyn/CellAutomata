@@ -3,8 +3,7 @@ import random
 from kivy.uix.label import Label
 
 from controler.BaseController import BaseController
-from controler.BinaryRuleSetController import BinaryRuleSetController
-from controler.GameOfLifeController import GameOfLifeController
+
 from view.BaseView import BaseView
 
 

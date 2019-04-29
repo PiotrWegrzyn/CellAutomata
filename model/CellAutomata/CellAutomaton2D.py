@@ -35,7 +35,7 @@ class CellAutomaton2D(CellAutomaton1D):
                 self.previous_state[row][col].state = self.current_state[row][col].state
 
     def _apply_rule_to_cell(self, cell_row, cell_index):
-        self.rule_set.apply(self.previous_state, cell_row, cell_index)
+        self.rule_set.apply(self.previous_state, self.current_state, cell_row, cell_index)
 
     def change_rows(self, rows):
         self._set_rows(rows)

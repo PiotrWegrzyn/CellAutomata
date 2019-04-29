@@ -9,12 +9,13 @@ class GameOfLifeRuleSet(RuleSet):
     cell_type = BinaryCell
     required_dimension = 2
 
+    # Game Of Life code: "B3/23S"
     def __init__(self, rule_code="B3/23S"):
         super().__init__()
         self.decode(rule_code)
 
-    def apply(self, previous_state, cell_row, cell_column):
-        judged_cell = previous_state[cell_row][cell_column]
+    def apply(self, previous_state, current_state, cell_row, cell_column):
+        judged_cell = current_state[cell_row][cell_column]
         previous_neighbours_values = self.get_previous_neighbours_state(previous_state, cell_row, cell_column)
         self._judgement_day(judged_cell, sum(previous_neighbours_values))
 

@@ -47,11 +47,8 @@ class DrawingView(BaseView):
                 color = create_color(cell_color)
                 self._draw_cell(row, column, color)
 
-    def _draw_cell(self, row, column, color=None):
-        if color:
-            self.grid.canvas.add(color)
-        else:
-            self.grid.canvas.add(Color(1, 1, 1))
+    def _draw_cell(self, row, column, color):
+        self.grid.canvas.add(color)
         rectangle = Rectangle(
             pos=(
                 self._get_graphic_cell_x_pos(column),

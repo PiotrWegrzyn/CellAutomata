@@ -17,6 +17,10 @@ class GameOfLifeRuleSet(RuleSet):
     # 0/1234578
     # 36/245 logarithmic oscilator
     # 4/23468 funny building blocks
+    # 3/12 Flock
+    # b36/125 2x2
+    # 1357/1357 Fredkin
+
     def __init__(self, rule_code="B3/S23", reverse_colors=False):
         super().__init__()
         self.rule_code = rule_code
@@ -94,12 +98,22 @@ class GameOfLifeRuleSet(RuleSet):
         return clear_state
 
     def decode(self, rule_code):
-        self.born_conditions = self.get_born_conditions(rule_code)
-        self.survive_conditions = self.get_survive_condition(rule_code)
+        try:
+            self.born_conditions = self.get_born_conditions(rule_code)
+            self.survive_conditions = self.get_survive_condition(rule_code)
+        except IndexError:
+            self.born_conditions = self.get_born_conditions_split_by_s(rule_code)
+            self.survive_conditions = self.get_survive_condition_split_by_s(rule_code)
 
     def get_born_conditions(self, rule_code):
         return [int(condition) for condition in re.sub("\D", "", rule_code.split("/")[0])]
 
     def get_survive_condition(self, rule_code):
         return [int(condition) for condition in re.sub("\D", "", rule_code.split("/")[1])]
+
+    def get_born_conditions_split_by_s(self, rule_code):
+        return [int(condition) for condition in re.sub("\D", "", rule_code.lower().split("s")[0])]
+
+    def get_survive_condition_split_by_s(self, rule_code):
+        return [int(condition) for condition in re.sub("\D", "", rule_code.lower().split("s")[1])]
 

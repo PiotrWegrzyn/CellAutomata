@@ -17,7 +17,7 @@ class BinaryCell(Cell):
         else:
             return [1, 0, 0]
 
-    def get_reversed_color_representation(self):
+    def get_reversed_color(self):
         if self.state is 0:
             return [1, 0, 0]
         else:

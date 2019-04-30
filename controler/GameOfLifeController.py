@@ -83,7 +83,7 @@ class GameOfLifeController(AutomatonController):
                 [[cell.get_color_representation() for cell in new_state[row]] for row in range(0, self.cell_automaton.get_rows())]
         else:
             self.data_frame = \
-                [[cell.get_reversed_color_representation() for cell in new_state[row]] for row in
+                [[cell.get_reversed_color() for cell in new_state[row]] for row in
                  range(0, self.cell_automaton.get_rows())]
 
     def update_labels(self):
@@ -130,7 +130,7 @@ class GameOfLifeController(AutomatonController):
                 saved_state_cells[row_index].append(cell_factory.create_cell_with_values(value))
         self.cell_automaton.current_state = saved_state_cells
 
-        self.draw_next_iteration()
+        self.draw_current_state()
 
     def load_btn_controller(self, btn_instance):
         self.app.view.show_choose_file_menu()
@@ -209,7 +209,12 @@ class GameOfLifeController(AutomatonController):
             clicked_cell = cstate[cell_row][cell_index]
             clicked_cell.flip_state()
 
-            self.app.view.update_cell(cell_row, cell_index, create_color(clicked_cell.get_color()))
+            if self.rule_set.reverse_colors:
+                cell_color = clicked_cell.get_reversed_color()
+            else:
+                cell_color = clicked_cell.get_color()
+
+            self.app.view.update_cell(cell_row, cell_index, create_color(cell_color))
             self.cell_automaton.update_cell(cell_row, cell_index, clicked_cell)
             self.fetch_current_state()
 

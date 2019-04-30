@@ -151,14 +151,12 @@ class GameOfLifeView(DrawingView):
         import os
         for file in os.listdir("patterns"):
             if file.endswith(".txt"):
-                print(os.path.join("/patterns", file))
+                # print(os.path.join("/patterns", file))
                 file_button = kb.Button(
                     text=file.__str__(),
                     size_hint=(1, 0.1),
                 )
                 self.file_buttons.append(file_button)
-
-    # on_press = partial(self.controller.load_state_from_file_controller)
 
     def add_file_buttons(self):
         for button in self.file_buttons:
@@ -189,7 +187,7 @@ class GameOfLifeView(DrawingView):
 
     def create_speed_elements(self):
         self.speed_label = Label(
-            text="Speed: ", #+ self.controller.get_iteration_speed().__str__() + "fps",
+            text="Speed: ",
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
         )
@@ -206,7 +204,6 @@ class GameOfLifeView(DrawingView):
         self.faster_btn = kb.Button(
             text='x2',
             size_hint=(1, 1),
-            # on_press=partial(self.controller.faster_iterations_controller)
         )
         self.faster_slower_btns_containter.add_widget(self.faster_btn)
 

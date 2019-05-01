@@ -172,8 +172,11 @@ class Automaton2DController(AutomatonController):
             file.write([cell.get_state() for cell in iteration[0][row]].__str__() + "\n")
 
     def generate_file_name(self):
-        return self.pattern_folder+self.cell_automaton.get_rule_set().__str__() \
-               +"-"+ datetime.datetime.now().__str__().replace(' ', '-').replace(':', '-') + ".txt"
+        dt_now = datetime.datetime.now()
+        filename = self.pattern_folder\
+                 + self.cell_automaton.get_rule_set().__str__()\
+                 + "-" + dt_now.strftime('%y-%m-%d_%H-%M-%S-%f') + ".txt"
+        return filename
 
     def draw_next_iteration(self):
         self.clear_canvas()

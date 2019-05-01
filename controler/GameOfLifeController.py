@@ -4,9 +4,6 @@ from ast import literal_eval
 from kivy.clock import Clock
 
 from controler.Automaton2DController import Automaton2DController
-from controler.AutomatonController import AutomatonController
-from controler.BaseController import generate_empty_2d_list_of_list, create_color
-from model.Cells.CellFactory import CellFactory
 from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
 from view.GameOfLifeView import GameOfLifeView
 

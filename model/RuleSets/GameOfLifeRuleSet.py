@@ -81,12 +81,15 @@ class GameOfLifeRuleSet(RuleSet):
 
     def _prepare_initial_alive_cells(self, initial_state, number_of_alive_cells, rows, columns):
         for i in range(0, number_of_alive_cells):
-            while True:
-                x = random.randrange(0, rows)
-                y = random.randrange(0, columns)
-                if initial_state[x][y].is_dead():
-                    initial_state[x][y] = self.cell_factory.create_random_alive_cell()
-                    break
+            self.set_random_cell_to_random_state(initial_state, rows, columns)
+
+    def set_random_cell_to_random_state(self, state, rows, columns):
+        while True:
+            x = random.randrange(0, rows)
+            y = random.randrange(0, columns)
+            if state[x][y].is_dead():
+                state[x][y] = self.cell_factory.create_random_alive_cell()
+                break
 
     def _prepare_initial_dead_cells(self, rows, columns):
         clear_state = []

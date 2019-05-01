@@ -30,6 +30,7 @@ class NucleationView(GameOfLifeView):
         self.create_start_stop_elements()
         self.create_reverse_colors_items()
         self.create_clear_button()
+        self.create_recristalize_button()
 
     def show_menu(self):
         super(DrawingView, self).show_menu()
@@ -43,6 +44,7 @@ class NucleationView(GameOfLifeView):
         self.add_save_current_state_btn()
         self.add_load_state_from_file()
         self.add_reverse_colors_items()
+        self.add_recristalize_button()
 
     def create_load_file_buttons(self):
         self.file_buttons = []
@@ -55,3 +57,11 @@ class NucleationView(GameOfLifeView):
                 )
                 self.file_buttons.append(file_button)
 
+    def create_recristalize_button(self):
+        self.recristalize_button= kb.Button(
+            text="Recristalize",
+            size_hint=(1, 0.1),
+        )
+
+    def add_recristalize_button(self):
+        self.menu.add_widget(self.recristalize_button)

@@ -23,7 +23,7 @@ class GameOfLifeView(DrawingView):
         self.create_columns_elements()
         self.create_rows_elements()
         self.create_alive_cells_elements()
-        self.create_file_buttons()
+        self.create_load_file_buttons()
         self.create_load_btn()
         self.create_save_btn()
         self.create_speed_elements()
@@ -146,10 +146,10 @@ class GameOfLifeView(DrawingView):
         self.add_back_btn_to_menu()
         self.add_file_buttons()
 
-    def create_file_buttons(self):
+    def create_load_file_buttons(self):
         self.file_buttons = []
         import os
-        for file in os.listdir("patterns"):
+        for file in os.listdir("patterns\LifelikeAutomata"):
             if file.endswith(".txt"):
                 # print(os.path.join("/patterns", file))
                 file_button = kb.Button(
@@ -170,14 +170,12 @@ class GameOfLifeView(DrawingView):
         self.play_btn = kb.Button(
             text='Play',
             size_hint=(1, 1),
-            # on_press=partial(self.controller.play_iterations_controller)
         )
         self.play_stop_btns_containter.add_widget(self.play_btn)
 
         self.stop_btn = kb.Button(
             text='Stop',
             size_hint=(1, 1),
-            # on_press=partial(self.controller.stop_iterations_controller)
         )
         self.play_stop_btns_containter.add_widget(self.stop_btn)
 

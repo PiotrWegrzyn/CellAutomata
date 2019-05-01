@@ -59,9 +59,7 @@ class CellAutomaton2D(CellAutomaton1D):
                + "Rows: " + self.rows.__str__()
 
     def _set_cells(self):
-        processes = int(self.rows / 3)
-        if processes <= 0:
-            processes = 1
+        processes = 8
         with closing(ThreadPool(processes)) as pool:
             pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.rows)])
         self.update_alive_cells()

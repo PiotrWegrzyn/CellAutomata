@@ -34,7 +34,6 @@ class DrawingView(BaseView):
         for cell_row in range(0, len(data_frame)):
             self._draw_graphic_columns(cell_row)
 
-
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):
             cell_color = self.data_frame[row][column]

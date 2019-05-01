@@ -40,7 +40,7 @@ class GameOfLifeController(AutomatonController):
             columns=self.get_view_max_columns(),
             rows=self.get_view_max_rows(),
             rule_set=self.rule_set,
-            p_of_alive=0.2
+            p_of_alive=0.05
         )
 
     def get_rows(self):
@@ -70,8 +70,12 @@ class GameOfLifeController(AutomatonController):
             self.update_rows_label()
 
     def yield_next_data_frame(self):
+        old_df = self.data_frame
         self.cell_automaton.calculate_next_iteration()
         self.fetch_current_state()
+        if old_df == self.data_frame:
+            self.stop_iterations()
+            print("stoped")
 
     def fetch_current_data_frame(self):
         self.fetch_current_state()

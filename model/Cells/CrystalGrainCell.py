@@ -19,7 +19,7 @@ class CrystalGrainCell(Cell):
         super().__init__(state)
 
     def get_color_representation(self):
-        if self.state is 1:
+        if self.state is 0:
             return [1, 1, 1]
         else:
             color_table = self.state_to_color()
@@ -48,3 +48,8 @@ class CrystalGrainCell(Cell):
         float_s = self.state * 1.0
         return [float_s%8/8,float_s%13/13,float_s%21/21]
 
+    def flip_state(self):
+        if self.is_dead():
+            self.state = self.get_new_grain_id()
+        else:
+            self.state = self.get_dead_state()

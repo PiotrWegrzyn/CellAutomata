@@ -112,6 +112,7 @@ class AutomatonController(BaseController):
         if current_value + delta > 0:
             self.cell_automaton.change_alive_cells_percentage(current_value + delta)
             self.update_alive_cells_label()
+            self.draw_current_state()
 
     def add_alive_cells_controller(self, button_instance):
         delta = 0.05
@@ -119,6 +120,7 @@ class AutomatonController(BaseController):
         if current_value + delta <= 1:
             self.cell_automaton.change_alive_cells_percentage(current_value + delta)
             self.update_alive_cells_label()
+            self.draw_current_state()
 
     def update_labels(self):
         self.update_columns_label()

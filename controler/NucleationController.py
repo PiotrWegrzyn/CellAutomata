@@ -5,7 +5,7 @@ from view.NucleationView import NucleationView
 
 class NucleationController(GameOfLifeController):
 
-    rule_set = NucleationRuleSet
+    rule_set = NucleationRuleSet()
 
     def __init__(self, app, cell_size=9, cell_offset=1):
         super().__init__(app, cell_size, cell_offset)

@@ -2,17 +2,9 @@ from contextlib import closing
 from multiprocessing.pool import ThreadPool
 
 from kivy.core.window import Window
-from kivy.properties import partial
-from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import Rectangle
 
-from kivy.uix.label import Label
-
-import kivy
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Ellipse
-import kivy.uix.button as kb
+from kivy.graphics import Color
 from view.BaseView import BaseView
 
 
@@ -35,10 +27,13 @@ class DrawingView(BaseView):
 
     def draw_data_frame(self, data_frame):
         self.data_frame = data_frame
-        threads = int(len(data_frame)+1)
-        with closing(ThreadPool(threads)) as pool:
-            parameters_list = [cell_row for cell_row in range(0, len(data_frame))]
-            pool.map(self._draw_graphic_columns, parameters_list)
+        # threads = int(len(data_frame)+1)
+        # with closing(ThreadPool(threads)) as pool:
+        #     parameters_list = [cell_row for cell_row in range(0, len(data_frame))]
+        #     pool.map(self._draw_graphic_columns, parameters_list)
+        for cell_row in range(0, len(data_frame)):
+            self._draw_graphic_columns(cell_row)
+
 
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):

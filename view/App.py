@@ -2,6 +2,9 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 import kivy
 from kivy.app import App
+from controler.BinaryRuleSetController import BinaryRuleSetController
+from controler.NucleationController import NucleationController
+from controler.GameOfLifeController import GameOfLifeController
 from controler.MainController import MainController
 
 from view.BaseView import BaseView

@@ -1,7 +1,6 @@
 import random
 
 from model.Cells.BinaryCell import BinaryCell
-from model.Cells.CellFactory import CellFactory
 from model.RuleSets.RuleSet import RuleSet
 
 

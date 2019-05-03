@@ -1,7 +1,3 @@
-import random
-from concurrent.futures.thread import ThreadPoolExecutor
-from multiprocessing.pool import ThreadPool
-from contextlib import closing
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
 
 
@@ -26,9 +22,6 @@ class CellAutomaton2D(CellAutomaton1D):
         if rows < 0:
             raise ValueError
         self.rows = rows
-
-    # def _append_cell(self, cell_row, cell_index):
-    #     self.current_state[cell_row].append(self.rule_set.apply(self.previous_state, ))
 
     def _move_current_state_to_previous_state(self):
         for row in range(0, self.rows):

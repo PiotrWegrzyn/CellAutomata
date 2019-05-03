@@ -1,7 +1,3 @@
-import sys
-from functools import reduce
-
-from kivy.graphics.context_instructions import Color
 from kivy.properties import partial
 
 

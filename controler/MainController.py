@@ -1,7 +1,3 @@
-import random
-
-from kivy.uix.label import Label
-
 from controler.BaseController import BaseController
 
 from view.BaseView import BaseView

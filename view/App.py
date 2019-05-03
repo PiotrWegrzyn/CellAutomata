@@ -3,9 +3,6 @@ from kivy.uix.boxlayout import BoxLayout
 import kivy
 from kivy.app import App
 from controler.MainController import MainController
-from controler.BinaryRuleSetController import BinaryRuleSetController
-from controler.GameOfLifeController import GameOfLifeController
-from controler.NucleationController import NucleationController
 
 from view.BaseView import BaseView
 

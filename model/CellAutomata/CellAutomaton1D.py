@@ -1,6 +1,3 @@
-import random
-
-from model.Cells.CellFactory import CellFactory
 from model.Cells.CellFactory import CellFactory
 from model.RuleSets.RuleSet import RuleSet
 import copy
@@ -123,13 +120,10 @@ class CellAutomaton1D:
     def cell_count(self):
         return self.columns
 
-    # todo change so that it fits old data not creates new
     def _fit_initial_state_to_size(self):
+        # todo change so that it fits old data not creates new
         self.previous_state = self.create_empty_state()
         self.initial_state = self.create_random_initial_state()
-
-    # def _append_cell(self, cell_index):
-    #     self.current_state.append(self.rule_set.apply(self.previous_state, cell_index))
 
     def _apply_rule_to_cell(self, cell_index):
         pass

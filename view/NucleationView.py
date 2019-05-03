@@ -1,13 +1,7 @@
-from functools import partial
-
+import kivy
 import kivy.uix.button as kb
 
-from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
 from view.DrawingView import DrawingView
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
-import kivy
-
 from view.GameOfLifeView import GameOfLifeView
 
 kivy.require('1.9.0')

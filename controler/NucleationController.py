@@ -1,8 +1,8 @@
 from functools import partial
 
 from controler.Automaton2DController import Automaton2DController
-from model.RuleSets.RecristalizationRuleSet import RecristalizationRuleSet
 from model.RuleSets.NucleationRuleSet import NucleationRuleSet
+from model.RuleSets.RecristalizationRuleSet import RecristalizationRuleSet
 from view.NucleationView import NucleationView
 
 

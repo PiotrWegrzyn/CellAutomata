@@ -1,7 +1,3 @@
-import random
-from kivy.graphics.context_instructions import Color
-
-
 class Cell:
     dead_state = None
     alive_states = []

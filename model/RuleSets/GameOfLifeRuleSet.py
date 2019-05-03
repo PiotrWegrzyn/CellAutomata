@@ -1,8 +1,8 @@
 import random
+import re
 
 from model.Cells.BinaryCell import BinaryCell
 from model.RuleSets.RuleSet import RuleSet
-import re
 
 
 class GameOfLifeRuleSet(RuleSet):

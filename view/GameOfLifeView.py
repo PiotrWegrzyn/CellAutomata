@@ -1,14 +1,11 @@
-from functools import partial
-
+import kivy
 import kivy.uix.button as kb
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
+from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
-from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet
 from view.DrawingView import DrawingView
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
-import kivy
 
 kivy.require('1.9.0')
 

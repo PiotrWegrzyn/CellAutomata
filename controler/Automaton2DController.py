@@ -1,7 +1,9 @@
 import datetime
-from functools import partial
 from ast import literal_eval
+from functools import partial
+
 from kivy.clock import Clock
+
 from controler.AutomatonController import AutomatonController
 from controler.BaseController import generate_empty_2d_list_of_list
 from model.Cells.CellFactory import CellFactory

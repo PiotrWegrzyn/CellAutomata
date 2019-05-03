@@ -1,20 +1,8 @@
-from kivy.core.window import Window
-from kivy.graphics.context_instructions import Color
-from kivy.graphics.vertex_instructions import Rectangle
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.widget import Widget
-from kivy.core.window import Window
-from kivy.properties import partial
-from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color, Rectangle
-
-from kivy.uix.label import Label
-
 import kivy
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Ellipse
 import kivy.uix.button as kb
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.widget import Widget
+
 kivy.require('1.9.0')
 
 

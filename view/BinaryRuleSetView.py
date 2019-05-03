@@ -1,8 +1,9 @@
+import kivy
 import kivy.uix.button as kb
-from view.DrawingView import DrawingView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-import kivy
+
+from view.DrawingView import DrawingView
 
 kivy.require('1.9.0')
 

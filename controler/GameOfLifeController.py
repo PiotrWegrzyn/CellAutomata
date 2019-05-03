@@ -1,7 +1,4 @@
-import datetime
 from functools import partial
-from ast import literal_eval
-from kivy.clock import Clock
 
 from controler.Automaton2DController import Automaton2DController
 from model.RuleSets.GameOfLifeRuleSet import GameOfLifeRuleSet

@@ -1,10 +1,7 @@
-from contextlib import closing
-from multiprocessing.pool import ThreadPool
-
 from kivy.core.window import Window
+from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
-from kivy.graphics import Color
 from view.BaseView import BaseView
 
 

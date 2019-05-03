@@ -3,7 +3,7 @@ from functools import partial
 from ast import literal_eval
 from kivy.clock import Clock
 from controler.AutomatonController import AutomatonController
-from controler.BaseController import generate_empty_2d_list_of_list, create_color
+from controler.BaseController import generate_empty_2d_list_of_list
 from model.Cells.CellFactory import CellFactory
 
 
@@ -32,7 +32,7 @@ class Automaton2DController(AutomatonController):
             columns=self.get_view_max_columns(),
             rows=self.get_view_max_rows(),
             rule_set=self.rule_set,
-            p_of_alive=0.05
+            p_of_alive=0.1
         )
 
     def get_rows(self):
@@ -62,12 +62,8 @@ class Automaton2DController(AutomatonController):
             self.update_rows_label()
 
     def yield_next_data_frame(self):
-        old_df = self.data_frame
         self.cell_automaton.calculate_next_iteration()
         self.fetch_current_state()
-        if old_df == self.data_frame:
-            self.stop_iterations()
-            print("stoped")
 
     def fetch_current_data_frame(self):
         self.fetch_current_state()
@@ -145,7 +141,6 @@ class Automaton2DController(AutomatonController):
         self.save_current_state_to_file()
 
     def play_btn_controller(self, btn_instance):
-        self.draw_next_iteration()
         self.restart_auto_iterations_clock()
 
     def stop_btn_controller(self, btn_instance):
@@ -179,11 +174,10 @@ class Automaton2DController(AutomatonController):
         return filename
 
     def draw_next_iteration(self):
-        self.clear_canvas()
         self.yield_next_data_frame()
+        self.clear_canvas()
         self.app.view.draw_data_frame(self.data_frame)
         self.update_alive_cells_label()
-        # self.cell_automaton.print_rows(self.rows)
 
     def restart_auto_iterations_clock(self):
         self.stop_iterations()
@@ -221,7 +215,7 @@ class Automaton2DController(AutomatonController):
             else:
                 cell_color = clicked_cell.get_color()
 
-            self.app.view.update_cell(cell_row, cell_index, create_color(cell_color))
+            self.app.view.update_cell(cell_row, cell_index, cell_color)
             self.cell_automaton.update_cell(cell_row, cell_index, clicked_cell)
             self.fetch_current_state()
 
@@ -239,9 +233,10 @@ class Automaton2DController(AutomatonController):
         self.app.view.clear_button.bind(on_press=partial(self.clear_state_controller))
 
     def clear_state_controller(self, instance):
-       self.clear_ca_state_and_canvas()
+        self.clear_ca_state_and_canvas()
 
     def clear_ca_state_and_canvas(self):
         self.cell_automaton.set_to_empty_state()
         self.draw_current_state()
+
 

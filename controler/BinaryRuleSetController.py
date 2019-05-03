@@ -1,9 +1,6 @@
 from functools import partial
 
-from kivy.core.window import Window
-
 from controler.AutomatonController import AutomatonController
-from controler.BaseController import generate_empty_2d_list_of_list, create_color
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
 from model.Cells.CellFactory import CellFactory
 from model.RuleSets.BinaryRuleSet import BinaryRuleSet
@@ -129,7 +126,7 @@ class BinaryRuleSetController(AutomatonController):
                 clicked_cell = current_initial_state[cell_index]
                 cell_factory = CellFactory(self.rule_set.get_cell_type())
                 new_cell = cell_factory.create_cell_with_values(int(not clicked_cell.get_state()))
-                self.app.view.update_cell(cell_row, cell_index, create_color(new_cell.get_color()))
+                self.app.view.update_cell(cell_row, cell_index, new_cell.get_color())
                 self.cell_automaton.update_cell(cell_index, new_cell)
                 self.fetch_current_initial_state()
 

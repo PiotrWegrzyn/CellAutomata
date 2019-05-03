@@ -1,4 +1,5 @@
 import random
+from concurrent.futures.thread import ThreadPoolExecutor
 from multiprocessing.pool import ThreadPool
 from contextlib import closing
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
@@ -62,9 +63,12 @@ class CellAutomaton2D(CellAutomaton1D):
                + "Rows: " + self.rows.__str__()
 
     def _set_cells(self):
-        processes = 8
-        with closing(ThreadPool(processes)) as pool:
-            pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.rows)])
+        # processes = 8
+        # with closing(ThreadPool(processes)) as pool:
+        #     pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.rows)])
+        # pool = ThreadPoolExecutor(max_workers=8)
+        for cell_row in range(0, self.rows):
+            self.set_cells_in_row(cell_row)
         self.update_alive_cells()
 
     def set_cells_in_row(self, cell_row):

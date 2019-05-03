@@ -3,6 +3,7 @@ import random
 from model.Cells.CellFactory import CellFactory
 from model.Cells.CellFactory import CellFactory
 from model.RuleSets.RuleSet import RuleSet
+import copy
 
 
 def generate_empty_2d_list_of_list(size):
@@ -62,7 +63,7 @@ class CellAutomaton1D:
         return empty_state
 
     def set_to_initial_state(self):
-        self.current_state = self.initial_state
+        self.current_state = copy.deepcopy(self.initial_state)
 
     def get_current_state(self):
         return self.current_state
@@ -152,7 +153,9 @@ class CellAutomaton1D:
         return self.percentage_of_alive_cells
 
     def update_cell(self, cell_index, new_cell):
-        self.initial_state[cell_index] = new_cell
+        # todo refactor this. No need to deepcopy always.
+        self.initial_state[cell_index] = copy.deepcopy(new_cell)
+        self.current_state[cell_index] = copy.deepcopy(new_cell)
 
     def set_to_empty_state(self):
         self.current_state = self.create_empty_state()

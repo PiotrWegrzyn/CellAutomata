@@ -13,10 +13,6 @@ def generate_empty_2d_list_of_list(size):
     return main_list
 
 
-def create_color(rgb):
-    return Color(rgb[0], rgb[1], rgb[2])
-
-
 class BaseController:
     modes = {}
 

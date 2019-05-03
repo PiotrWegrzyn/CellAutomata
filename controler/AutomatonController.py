@@ -164,8 +164,6 @@ class AutomatonController(BaseController):
         self.app.view.draw_data_frame(self.data_frame)
         self.update_alive_cells_label()
 
-        # self.cell_automaton.print_iterations(self.iterations)
-
     def get_y_dimension_size(self):
         pass
 

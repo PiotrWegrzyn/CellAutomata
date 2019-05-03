@@ -22,9 +22,10 @@ class CrystalGrainCell(Cell):
     def get_color_representation(self):
         if self.state.grain_id is 0:
             return [1, 1, 1]
+        elif self.is_recrystallized():
+            return [0, 0, 0]
         else:
-            color_table = self.state_to_color()
-            return color_table  # [1, 0, 0]
+            return self.state_to_color()
 
     @staticmethod
     def get_dead_state():
@@ -45,8 +46,11 @@ class CrystalGrainCell(Cell):
         CrystalGrainCell.alive_states.append(CrystalGrainCell.State(grain_id=new_grain_id))
         return new_grain_id
 
-    def recristalize(self):
-        self.state.recristalize()
+    def recrystallize(self):
+        self.state.recrystallize()
+
+    def is_recrystallized(self):
+        return self.state.is_recrystallized
 
     def state_to_color(self):
         float_s = self.state.grain_id * 1.0
@@ -64,11 +68,11 @@ class CrystalGrainCell(Cell):
             self.state = self.get_dead_state()
 
     class State:
-        def __init__(self, grain_id, dislocation=0, is_recristalized=False, ):
+        def __init__(self, grain_id, energy=0, is_recrystallized=False, ):
             self.grain_id = grain_id
-            self.dislocation = dislocation
-            self.is_recristalized = is_recristalized
+            self.energy = energy
+            self.is_recrystallized = is_recrystallized
 
-        def recristalize(self):
-            self.is_recristalized = True
+        def recrystallize(self):
+            self.is_recrystallized = True
 

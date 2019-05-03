@@ -74,9 +74,6 @@ class BaseController:
         pass
 
     def on_touch_down(self, touch):
-        # todo remove print on release
-        print(self.app.view)
-        print(touch.y, touch.x)
         pass
 
     def bind_buttons(self):

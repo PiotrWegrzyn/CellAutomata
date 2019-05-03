@@ -10,6 +10,8 @@ class RuleSet:
     cell_type = Cell
     required_dimension = None
     allow_dead_cells = True
+    initial_alive_cells = 0
+    initial_iteration_speed = 1
 
     def __init__(self):
         self.cell_factory = CellFactory(self.get_cell_type())

@@ -7,6 +7,8 @@ from model.RuleSets.RuleSet import RuleSet
 class NucleationRuleSet(RuleSet):
     cell_type = CrystalGrainCell
     required_dimension = 2
+    initial_alive_cells = 0.01
+    initial_iteration_speed = 2
 
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]

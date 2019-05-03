@@ -1,9 +1,7 @@
 import datetime
-from ast import literal_eval
 from functools import partial
-
+from ast import literal_eval
 from kivy.clock import Clock
-
 from controler.AutomatonController import AutomatonController
 from controler.BaseController import generate_empty_2d_list_of_list
 from model.Cells.CellFactory import CellFactory
@@ -12,7 +10,7 @@ from model.Cells.CellFactory import CellFactory
 class Automaton2DController(AutomatonController):
 
     def __init__(self, app, cell_size=9, cell_offset=1):
-        self.iteration_speed = 8
+        self.iteration_speed = self.rule_set.initial_iteration_speed
         super().__init__(app, cell_size, cell_offset)
         self.pattern_folder = "./patterns/"
         self.app.view.draw_btn.text = "Next\nIteration"     # todo move to view
@@ -34,7 +32,7 @@ class Automaton2DController(AutomatonController):
             columns=self.get_view_max_columns(),
             rows=self.get_view_max_rows(),
             rule_set=self.rule_set,
-            p_of_alive=0.1
+            p_of_alive=self.rule_set.initial_alive_cells
         )
 
     def get_rows(self):
@@ -116,7 +114,6 @@ class Automaton2DController(AutomatonController):
         self.app.view.slower_btn.bind(on_press=partial(self.slower_btn_controller))
 
     def load_file_controller(self, btn_instance):
-        print(self.pattern_folder + btn_instance.text)
         with open(self.pattern_folder + btn_instance.text) as f:
             raw_saved_state = [list(literal_eval(line)) for line in f]
 
@@ -199,7 +196,6 @@ class Automaton2DController(AutomatonController):
         self.app.view.speed_label.text = "Speed:" + self.iteration_speed.__str__() + " fps"
 
     def on_touch_down(self, touch):
-        print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
         self.set_clicked_cell(
             cell_row=self._get_graphic_cell_row_from_pos(touch.y),
             cell_index=self._get_graphic_cell_column_from_pos(touch.x)

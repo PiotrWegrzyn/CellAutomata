@@ -7,6 +7,7 @@ from model.RuleSets.RuleSet import RuleSet
 class BinaryRuleSet(RuleSet):
     cell_type = BinaryCell
     required_dimension = 1
+    initial_alive_cells = 0.06
 
     def __init__(self, rule_base10):
         super().__init__()

@@ -8,6 +8,8 @@ from model.RuleSets.RuleSet import RuleSet
 class GameOfLifeRuleSet(RuleSet):
     cell_type = BinaryCell
     required_dimension = 2
+    initial_alive_cells = 0.2
+    initial_iteration_speed = 8
 
     # Game Of Life code: "B3/23S"
     # Dot Life: "B3/S023"

@@ -42,7 +42,7 @@ class AutomatonController(BaseController):
         self.set_cell_automaton(
             columns=self.get_view_max_columns(),
             rule_set=self.rule_set(90),
-            p_of_alive=0.2
+            p_of_alive=self.rule_set.initial_alive_cells
         )
 
     def set_cell_automaton(self, columns=None, rows=None, rule_set=None, p_of_alive=None, initial_state=None):
@@ -137,7 +137,6 @@ class AutomatonController(BaseController):
         self.data_frame = generate_empty_2d_list_of_list(size=self.get_y_dimension_size())
 
     def on_touch_down(self, touch):
-        print(self._get_graphic_cell_row_from_pos(touch.y), self._get_graphic_cell_column_from_pos(touch.x))
         self.set_clicked_cell(
             cell_row=self._get_graphic_cell_row_from_pos(touch.y),
             cell_index=self._get_graphic_cell_column_from_pos(touch.x)

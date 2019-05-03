@@ -1,6 +1,5 @@
 import random
 
-from model.Cells.BinaryCell import BinaryCell
 from model.Cells.CrystalGrainCell import CrystalGrainCell
 from model.RuleSets.RuleSet import RuleSet
 
@@ -12,11 +11,12 @@ class NucleationRuleSet(RuleSet):
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
         if judged_cell.is_dead():
-            previous_neighbours_values = self.get_previous_neighbours_values(previous_state, cell_row, cell_column)
-            previous_grains_type_count = self.get_grain_type_count(previous_neighbours_values)
+            previous_neighbours_states = self.get_previous_neighbours_values(previous_state, cell_row, cell_column)
+            previous_neighbours_grain_ids = [state.grain_id for state in previous_neighbours_states]
+            previous_grains_type_count = self.get_grain_type_count(previous_neighbours_grain_ids)
             try:
                 most_common_grain_id = self.get_most_common_grain_id(previous_grains_type_count)
-                current_state[cell_row][cell_column].state = most_common_grain_id
+                current_state[cell_row][cell_column].state.grain_id = most_common_grain_id
             except ValueError:
                 self.no_grains_surrounding()
 
@@ -71,7 +71,7 @@ class NucleationRuleSet(RuleSet):
                 x = random.randrange(0, rows)
                 y = random.randrange(0, columns)
                 if initial_state[x][y].is_dead():
-                    initial_state[x][y].state = CrystalGrainCell.get_new_grain_id()
+                    initial_state[x][y].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
                     break
 
     def _prepare_initial_dead_cells(self, rows, columns):

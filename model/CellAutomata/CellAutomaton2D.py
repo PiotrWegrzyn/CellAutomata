@@ -32,7 +32,10 @@ class CellAutomaton2D(CellAutomaton1D):
     def _move_current_state_to_previous_state(self):
         for row in range(0, self.rows):
             for col in range(0, self.columns):
-                self.previous_state[row][col].state = self.current_state[row][col].state
+                try:
+                    self.previous_state[row][col].state.__dict__.update(self.current_state[row][col].state.__dict__)
+                except AttributeError:
+                    self.previous_state[row][col].state = self.current_state[row][col].state
 
     def _apply_rule_to_cell(self, cell_row, cell_index):
         self.rule_set.apply(self.previous_state, self.current_state, cell_row, cell_index)

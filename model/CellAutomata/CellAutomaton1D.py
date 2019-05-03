@@ -40,8 +40,6 @@ class CellAutomaton1D:
     def _set_cells(self):
         for cell_index in range(0, self.columns):
             self.current_state[cell_index].state = self.rule_set.apply(self.previous_state, cell_index)
-            # self._append_cell(cell_index)
-            # self._apply_rule_to_cell(cell_index)
 
     def _set_rule_set(self, rule_set):
         if not isinstance(rule_set, RuleSet):
@@ -49,7 +47,6 @@ class CellAutomaton1D:
         self.rule_set = rule_set
 
     def create_random_initial_state(self):
-        self._set_number_of_alive_cells()
         return self.rule_set.get_initial_random_state(
             number_of_alive_cells=self._number_of_alive_cells,
             columns=self.columns
@@ -139,6 +136,7 @@ class CellAutomaton1D:
 
     def change_columns(self, columns):
         self._set_columns(columns)
+        self._set_number_of_alive_cells()
         self._fit_initial_state_to_size()
         self.set_to_initial_state()
 

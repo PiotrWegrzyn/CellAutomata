@@ -29,15 +29,10 @@ class NucleationController(Automaton2DController):
         self.change_rule_set_to_recrystallization()
 
     def draw_next_iteration(self):
-        old_df = copy.deepcopy(self.data_frame)
-        if isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
-            self.cell_automaton.rule_set.next_iteration()
+        previous_data_frame = copy.deepcopy(self.data_frame)
         super().draw_next_iteration()
-        if old_df == self.data_frame:
-            if isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
-                self.stop_iterations()
-            if isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
-                self.change_rule_set_to_recrystallization()
+        if previous_data_frame == self.data_frame:
+            self.handle_no_change_in_data_frame()
 
     def change_rule_set_to_recrystallization(self):
         self.rule_set = RecrystallizationRuleSet(self.cell_automaton.get_current_state())
@@ -45,5 +40,19 @@ class NucleationController(Automaton2DController):
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()
         )
+
+    def change_rule_set_to_nucleation(self):
+        self.rule_set = NucleationRuleSet()
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )
+
+    def handle_no_change_in_data_frame(self):
+        if isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
+            self.stop_iterations()
+        if isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
+            self.change_rule_set_to_recrystallization()
+
 
 

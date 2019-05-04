@@ -23,7 +23,7 @@ class CellAutomaton2D(CellAutomaton1D):
             raise ValueError
         self.rows = rows
 
-    def _move_current_state_to_previous_state(self):
+    def _copy_current_state_to_previous_state(self):
         for row in range(0, self.rows):
             for col in range(0, self.columns):
                 try:
@@ -56,10 +56,6 @@ class CellAutomaton2D(CellAutomaton1D):
                + "Rows: " + self.rows.__str__()
 
     def _set_cells(self):
-        # processes = 8
-        # with closing(ThreadPool(processes)) as pool:
-        #     pool.map(self.set_cells_in_row, [cell_row for cell_row in range(0, self.rows)])
-        # pool = ThreadPoolExecutor(max_workers=8)
         for cell_row in range(0, self.rows):
             self.set_cells_in_row(cell_row)
         self.update_alive_cells()
@@ -67,7 +63,6 @@ class CellAutomaton2D(CellAutomaton1D):
     def set_cells_in_row(self, cell_row):
         for cell_index in range(0, self.columns):
             self._apply_rule_to_cell(cell_row, cell_index)
-            # self._append_cell(cell_row, cell_index)
 
     def update_alive_cells(self):
         alive_sum = 0

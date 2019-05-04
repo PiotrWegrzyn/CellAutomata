@@ -22,8 +22,9 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         self.calculate_energy_pool()
         self.average_energy = self.energy_pool / self.amount_of_cells
 
-    def next_iteration(self):
+    def apply_pre_iteration(self, previous_state, current_state):
         self.calculate_energy_pool()
+        self.distribute_energy()
 
     def calculate_energy_pool(self):
         # ro = A/b + (1- (A/B))e ^ (-Bt)
@@ -82,6 +83,9 @@ class RecrystallizationRuleSet(NucleationRuleSet):
             if cell_in_prev.state.energy < state.energy and not state.is_recrystallized:
                 return False
         return True
+
+    def distribute_energy(self):
+        pass
 
 
 

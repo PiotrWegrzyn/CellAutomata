@@ -37,3 +37,9 @@ class RuleSet:
     def get_dead_cell(self):
         return self.cell_type.get_dead_state()
 
+    def apply_pre_iteration(self, previous_state, current_state):
+        pass
+
+    def apply_post_iteration(self, previous_state, current_state):
+        pass
+

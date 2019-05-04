@@ -27,13 +27,14 @@ class CellAutomaton1D:
         self.set_to_initial_state()
 
     def calculate_next_iteration(self):
-        self._move_current_state_to_previous_state()
-        # self._reset_current_state()
+        self._copy_current_state_to_previous_state()
+        self.apply_pre_iteration()
         self._set_cells()
+        self.apply_post_iteration()
 
-    def _move_current_state_to_previous_state(self):
+    def _copy_current_state_to_previous_state(self):
         for col in range(0, self.columns):
-            self.previous_state[col].state = self.current_state[col].state
+            self.previous_state[col].state = copy.deepcopy(self.current_state[col].state)
 
     def _set_cells(self):
         for cell_index in range(0, self.columns):
@@ -153,3 +154,11 @@ class CellAutomaton1D:
 
     def set_to_empty_state(self):
         self.current_state = self.create_empty_state()
+
+    def apply_pre_iteration(self):
+        self.rule_set.apply_pre_iteration(self.previous_state, self.current_state)
+
+    def apply_post_iteration(self):
+        self.rule_set.apply_post_iteration(self.previous_state,self.current_state)
+
+

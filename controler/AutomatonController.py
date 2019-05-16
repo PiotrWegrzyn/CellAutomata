@@ -127,11 +127,11 @@ class AutomatonController(BaseController):
         self.update_alive_cells_label()
 
     def update_columns_label(self):
-        self.app.view.columns_label.text = "Columns" + self.cell_automaton.get_columns().__str__()
+        self.app.view.columns_label.text = "Columns: " + self.cell_automaton.get_columns().__str__()
 
     def update_alive_cells_label(self):
         self.app.view.alive_cells_label.text = \
-            "Alive cells:\n"+"{:.1f}%".format(self.cell_automaton.get_percent_of_alive_cells()*100)
+            "Alive "+"{:.1f}%".format(self.cell_automaton.get_percent_of_alive_cells()*100)
 
     def set_empty_data_frame(self):
         self.data_frame = generate_empty_2d_list_of_list(size=self.get_y_dimension_size())

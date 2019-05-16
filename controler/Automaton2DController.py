@@ -138,6 +138,7 @@ class Automaton2DController(AutomatonController):
     def save_btn_controller(self, btn_instance):
         self.cell_automaton.print_iterations(1)
         self.save_current_state_to_file()
+        self.app.view.create_load_file_buttons()
 
     def play_btn_controller(self, btn_instance):
         self.restart_auto_iterations_clock()
@@ -232,6 +233,7 @@ class Automaton2DController(AutomatonController):
 
     def clear_state_controller(self, instance):
         self.clear_ca_state_and_canvas()
+        self.update_alive_cells_label()
 
     def clear_ca_state_and_canvas(self):
         self.cell_automaton.set_to_empty_state()

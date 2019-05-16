@@ -61,13 +61,10 @@ class NucleationRuleSet(RuleSet):
         return initial_state
 
     def _prepare_initial_alive_cells(self, initial_state, number_of_alive_cells, rows, columns):
-        for i in range(0, number_of_alive_cells):
-            while True:
-                x = random.randrange(0, rows)
-                y = random.randrange(0, columns)
-                if initial_state[x][y].is_dead():
-                    initial_state[x][y].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
-                    break
+        if self.initial_mode is "random":
+            self._prepare_random_alive_cells(initial_state, number_of_alive_cells, rows, columns)
+        elif self.initial_mode is "equal_spread":
+            self._prepare_equaly_spread_alive_cells(initial_state, rows, columns)
 
     def _prepare_initial_dead_cells(self, rows, columns):
         clear_state = []
@@ -80,4 +77,21 @@ class NucleationRuleSet(RuleSet):
 
     def no_grains_surrounding(self):
         pass
+
+    def _prepare_random_alive_cells(self, initial_state, number_of_alive_cells, rows, columns):
+        for i in range(0, number_of_alive_cells):
+            while True:
+                x = random.randrange(0, rows)
+                y = random.randrange(0, columns)
+                if initial_state[x][y].is_dead():
+                    initial_state[x][y].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
+                    break
+
+    def _prepare_equaly_spread_alive_cells(self, initial_state, rows, columns):
+        for row in range(0, rows):
+            if row % 3 is 0:
+                for column in range(0, columns):
+                    if column % 3 is 0:
+                        initial_state[row][column].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
+
 

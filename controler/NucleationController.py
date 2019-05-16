@@ -21,6 +21,7 @@ class NucleationController(Automaton2DController):
     def bind_buttons(self):
         super().bind_buttons()
         self.bind_recrystallize_button()
+        self.bind_periodic_checkbox()
 
     def bind_recrystallize_button(self):
         self.app.view.recrystallize_button.bind(on_press=partial(self.recrystallize_button_controller))
@@ -42,17 +43,34 @@ class NucleationController(Automaton2DController):
         )
 
     def change_rule_set_to_nucleation(self):
-        self.rule_set = NucleationRuleSet()
+        self.rule_set = NucleationRuleSet(self.rule_set.initial_mode, self.rule_set.is_periodic)
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()
         )
 
     def handle_no_change_in_data_frame(self):
-        if isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
-            self.stop_iterations()
-        if isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
-            self.change_rule_set_to_recrystallization()
+        if self.cell_automaton.get_percent_of_alive_cells() > 0:
+            if isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
+                self.stop_iterations()
+            if isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
+                self.change_rule_set_to_recrystallization()
 
+    def clear_state_controller(self, instance):
+        super(NucleationController, self).clear_state_controller(instance)
+        self.change_rule_set_to_nucleation()
 
+    def bind_periodic_checkbox(self):
+        self.app.view.periodic_checkbox.bind(active=partial(self.toggle_periodic_controller))
 
+    def toggle_periodic_controller(self, checkbox, value):
+        self.rule_set = NucleationRuleSet(
+            is_periodic=value,
+        )
+        self.set_cell_automaton(
+            rule_set=self.rule_set
+        )
+        self.draw_current_state()
+
+    # def bind_rule_input(self):
+    #     self.app.view.mode_input.bind(on_text_validate=partial(self.rule_input_controller))

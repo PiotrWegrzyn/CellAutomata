@@ -21,8 +21,7 @@ class GameOfLifeView(DrawingView):
         self.create_rows_elements()
         self.create_alive_cells_elements()
         self.create_load_file_buttons()
-        self.create_load_btn()
-        self.create_save_btn()
+        self.create_load_save_elements()
         self.create_speed_elements()
         self.create_start_stop_elements()
         self.create_reverse_colors_items()
@@ -39,8 +38,7 @@ class GameOfLifeView(DrawingView):
         self.add_columns_elements_to_menu()
         self.add_row_elements_to_menu()
         self.add_alive_cells_elements_to_menu()
-        self.add_save_current_state_btn()
-        self.add_load_state_from_file()
+        self.add_load_save_elements()
         self.add_reverse_colors_items()
 
     def add_columns_elements_to_menu(self):
@@ -208,8 +206,8 @@ class GameOfLifeView(DrawingView):
 
     def create_save_btn(self):
         self.save_btn = kb.Button(
-            text="Save\nstate",
-            size_hint=(1, 0.1),
+            text="Save",
+            size_hint=(1, 1),
         )
 
     def add_save_current_state_btn(self):
@@ -217,12 +215,28 @@ class GameOfLifeView(DrawingView):
 
     def create_load_btn(self):
         self.load_btn = kb.Button(
-            text="Load\nstate",
-            size_hint=(1, 0.1)
+            text="Load",
+            size_hint=(1, 1),
         )
 
     def add_load_state_from_file(self):
         self.menu.add_widget(self.load_btn)
+
+    def create_load_save_elements(self):
+        self.create_load_btn()
+        self.create_save_btn()
+        self.create_load_save_container()
+
+    def add_load_save_elements(self):
+        self.menu.add_widget(self.load_save_containter)
+
+    def create_load_save_container(self):
+        self.load_save_containter = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.load_save_containter.add_widget(self.load_btn)
+        self.load_save_containter.add_widget(self.save_btn)
 
     def create_rule_text_box (self):
         self.rule_input = TextInput(text="B3/S23", size_hint=[1, 0.1], multiline=False)

@@ -22,7 +22,7 @@ class CellAutomatonApp(App):
 
     def __init__(self):
         super(CellAutomatonApp, self).__init__()
-        Window.clearcolor = (1, 1, 1, 1)
+        Window.clearcolor = (0.2, 0.2, 0.2, 1)
         Window.size = (1000, 700)
 
     def build(self):

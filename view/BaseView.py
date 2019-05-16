@@ -1,9 +1,15 @@
 import kivy
 import kivy.uix.button as kb
+from kivy.properties import ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.widget import Widget
-
+from kivy.lang import Builder
 kivy.require('1.9.0')
+
+Builder.load_file('view/menu.kv')
+
+class Menu(BoxLayout):
+    color = ListProperty()
 
 
 class BaseView(BoxLayout):
@@ -11,7 +17,8 @@ class BaseView(BoxLayout):
         super().__init__(**kwargs)
         self.menu_width = menu_width
         self.modes = modes
-        self.menu = BoxLayout(size_hint=(None, 1), width=menu_width, orientation='vertical')
+        self.menu = Menu(size_hint=(None, 1), width=menu_width, orientation='vertical')
+        self.menu.color = [1, 1, 1, 1]
         self.add_widget(self.menu)
 
         self.grid = Widget()

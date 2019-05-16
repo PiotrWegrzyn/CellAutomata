@@ -1,6 +1,7 @@
 import random
 
 from model.Cells.CrystalGrainCell import CrystalGrainCell
+from model.Neighbourhoods.Moore import Moore
 from model.RuleSets.RuleSet import RuleSet
 
 
@@ -9,6 +10,11 @@ class NucleationRuleSet(RuleSet):
     required_dimension = 2
     initial_alive_cells = 0.01
     initial_iteration_speed = 2
+
+    def __init__(self, initial_mode="random", is_periodic=True):
+        super(NucleationRuleSet, self).__init__()
+        self.is_periodic = is_periodic
+        self.initial_mode = initial_mode
 
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
@@ -23,21 +29,8 @@ class NucleationRuleSet(RuleSet):
                 self.no_grains_surrounding()
 
     def get_previous_neighbours_values(self, previous_state, cell_row, cell_column):
-        # todo refactor this *somehow*
-        rows = len(previous_state)
-        columns = len(previous_state[0])
-        return [
-            previous_state[(cell_row - 1)][cell_column - 1].get_state(),
-            previous_state[(cell_row - 1)][cell_column].get_state(),
-            previous_state[(cell_row - 1)][(cell_column + 1) % columns].get_state(),
-
-            previous_state[cell_row][cell_column - 1].get_state(),
-            previous_state[cell_row][(cell_column + 1) % columns].get_state(),
-
-            previous_state[(cell_row + 1) % rows][cell_column - 1].get_state(),
-            previous_state[(cell_row + 1) % rows][cell_column].get_state(),
-            previous_state[(cell_row + 1) % rows][(cell_column + 1) % columns].get_state()
-        ]
+        prev_neighbours_states = Moore(previous_state, cell_row, cell_column, self.is_periodic).get_prev_neighbours_states()
+        return prev_neighbours_states
 
     @staticmethod
     def get_required_dimension():

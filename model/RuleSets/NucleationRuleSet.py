@@ -55,16 +55,18 @@ class NucleationRuleSet(RuleSet):
     def get_most_common_grain_id(self, previous_grains_type_count):
         return max(previous_grains_type_count, key=lambda key: previous_grains_type_count[key])
 
-    def get_initial_random_state(self, number_of_alive_cells, columns, rows=None):
+    def get_initial_state(self, number_of_alive_cells, columns, rows=None):
         initial_state = self._prepare_initial_dead_cells(rows, columns)
-        self._prepare_initial_alive_cells(initial_state, number_of_alive_cells, rows, columns)
+        self._prepare_initial_alive_cells(initial_state, number_of_alive_cells)
         return initial_state
 
-    def _prepare_initial_alive_cells(self, initial_state, number_of_alive_cells, rows, columns):
+    def _prepare_initial_alive_cells(self, initial_state, number_of_alive_cells):
         if self.initial_mode is "random":
-            self._prepare_random_alive_cells(initial_state, number_of_alive_cells, rows, columns)
+            self._prepare_random_alive_cells(initial_state, number_of_alive_cells)
         elif self.initial_mode is "equal_spread":
-            self._prepare_equaly_spread_alive_cells(initial_state, rows, columns)
+            self._prepare_equaly_spread_alive_cells(initial_state)
+        elif self.initial_mode is "radius":
+            self._prepare_radius_spread_alive_cells(initial_state,number_of_alive_cells)
 
     def _prepare_initial_dead_cells(self, rows, columns):
         clear_state = []
@@ -78,7 +80,11 @@ class NucleationRuleSet(RuleSet):
     def no_grains_surrounding(self):
         pass
 
-    def _prepare_random_alive_cells(self, initial_state, number_of_alive_cells, rows, columns):
+    def _prepare_random_alive_cells(self, initial_state, number_of_alive_cells):
+        rows = len(initial_state)
+        columns = len(initial_state[0])
+        if number_of_alive_cells > rows*columns:
+            number_of_alive_cells = rows*columns
         for i in range(0, number_of_alive_cells):
             while True:
                 x = random.randrange(0, rows)
@@ -87,11 +93,46 @@ class NucleationRuleSet(RuleSet):
                     initial_state[x][y].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
                     break
 
-    def _prepare_equaly_spread_alive_cells(self, initial_state, rows, columns):
-        for row in range(0, rows):
-            if row % 3 is 0:
-                for column in range(0, columns):
-                    if column % 3 is 0:
-                        initial_state[row][column].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
+    def _prepare_equaly_spread_alive_cells(self, initial_state, row_offset=3, col_offset=3):
+        rows = len(initial_state)
+        columns = len(initial_state[0])
+
+        for row in range(0, rows, row_offset):
+            for column in range(0, columns, col_offset):
+                initial_state[row][column].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
+
+    def _prepare_radius_spread_alive_cells(self, initial_state, number_of_alive_cells, radius=4):
+        rows = len(initial_state)
+        columns = len(initial_state[0])
+        retries = int(rows*columns*0.01)
+        if number_of_alive_cells > rows*columns:
+            number_of_alive_cells = rows*columns
+        failed_count = 0
+        for cell in range(0, number_of_alive_cells):
+            if failed_count < 10:
+                for i in range(retries):
+                    x = random.randrange(0, rows)
+                    y = random.randrange(0, columns)
+                    if initial_state[x][y].is_dead() and self._no_alive_cells_in_radius(initial_state, x, y, radius):
+                        initial_state[x][y].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
+                        failed_count = 0
+                        break
+            failed_count += 1
+
+    def _no_alive_cells_in_radius(self, state, row, column, radius):
+        rows = len(state)
+        columns = len(state[0])
+        # todo refactor
+        for x in range(row-radius, row+radius):
+            for y in range(column-radius, column+radius):
+                if x is row and y is column:
+                    continue
+                if self.is_in_radius(row, column, radius, x, y):
+                    if state[x% rows][y% columns].is_alive():
+                        return False
+        return True
+
+    def is_in_radius(self, circle_center_row, circle_center_column, radius, cell_row, cell_col):
+        return (cell_row-circle_center_row) ** 2 + (cell_col - circle_center_column) ** 2 <= radius ** 2
 
 

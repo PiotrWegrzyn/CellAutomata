@@ -76,7 +76,7 @@ class GameOfLifeRuleSet(RuleSet):
     def get_required_dimension():
         return GameOfLifeRuleSet.required_dimension
 
-    def get_initial_random_state(self, number_of_alive_cells, columns, rows=None):
+    def get_initial_state(self, number_of_alive_cells, columns, rows=None):
         initial_state = self._prepare_initial_dead_cells(rows, columns)
         self._prepare_initial_alive_cells(initial_state, number_of_alive_cells, rows, columns)
         return initial_state

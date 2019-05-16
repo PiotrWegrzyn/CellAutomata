@@ -12,7 +12,7 @@ class CellAutomaton2D(CellAutomaton1D):
 
     def create_random_initial_state(self):
         self._set_number_of_alive_cells()
-        return self.rule_set.get_initial_random_state(
+        return self.rule_set.get_initial_state(
             number_of_alive_cells=self._number_of_alive_cells,
             columns=self.columns,
             rows=self.rows
@@ -84,3 +84,11 @@ class CellAutomaton2D(CellAutomaton1D):
                 row.append(self.cell_factory.create_dead_cell())
             empty_state.append(row)
         return empty_state
+
+    def count_alive_cells(self):
+        count = 0
+        for row in self.current_state:
+            for cell in row:
+                if cell.is_alive():
+                    count += 1
+        return count

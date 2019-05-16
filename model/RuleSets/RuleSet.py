@@ -23,7 +23,7 @@ class RuleSet:
     def apply(self, previous_state, cell_column):
         pass
 
-    def get_initial_random_state(self, number_of_alive_cells, columns, rows=None):
+    def get_initial_state(self, number_of_alive_cells, columns, rows=None):
         pass
 
     @staticmethod

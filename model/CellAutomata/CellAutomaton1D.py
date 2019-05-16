@@ -46,7 +46,7 @@ class CellAutomaton1D:
         self.rule_set = rule_set
 
     def create_random_initial_state(self):
-        return self.rule_set.get_initial_random_state(
+        return self.rule_set.get_initial_state(
             number_of_alive_cells=self._number_of_alive_cells,
             columns=self.columns
         )
@@ -141,8 +141,8 @@ class CellAutomaton1D:
 
     def change_alive_cells_percentage(self, percentage_of_alive_cells):
         self._set_percent_of_alive_cells(round(percentage_of_alive_cells, 2))
-        self._set_number_of_alive_cells()
         self.reset_to_random_state()
+        self._set_percent_of_alive_cells(round(self.count_alive_cells()/self.cell_count(), 2))
 
     def get_percent_of_alive_cells(self):
         return self.percentage_of_alive_cells
@@ -160,6 +160,13 @@ class CellAutomaton1D:
         self.rule_set.apply_pre_iteration(self.previous_state, self.current_state)
 
     def apply_post_iteration(self):
-        self.rule_set.apply_post_iteration(self.previous_state,self.current_state)
+        self.rule_set.apply_post_iteration(self.previous_state, self.current_state)
+
+    def count_alive_cells(self):
+        count = 0
+        for cell in self.current_state:
+            if cell.is_alive():
+                count += 1
+        return count
 
 

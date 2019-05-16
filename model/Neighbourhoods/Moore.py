@@ -14,21 +14,17 @@ class Moore(NeighborhoodInterface):
             except IndexError:
                 return None   # todo make it not return None
 
-
     def _append_neighbour(self, row_offset, column_offset):
         state = self._get_neighbour_state(row_offset, column_offset)
         if state:
             self.prev_neighbour_states.append(state)
 
     def _set_prev_neighbour_states(self):
-        self._append_neighbour(-1, -1)
-        self._append_neighbour(-1, 0)
-        self._append_neighbour(-1, 1)
-        self._append_neighbour(0, -1)
-        self._append_neighbour(0, 1)
-        self._append_neighbour(1, -1)
-        self._append_neighbour(1, 0)
-        self._append_neighbour(1, 1)
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x is 0 and y is 0:
+                    continue
+                self._append_neighbour(x, y)
 
     def get_prev_neighbours_states(self):
         return self.prev_neighbour_states

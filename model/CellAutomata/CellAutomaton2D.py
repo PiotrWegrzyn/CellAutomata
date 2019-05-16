@@ -68,7 +68,7 @@ class CellAutomaton2D(CellAutomaton1D):
         alive_sum = 0
         for row in self.current_state:
             alive_sum += sum([int(cell.is_alive()) for cell in row])
-        self.set_percent_of_alive_cells(round(alive_sum/self.cell_count(), 2))
+        self._set_percent_of_alive_cells(round(alive_sum / self.cell_count(), 2))
 
     def get_rows(self):
         return self.rows

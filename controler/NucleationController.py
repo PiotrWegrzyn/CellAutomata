@@ -45,14 +45,25 @@ class NucleationController(Automaton2DController):
             self.handle_no_change_in_data_frame()
 
     def change_rule_set_to_recrystallization(self):
-        self.rule_set = RecrystallizationRuleSet(self.cell_automaton.get_current_state())
+        self.rule_set = RecrystallizationRuleSet(
+            current_state=self.cell_automaton.get_current_state(),
+            initial_mode=self.rule_set.initial_mode,
+            is_periodic=self.rule_set.is_periodic,
+            neighbourhood_type=self.rule_set.neighbourhood_type,
+            radius=self.rule_set.radius
+        )
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()
         )
 
     def change_rule_set_to_nucleation(self):
-        self.rule_set = NucleationRuleSet(self.rule_set.initial_mode, self.rule_set.is_periodic)
+        self.rule_set = NucleationRuleSet(
+            initial_mode=self.rule_set.initial_mode,
+            is_periodic=self.rule_set.is_periodic,
+            neighbourhood_type=self.rule_set.neighbourhood_type,
+            radius=self.rule_set.radius
+        )
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()

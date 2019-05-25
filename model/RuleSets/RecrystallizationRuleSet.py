@@ -1,6 +1,7 @@
 import random
 
 from model.Cells.CrystalGrainCell import CrystalGrainCell
+from model.Neighbourhoods.Moore import Moore
 from model.RuleSets.NucleationRuleSet import NucleationRuleSet
 
 
@@ -8,8 +9,13 @@ class RecrystallizationRuleSet(NucleationRuleSet):
     cell_type = CrystalGrainCell
     required_dimension = 2
 
-    def __init__(self, current_state, iteration=0):
-        super().__init__()
+    def __init__(self, current_state, initial_mode='random', is_periodic=True, neighbourhood_type = Moore, radius=4, iteration=0):
+        super().__init__(
+            initial_mode=initial_mode,
+            is_periodic=is_periodic,
+            neighbourhood_type=neighbourhood_type,
+            radius=radius
+        )
         self.iteration = iteration
 
         # constants

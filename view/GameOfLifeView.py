@@ -3,6 +3,7 @@ import kivy.uix.button as kb
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
+from kivy.uix.spinner import Spinner
 from kivy.uix.textinput import TextInput
 
 from view.DrawingView import DrawingView
@@ -27,6 +28,7 @@ class GameOfLifeView(DrawingView):
         self.create_reverse_colors_items()
         self.create_rule_text_box()
         self.create_clear_button()
+        self.create_neighbourhood_elements()
 
     def show_menu(self):
         self.add_rule_text_box()
@@ -51,7 +53,7 @@ class GameOfLifeView(DrawingView):
 
     def add_draw_initial_btn_to_menu(self):
         self.draw_btn = kb.Button(
-            text="Draw\nInitial",
+            text="Draw Initial",
             size_hint=(1, 0.1),
         )
         self.menu.add_widget(self.draw_btn)
@@ -106,7 +108,7 @@ class GameOfLifeView(DrawingView):
 
     def create_alive_cells_elements(self):
         self.alive_cells_label = Label(
-            text="Alive cells:\n",
+            text="Alive cells:",
             # +"{:.1f}%".format(self.controller.get_alive_cell_percentage()*100)
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
@@ -246,7 +248,7 @@ class GameOfLifeView(DrawingView):
 
     def create_reverse_colors_items(self):
         self.reverse_colors_label = Label(
-            text="Reverse\nColors: ",
+            text="Reverse Colors: ",
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
         )
@@ -264,3 +266,22 @@ class GameOfLifeView(DrawingView):
 
     def add_clear_button(self):
         self.menu.add_widget(self.clear_button)
+
+    def create_neighbourhood_elements(self):
+        self.neighbourhood_select = Spinner(
+            # default value shown
+            text_autoupdate=True,
+            values=("Moore", 'VonNeumann', 'Pendagonal', 'HexLeft', 'HexRight', 'HexRandom'),
+            size_hint=(None, 0.2),
+            size=(100, 44),
+            pos_hint={'center_x': .5, 'center_y': .5})
+
+        def show_selected_value(spinner, text):
+            print('The spinner', spinner, 'have text', text)
+
+        self.neighbourhood_select.bind(text=show_selected_value)
+
+    def add_neighbourhood_elements(self):
+        self.menu.add_widget(self.neighbourhood_select)
+
+

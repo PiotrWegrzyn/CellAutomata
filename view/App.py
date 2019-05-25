@@ -23,11 +23,11 @@ class CellAutomatonApp(App):
     def __init__(self):
         super(CellAutomatonApp, self).__init__()
         Window.clearcolor = (0.2, 0.2, 0.2, 1)
-        Window.size = (1000, 700)
+        Window.size = (1000, 750)
 
     def build(self):
         self.root = BoxLayout()
-        self.view = BaseView(MainController.modes, 100)
+        self.view = BaseView(MainController.modes, 150)
         self.set_view(self.view)
         self.controller = MainController(self)
 

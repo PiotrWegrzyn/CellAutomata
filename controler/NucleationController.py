@@ -17,6 +17,10 @@ class NucleationController(Automaton2DController):
         self.app.view.sub_alive_cells.text = "-1%"
         self.app.view.add_alive_cells.text = "+1%"
 
+    def update_labels(self):
+        super().update_labels()
+        self.update_radius_label()
+
     def set_initial_view(self):
         self.set_view(NucleationView(self.modes, self.get_menu_width()))
 
@@ -25,6 +29,8 @@ class NucleationController(Automaton2DController):
         self.bind_recrystallize_button()
         self.bind_periodic_checkbox()
         self.bind_mode_checkboxes()
+        self.bind_add_radius()
+        self.bind_sub_radius()
 
     def bind_recrystallize_button(self):
         self.app.view.recrystallize_button.bind(on_press=partial(self.recrystallize_button_controller))
@@ -69,7 +75,8 @@ class NucleationController(Automaton2DController):
     def toggle_periodic_controller(self, checkbox, value):
         self.rule_set.is_periodic = not self.rule_set.is_periodic
         self.set_cell_automaton(
-            rule_set=self.rule_set
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
         )
         self.draw_current_state()
 
@@ -113,3 +120,22 @@ class NucleationController(Automaton2DController):
             self.cell_automaton.change_alive_cells_percentage(current_value + delta)
             self.update_alive_cells_label()
             self.draw_current_state()
+
+    def bind_add_radius(self):
+        self.app.view.add_radius.bind(on_press=partial(self.add_radius_controller))
+
+    def bind_sub_radius(self):
+        self.app.view.sub_radius.bind(on_press=partial(self.sub_radius_controller))
+
+    def add_radius_controller(self, instance):
+        self.rule_set.radius += 1
+        self.update_radius_label()
+        print(self.rule_set.radius)
+
+    def sub_radius_controller(self, instance):
+        if self.rule_set.radius - 1 > 0:
+            self.rule_set.radius -= 1
+            self.update_radius_label()
+
+    def update_radius_label(self):
+        self.app.view.radius_label.text = "Radius: " + self.rule_set.radius.__str__()

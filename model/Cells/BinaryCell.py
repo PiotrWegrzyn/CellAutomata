@@ -13,7 +13,7 @@ class BinaryCell(Cell):
 
     def get_color_representation(self):
         if self.state is 0:
-            return [1, 1, 1]
+            return [0.2, 0.2, 0.2]
         else:
             return [1, 0, 0]
 

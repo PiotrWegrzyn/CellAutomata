@@ -5,6 +5,14 @@ from kivy.clock import Clock
 from controler.AutomatonController import AutomatonController
 from controler.BaseController import generate_empty_2d_list_of_list
 from model.Cells.CellFactory import CellFactory
+from model.Neighbourhoods import NeighbourhoodInterface
+from model.Neighbourhoods.Moore import Moore
+from model.Neighbourhoods.VonNeumann import VonNeumann
+from model.Neighbourhoods.Pentagonal import Pentagonal
+from model.Neighbourhoods.HexagoanlRight import HexagonalRight
+from model.Neighbourhoods.HexagonalLeft import HexagonalLeft
+from model.Neighbourhoods.HexagonalRandom import HexagonalRandom
+from model.Neighbourhoods.Radius import Radius
 
 
 class Automaton2DController(AutomatonController):
@@ -13,7 +21,7 @@ class Automaton2DController(AutomatonController):
         self.iteration_speed = self.rule_set.initial_iteration_speed
         super().__init__(app, cell_size, cell_offset)
         self.pattern_folder = "./patterns/"
-        self.app.view.draw_btn.text = "Next\nIteration"     # todo move to view
+        self.app.view.draw_btn.text = "Next Iteration"     # todo move to view
         self.app.view.grid.on_touch_down = self.on_touch_down
         self.draw_current_state()
 
@@ -26,6 +34,7 @@ class Automaton2DController(AutomatonController):
         self.bind_speed_elements()
         self.bind_start_stop_elements()
         self.bind_clear_button()
+        self.bind_neighbourhood_select()
 
     def set_cell_automaton_to_starting_state(self):
         self.set_cell_automaton(
@@ -239,4 +248,15 @@ class Automaton2DController(AutomatonController):
         self.cell_automaton.set_to_empty_state()
         self.draw_current_state()
 
+    def bind_neighbourhood_select(self):
+        self.app.view.neighbourhood_select.bind(text=self.neighbourhood_select_controller)
 
+    def neighbourhood_select_controller(self, spinner, text):
+        self.change_neighbourhood(eval(text))
+
+    def change_neighbourhood(self, neighbourhood):
+        self.rule_set.neighbourhood_type = neighbourhood
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )

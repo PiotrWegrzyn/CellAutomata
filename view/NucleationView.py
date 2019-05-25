@@ -3,7 +3,7 @@ import kivy.uix.button as kb
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+from kivy.uix.spinner import Spinner
 
 from view.DrawingView import DrawingView
 from view.GameOfLifeView import GameOfLifeView
@@ -29,6 +29,8 @@ class NucleationView(GameOfLifeView):
         self.create_recrystallize_button()
         self.create_periodic_checkbox()
         self.create_mode_radio_elements()
+        self.create_neighbourhood_elements()
+        self.create_radius_elements()
 
     def show_menu(self):
         super(DrawingView, self).show_menu()
@@ -43,6 +45,8 @@ class NucleationView(GameOfLifeView):
         self.add_alive_cells_elements_to_menu()
         self.add_periodic_checkbox()
         self.add_mode_radio_elements()
+        self.add_neighbourhood_elements()
+        self.add_radius_elements()
 
     def create_load_file_buttons(self):
         self.file_buttons = []
@@ -90,4 +94,41 @@ class NucleationView(GameOfLifeView):
 
     def add_mode_radio_elements(self):
         self.menu.add_widget(self.mode_radio_continer)
+
+    def create_neighbourhood_elements(self):
+        self.neighbourhood_select = Spinner(
+            text_autoupdate=True,
+            values=("Moore", 'VonNeumann', 'Pentagonal', 'HexagonalLeft', 'HexagonalRight', 'HexagonalRandom', 'Radius'),
+            size_hint=(1, 0.2),
+            pos_hint={'center_x': .5, 'center_y': .5})
+
+    def add_neighbourhood_elements(self):
+        self.menu.add_widget(self.neighbourhood_select)
+
+    def create_radius_elements(self):
+        self.radius_label = Label(
+            text="Radius:",
+            size_hint=(1, 0.1),
+            color=[1, 0, 0, 1]
+        )
+        self.change_radius_btns_containter = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.sub_radius = kb.Button(
+            text='-1',
+            size_hint=(1, 1),
+        )
+        self.change_radius_btns_containter.add_widget(self.sub_radius)
+
+        self.add_radius = kb.Button(
+            text='+1',
+            size_hint=(1, 1),
+        )
+        self.change_radius_btns_containter.add_widget(self.add_radius)
+
+    def add_radius_elements(self):
+        self.menu.add_widget(self.radius_label)
+        self.menu.add_widget(self.change_radius_btns_containter)
+
 

@@ -14,7 +14,7 @@ class BaseController:
 
     def __init__(self, app):
         self.app = app
-        self.menu_item_width = 100
+        self.menu_item_width = 150
         self.set_modes()
         self.setup()
         self.set_initial_view()

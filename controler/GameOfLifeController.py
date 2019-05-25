@@ -29,7 +29,10 @@ class GameOfLifeController(Automaton2DController):
             rule_code=value.text,
             reverse_colors=self.rule_set.reverse_colors
         )
-        self.set_cell_automaton(rule_set=self.rule_set)
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )
         self.clear_canvas()
 
     def bind_reverse_colors(self):
@@ -43,4 +46,7 @@ class GameOfLifeController(Automaton2DController):
             rule_code=self.rule_set.rule_code,
             reverse_colors=value
         )
-        self.set_cell_automaton(rule_set=self.rule_set)
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )

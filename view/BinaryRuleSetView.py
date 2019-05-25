@@ -38,7 +38,7 @@ class BinaryRuleSetView(DrawingView):
 
     def add_draw_initial_btn_to_menu(self):
         self.draw_btn = kb.Button(
-            text="Draw\nInitial",
+            text="Draw Initial",
             size_hint=(1, 0.1),
         )
         self.menu.add_widget(self.draw_btn)
@@ -120,8 +120,7 @@ class BinaryRuleSetView(DrawingView):
 
     def create_alive_cells_elements(self):
         self.alive_cells_label = Label(
-            text="Alive cells:\n",
-            # +"{:.1f}%".format(self.controller.get_alive_cell_percentage()*100)
+            text="Alive cells:",
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
         )

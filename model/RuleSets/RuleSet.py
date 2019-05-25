@@ -13,9 +13,10 @@ class RuleSet:
     initial_alive_cells = 0
     initial_iteration_speed = 1
 
-    def __init__(self):
+    def __init__(self, radius=4):
         self.cell_factory = CellFactory(self.get_cell_type())
         self.reverse_colors = False
+        self.radius = radius
 
     def __str__(self):
         return self.__class__.__name__

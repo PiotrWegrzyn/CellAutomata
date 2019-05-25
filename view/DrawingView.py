@@ -34,7 +34,7 @@ class DrawingView(BaseView):
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):
             cell_color = self.data_frame[row][column]
-            if not cell_color == [1, 1, 1]:     # [1,1,1] is white
+            if not cell_color == [0.2, 0.2, 0.2]:     # [1,1,1] is white
                 self._draw_cell(row, column, cell_color)
 
     def _draw_cell(self, row, column, cell_color):

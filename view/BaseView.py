@@ -54,7 +54,7 @@ class BaseView(BoxLayout):
 
     def _create_menu(self):
         self.change_mode_btn = kb.Button(
-            text="Change\nmode",
+            text="Change mode",
             size_hint=(1, 0.1),
         )
 

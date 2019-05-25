@@ -2,6 +2,12 @@ import random
 
 from model.Cells.CrystalGrainCell import CrystalGrainCell
 from model.Neighbourhoods.Moore import Moore
+from model.Neighbourhoods.Radius import Radius
+from model.Neighbourhoods.VonNeumann import VonNeumann
+from model.Neighbourhoods.Pentagonal import Pentagonal
+from model.Neighbourhoods.HexagoanlRight import HexagonalRight
+from model.Neighbourhoods.HexagonalLeft import HexagonalLeft
+from model.Neighbourhoods.HexagonalRandom import HexagonalRandom
 from model.RuleSets.RuleSet import RuleSet
 
 
@@ -11,10 +17,11 @@ class NucleationRuleSet(RuleSet):
     initial_alive_cells = 0.01
     initial_iteration_speed = 2
 
-    def __init__(self, initial_mode="random", is_periodic=True):
-        super(NucleationRuleSet, self).__init__()
+    def __init__(self, initial_mode="random", is_periodic=True, neighbourhood_type=Moore, radius=4):
+        super(NucleationRuleSet, self).__init__(radius)
         self.is_periodic = is_periodic
         self.initial_mode = initial_mode
+        self.neighbourhood_type = neighbourhood_type
 
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
@@ -29,7 +36,9 @@ class NucleationRuleSet(RuleSet):
                 self.no_grains_surrounding()
 
     def get_previous_neighbours_values(self, previous_state, cell_row, cell_column):
-        prev_neighbours_states = Moore(previous_state, cell_row, cell_column, self.is_periodic).get_prev_neighbours_states()
+
+        neighbourhood = self.get_neighbourhood(previous_state, cell_row, cell_column)
+        prev_neighbours_states = neighbourhood.get_prev_neighbours_states()
         return prev_neighbours_states
 
     @staticmethod
@@ -101,7 +110,7 @@ class NucleationRuleSet(RuleSet):
             for column in range(0, columns, col_offset):
                 initial_state[row][column].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
 
-    def _prepare_radius_spread_alive_cells(self, initial_state, number_of_alive_cells, radius=4):
+    def _prepare_radius_spread_alive_cells(self, initial_state, number_of_alive_cells):
         rows = len(initial_state)
         columns = len(initial_state[0])
         retries = int(rows*columns*0.01)
@@ -113,26 +122,36 @@ class NucleationRuleSet(RuleSet):
                 for i in range(retries):
                     x = random.randrange(0, rows)
                     y = random.randrange(0, columns)
-                    if initial_state[x][y].is_dead() and self._no_alive_cells_in_radius(initial_state, x, y, radius):
+                    if initial_state[x][y].is_dead() and self._no_alive_cells_in_radius(initial_state, x, y):
                         initial_state[x][y].state = CrystalGrainCell.State(grain_id=CrystalGrainCell.get_new_grain_id())
                         failed_count = 0
                         break
             failed_count += 1
 
-    def _no_alive_cells_in_radius(self, state, row, column, radius):
+    def _no_alive_cells_in_radius(self, state, row, column):
         rows = len(state)
         columns = len(state[0])
         # todo refactor
-        for x in range(row-radius, row+radius):
-            for y in range(column-radius, column+radius):
+        for x in range(row-self.radius, row+self.radius):
+            for y in range(column-self.radius, column+self.radius):
                 if x is row and y is column:
                     continue
-                if self.is_in_radius(row, column, radius, x, y):
+                if self.is_in_radius(row, column, x, y):
                     if state[x% rows][y% columns].is_alive():
                         return False
         return True
 
-    def is_in_radius(self, circle_center_row, circle_center_column, radius, cell_row, cell_col):
-        return (cell_row-circle_center_row) ** 2 + (cell_col - circle_center_column) ** 2 <= radius ** 2
+    def is_in_radius(self, circle_center_row, circle_center_column, cell_row, cell_col):
+        return (cell_row-circle_center_row) ** 2 + (cell_col - circle_center_column) ** 2 <= self.radius** 2
+
+    def get_neighbourhood_type(self):
+        return self.neighbourhood_type
+
+    def get_neighbourhood(self, previous_state, cell_row, cell_column):
+        NeighbourhoodClass = self.get_neighbourhood_type()
+        if issubclass(NeighbourhoodClass, Radius):
+            return NeighbourhoodClass(previous_state, cell_row, cell_column, self.is_periodic, radius=self.radius)
+        else:
+            return NeighbourhoodClass(previous_state, cell_row, cell_column, self.is_periodic)
 
 

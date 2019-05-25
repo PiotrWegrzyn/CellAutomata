@@ -1,13 +1,13 @@
-from model.Neighbourhoods.NeighbourhoodInterface import NeighborhoodInterface
+from model.Neighbourhoods.NeighbourhoodBase import NeighbourhoodBase
 
 
-class HexagonalRight(NeighborhoodInterface):
+class HexagonalRight(NeighbourhoodBase):
 
-    def _set_prev_neighbour_states(self):
-        self._append_neighbour_state(-1, 0)
-        self._append_neighbour_state(-1, 1)
-        self._append_neighbour_state(0, -1)
-        self._append_neighbour_state(0, 0)
-        self._append_neighbour_state(0, 1)
-        self._append_neighbour_state(1, -1)
-        self._append_neighbour_state(1, 0)
+    def _set_prev_neighbours(self):
+        self._append_neighbour(-1, 0)
+        self._append_neighbour(-1, 1)
+        self._append_neighbour(0, -1)
+        self._append_neighbour(0, 0)
+        self._append_neighbour(0, 1)
+        self._append_neighbour(1, -1)
+        self._append_neighbour(1, 0)

@@ -5,7 +5,7 @@ from kivy.clock import Clock
 from controler.AutomatonController import AutomatonController
 from controler.BaseController import generate_empty_2d_list_of_list
 from model.Cells.CellFactory import CellFactory
-from model.Neighbourhoods import NeighbourhoodInterface
+from model.Neighbourhoods import NeighbourhoodBase
 from model.Neighbourhoods.Moore import Moore
 from model.Neighbourhoods.VonNeumann import VonNeumann
 from model.Neighbourhoods.Pentagonal import Pentagonal

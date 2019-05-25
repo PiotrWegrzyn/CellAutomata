@@ -1,16 +1,16 @@
-from model.Neighbourhoods.NeighbourhoodInterface import NeighborhoodInterface
+from model.Neighbourhoods.NeighbourhoodBase import NeighbourhoodBase
 
 
-class Radius(NeighborhoodInterface):
+class Radius(NeighbourhoodBase):
     def __init__(self, state, row, column, is_periodic, radius):
         self.radius = radius
         super().__init__(state, row, column, is_periodic)
 
-    def _set_prev_neighbour_states(self):
+    def _set_prev_neighbours(self):
         for row_offset in range(-self.radius, self.radius+1):
             for column_offset in range(-self.radius, self.radius + 1):
                 if self.is_in_radius(row_offset, column_offset):
-                    self._append_neighbour_state(row_offset, column_offset)
+                    self._append_neighbour(row_offset, column_offset)
 
     def is_in_radius(self, x_distance_from_center, y_distance_from_center):
         cell = self._get_neighbour_cell(x_distance_from_center, y_distance_from_center)

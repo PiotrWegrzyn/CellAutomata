@@ -1,7 +1,7 @@
-from model.Neighbourhoods.NeighbourhoodInterface import NeighborhoodInterface
+from model.Neighbourhoods.NeighbourhoodBase import NeighbourhoodBase
 
 
-class Moore(NeighborhoodInterface):
+class Moore(NeighbourhoodBase):
     pass
 
 

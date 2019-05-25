@@ -129,20 +129,11 @@ class NucleationRuleSet(RuleSet):
             failed_count += 1
 
     def _no_alive_cells_in_radius(self, state, row, column):
-        rows = len(state)
-        columns = len(state[0])
-        # todo refactor
-        for x in range(row-self.radius, row+self.radius):
-            for y in range(column-self.radius, column+self.radius):
-                if x is row and y is column:
-                    continue
-                if self.is_in_radius(row, column, x, y):
-                    if state[x% rows][y% columns].is_alive():
-                        return False
+        neighbours = Radius(state, row, column, self.is_periodic, self.radius).get_prev_neighbours()
+        for cell in neighbours:
+            if cell.is_alive():
+                return False
         return True
-
-    def is_in_radius(self, circle_center_row, circle_center_column, cell_row, cell_col):
-        return (cell_row-circle_center_row) ** 2 + (cell_col - circle_center_column) ** 2 <= self.radius** 2
 
     def get_neighbourhood_type(self):
         return self.neighbourhood_type

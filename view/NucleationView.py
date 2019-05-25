@@ -37,7 +37,7 @@ class NucleationView(GameOfLifeView):
         self.add_draw_button()
         self.add_start_stop_btns_to_menu()
         self.add_clear_button()
-        self.add_load_save_elements()
+        self.add_neighbourhood_elements()
         self.add_recrystallize_button()
         self.add_speed_elements_to_menu()
         self.add_columns_elements_to_menu()
@@ -45,7 +45,6 @@ class NucleationView(GameOfLifeView):
         self.add_alive_cells_elements_to_menu()
         self.add_periodic_checkbox()
         self.add_mode_radio_elements()
-        self.add_neighbourhood_elements()
         self.add_radius_elements()
 
     def create_load_file_buttons(self):
@@ -81,25 +80,55 @@ class NucleationView(GameOfLifeView):
         self.menu.add_widget(self.periodic_checkbox)
 
     def create_mode_radio_elements(self):
-        self.mode_radio_continer = BoxLayout(
+        self.random_mode_continer = BoxLayout(
             size_hint=(1, 0.1),
             orientation='horizontal'
         )
-        self.random_mode = CheckBox(color=[1, 0, 0, 1], size_hint=[0.33, 1], group="mode", active=True)
-        self.equal_mode= CheckBox(color=[1, 0, 0, 1], size_hint=[0.33, 1], group="mode")
-        self.radius_mode = CheckBox(color=[1, 0, 0, 1], size_hint=[0.33, 1], group="mode")
-        self.mode_radio_continer.add_widget(self.random_mode)
-        self.mode_radio_continer.add_widget(self.equal_mode)
-        self.mode_radio_continer.add_widget(self.radius_mode)
+        self.random_mode_label = Label(
+            text="Random:",
+            size_hint=(0.7, 1),
+            color=[1, 0, 0, 1]
+        )
+        self.random_mode = CheckBox(color=[1, 0, 0, 1], size_hint=[0.3, 1], group="mode", active=True)
+        self.random_mode_continer.add_widget(self.random_mode_label)
+        self.random_mode_continer.add_widget(self.random_mode)
+
+        self.equal_mode_continer = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.equal_mode_label = Label(
+            text="Equal:",
+            size_hint=(0.7, 1),
+            color=[1, 0, 0, 1]
+        )
+        self.equal_mode = CheckBox(color=[1, 0, 0, 1], size_hint=[0.3, 1], group="mode")
+        self.equal_mode_continer.add_widget(self.equal_mode_label)
+        self.equal_mode_continer.add_widget(self.equal_mode)
+
+        self.radius_mode_continer = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.radius_mode_label = Label(
+            text="Radius:",
+            size_hint=(0.7, 1),
+            color=[1, 0, 0, 1]
+        )
+        self.radius_mode = CheckBox(color=[1, 0, 0, 1], size_hint=[0.3, 1], group="mode")
+        self.radius_mode_continer.add_widget(self.radius_mode_label)
+        self.radius_mode_continer.add_widget(self.radius_mode)
 
     def add_mode_radio_elements(self):
-        self.menu.add_widget(self.mode_radio_continer)
+        self.menu.add_widget(self.random_mode_continer)
+        self.menu.add_widget(self.equal_mode_continer)
+        self.menu.add_widget(self.radius_mode_continer)
 
     def create_neighbourhood_elements(self):
         self.neighbourhood_select = Spinner(
             text_autoupdate=True,
             values=("Moore", 'VonNeumann', 'Pentagonal', 'HexagonalLeft', 'HexagonalRight', 'HexagonalRandom', 'Radius'),
-            size_hint=(1, 0.2),
+            size_hint=(1, 0.1),
             pos_hint={'center_x': .5, 'center_y': .5})
 
     def add_neighbourhood_elements(self):

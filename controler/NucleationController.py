@@ -128,9 +128,11 @@ class NucleationController(Automaton2DController):
         self.app.view.sub_radius.bind(on_press=partial(self.sub_radius_controller))
 
     def add_radius_controller(self, instance):
-        self.rule_set.radius += 1
-        self.update_radius_label()
-        print(self.rule_set.radius)
+        if self.rule_set.radius + 1 <= 10:
+            self.rule_set.radius += 1
+            self.update_radius_label()
+        else:
+            print("Ain't nobody got calcualtiontime for dat.")
 
     def sub_radius_controller(self, instance):
         if self.rule_set.radius - 1 > 0:

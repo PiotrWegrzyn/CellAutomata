@@ -222,7 +222,7 @@ class NucleationController(Automaton2DController):
 
     def kt_input_controller(self, input):
         try:
-            self.rule_set.kt_constant.change_kt_contatnt(float(input.text))
+            self.rule_set.change_kt_constant(float(input.text))
         except ValueError or TypeError:
             print("Wrong input. Should be int or float.")
         except AttributeError:

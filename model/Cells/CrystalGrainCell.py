@@ -21,13 +21,18 @@ class CrystalGrainCell(Cell):
         self.x_center_offset = random.randrange(-5, 5) * 0.1
         self.y_center_offset = random.randrange(-5, 5) * 0.1
 
-    def get_color_representation(self):
-        if self.is_dead():
-            return [0.2, 0.2, 0.2]
-        elif self.is_recrystallized():
-            return [0, 0, 0]
-        else:
-            return self.state_to_color()
+    def get_color_representation(self, color_indicator="grain_id"):
+        if color_indicator == "grain_id":
+            if self.is_dead():
+                return [0.2, 0.2, 0.2]
+            elif self.is_recrystallized():
+                return [0, 0, 0]
+            else:
+                return self.grain_id_to_color()
+        elif color_indicator == 'energy':
+            if self.is_dead() or self.state.energy is 0:
+                return [0.2, 0.2, 0.2]
+            return [0.125 * self.state.energy, 0, 0]
 
     @staticmethod
     def get_dead_state():
@@ -54,7 +59,7 @@ class CrystalGrainCell(Cell):
     def is_recrystallized(self):
         return self.state.is_recrystallized
 
-    def state_to_color(self):
+    def grain_id_to_color(self):
         float_s = self.state.grain_id * 1.0
         return [float_s % 8/8, (float_s % 8 + float_s) % 13/13, (float_s +float_s%13)% 21/21]
 

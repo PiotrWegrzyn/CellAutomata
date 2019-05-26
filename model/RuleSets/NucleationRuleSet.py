@@ -17,11 +17,13 @@ class NucleationRuleSet(RuleSet):
     initial_alive_cells = 0.01
     initial_iteration_speed = 2
 
-    def __init__(self, initial_mode="random", is_periodic=True, neighbourhood_type=Moore, radius=4):
+    def __init__(self, initial_mode="random",is_periodic=True, neighbourhood_type=Moore, radius=4, color_indicator='grain_id'):
         super(NucleationRuleSet, self).__init__(radius)
+        self.color_indicator = color_indicator
         self.is_periodic = is_periodic
         self.initial_mode = initial_mode
         self.neighbourhood_type = neighbourhood_type
+        self.total_energy = 0
 
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
@@ -34,6 +36,14 @@ class NucleationRuleSet(RuleSet):
                 current_state[cell_row][cell_column].state.grain_id = most_common_grain_id
             except ValueError:
                 self.no_grains_surrounding()
+
+    def apply_post_iteration(self, previous_state, current_state):
+        self.total_energy = 0
+        for row in range(0,len(current_state)):
+            for col in range(len(current_state[0])):
+                cell_energy = self.calculate_energy(current_state, row, col)
+                current_state[row][col].state.energy = cell_energy
+                self.total_energy += cell_energy
 
     def get_neighbour_states(self, state, cell_row, cell_column):
 
@@ -145,4 +155,14 @@ class NucleationRuleSet(RuleSet):
         else:
             return NeighbourhoodClass(previous_state, cell_row, cell_column, self.is_periodic)
 
+    def calculate_energy(self, state, row, column):
+        energy = 0
+        neighbour_states = self.get_neighbour_states(state, row, column)
+        self_grain_id = state[row][column].state.grain_id
+        for state in neighbour_states:
+            if state.grain_id is not self_grain_id:
+                energy += 1
+        return energy
 
+    def get_total_energy(self):
+        return self.total_energy

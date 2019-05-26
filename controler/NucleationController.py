@@ -13,6 +13,7 @@ class NucleationController(Automaton2DController):
     rule_set = NucleationRuleSet()
 
     def __init__(self, app, cell_size=9, cell_offset=1):
+        self.iterations = 0
         super().__init__(app, cell_size, cell_offset)
         self.pattern_folder = "./patterns/Nucleation/"
         self.app.view.sub_alive_cells.text = "-1%"
@@ -21,6 +22,8 @@ class NucleationController(Automaton2DController):
     def update_labels(self):
         super().update_labels()
         self.update_radius_label()
+        self.update_total_energy_label()
+        self.update_iterations_label()
 
     def set_initial_view(self):
         self.set_view(NucleationView(self.modes, self.get_menu_width()))
@@ -33,6 +36,10 @@ class NucleationController(Automaton2DController):
         self.bind_add_radius()
         self.bind_sub_radius()
         self.bind_monte_carlo_button()
+        self.bind_show_energy_checkbox()
+        self.bind_kt_input()
+        self.bind_iteration_input()
+        self.bind_nucleation_button()
 
     def bind_recrystallize_button(self):
         self.app.view.recrystallize_button.bind(on_press=partial(self.recrystallize_button_controller))
@@ -54,11 +61,25 @@ class NucleationController(Automaton2DController):
         self.app.view.equal_mode.bind(active=partial(self.equal_mode_controller))
         self.app.view.radius_mode.bind(active=partial(self.radius_mode_controller))
 
+    def set_data_frame_to_current_colors(self):
+        new_state = self.cell_automaton.get_current_state()
+        self.data_frame = \
+            [[cell.get_color_representation(self.rule_set.color_indicator) for cell in new_state[row]] for row in
+             range(0, self.cell_automaton.get_rows())]
+
     def draw_next_iteration(self):
+        if isinstance(self.rule_set, MonteCarloRuleSet):
+            if self.iterations <= 0:
+                self.stop_iterations()
+                return
         previous_data_frame = copy.deepcopy(self.data_frame)
         super().draw_next_iteration()
+        if isinstance(self.rule_set, MonteCarloRuleSet):
+            self.iterations -=1
+            self.update_iterations_label()
         if previous_data_frame == self.data_frame:
             self.handle_no_change_in_data_frame()
+        self.update_total_energy_label()
 
     def handle_no_change_in_data_frame(self):
         if self.cell_automaton.get_percent_of_alive_cells() > 0:
@@ -67,6 +88,12 @@ class NucleationController(Automaton2DController):
 
             if isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
                 self.change_rule_set_to_monte_carlo()
+
+    def bind_nucleation_button(self):
+        self.app.view.nucleation_button.bind(on_press=partial(self.nucleation_button_controller))
+
+    def nucleation_button_controller(self, instance):
+        self.change_rule_set_to_nucleation()
 
     def recrystallize_button_controller(self, btn_instance):
         self.change_rule_set_to_recrystallization()
@@ -77,12 +104,14 @@ class NucleationController(Automaton2DController):
             initial_mode=self.rule_set.initial_mode,
             is_periodic=self.rule_set.is_periodic,
             neighbourhood_type=self.rule_set.neighbourhood_type,
-            radius=self.rule_set.radius
+            radius=self.rule_set.radius,
+            color_indicator=self.rule_set.color_indicator
         )
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()
         )
+        self.app.view.show_recristallization_menu()
 
     def change_rule_set_to_monte_carlo(self):
         self.rule_set = MonteCarloRuleSet(
@@ -90,24 +119,29 @@ class NucleationController(Automaton2DController):
             is_periodic=self.rule_set.is_periodic,
             neighbourhood_type=self.rule_set.neighbourhood_type,
             radius=self.rule_set.radius,
-            kt_constant=self.get_kt_constant()
+            kt_constant=self.get_kt_constant(),
+            color_indicator=self.rule_set.color_indicator
         )
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()
         )
+        self.app.view.show_monte_carlo_menu()
 
     def change_rule_set_to_nucleation(self):
         self.rule_set = NucleationRuleSet(
             initial_mode=self.rule_set.initial_mode,
             is_periodic=self.rule_set.is_periodic,
             neighbourhood_type=self.rule_set.neighbourhood_type,
-            radius=self.rule_set.radius
+            radius=self.rule_set.radius,
+            color_indicator=self.rule_set.color_indicator
         )
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()
         )
+        self.app.view.show_nucleation_menu()
+
 
     def clear_state_controller(self, instance):
         super(NucleationController, self).clear_state_controller(instance)
@@ -180,4 +214,64 @@ class NucleationController(Automaton2DController):
 
     def start_monte_carlo_controller(self, instance):
         self.change_rule_set_to_monte_carlo()
+
+    def bind_kt_input(self):
+        self.app.view.kt_input.bind(on_text_validate=partial(self.kt_input_controller))
+
+    def kt_input_controller(self, input):
+        try:
+            self.rule_set.kt_constant.change_kt_contatnt(float(input.text))
+        except ValueError or TypeError:
+            print("Wrong input. Should be int or float.")
+        except AttributeError:
+            print("Wrong Rule Set")
+
+    def bind_show_energy_checkbox(self):
+        self.app.view.show_energy_checkbox.bind(active=partial(self.show_energy_controller))
+
+    def show_energy_controller(self, checkbox, value):
+        if value:
+            self.set_show_energy_mode()
+        else:
+            self.set_show_grain_mode()
+
+    def set_show_energy_mode(self):
+        self.rule_set.color_indicator = 'energy'
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )
+        self.draw_current_state()
+
+    def set_show_grain_mode(self):
+        self.rule_set.color_indicator = 'grain_id'
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )
+        self.draw_current_state()
+
+    def update_total_energy_label(self):
+        self.app.view.total_energy_label.text = "Total energy: " + self.get_total_energy().__str__()
+
+    def get_total_energy(self):
+        return self.rule_set.get_total_energy()
+
+    def bind_iteration_input(self):
+        self.app.view.iterations_input.bind(on_text_validate=partial(self.iterations_input_controller))
+
+    def iterations_input_controller(self, text_input):
+        try:
+            self.add_iterations(int(text_input.text))
+        except ValueError:
+            print("Not an int.")
+
+    def add_iterations(self, iterations):
+        self.iterations += iterations
+        self.update_iterations_label()
+        # self.restart_auto_iterations_clock()
+
+    def update_iterations_label(self):
+        self.app.view.iterations_label.text = "Iterations: " + self.iterations.__str__()
+
 

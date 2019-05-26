@@ -10,12 +10,13 @@ class MonteCarloRuleSet(NucleationRuleSet):
     cell_type = CrystalGrainCell
     required_dimension = 2
 
-    def __init__(self, kt_constant=1.0, initial_mode='random', is_periodic=True, neighbourhood_type = Moore, radius=4, iteration=0):
+    def __init__(self, kt_constant=1.0, initial_mode='random', is_periodic=True, neighbourhood_type = Moore, radius=4, color_indicator='grain_id'):
         super().__init__(
             initial_mode=initial_mode,
             is_periodic=is_periodic,
             neighbourhood_type=neighbourhood_type,
-            radius=radius
+            radius=radius,
+            color_indicator=color_indicator
         )
         if 0.1 <= kt_constant <= 6:
             self.probability_calculator = ProbabilityCalculator(kt_constant)
@@ -40,23 +41,8 @@ class MonteCarloRuleSet(NucleationRuleSet):
 
             energy_delta = post_energy - pre_energy
 
-            if self.probability_calculator.should_accept(energy_delta):
-                self.set_cell_energy(current_state, row, col, post_energy)
-            else:
+            if not self.probability_calculator.should_accept(energy_delta):
                 self.revert_cell(previous_state, current_state, row, col)
-                self.set_cell_energy(current_state, row, col, pre_energy)
-
-    def calculate_energy(self, state, row, column):
-        energy = 0
-        neighbour_states = self.get_neighbour_states(state, row, column)
-        self_grain_id = state[row][column].state.grain_id
-        for state in neighbour_states:
-            if state.grain_id is not self_grain_id:
-                energy += 1
-        return energy
-
-    def set_cell_energy(self, state, row, column, energy):
-        state[row][column].state.energy = energy
 
     def get_shuffled_list_of_all_cell_cords(self, state):
         coords = [(x, y) for x in range(len(state)) for y in range(len(state[0]))]
@@ -70,6 +56,12 @@ class MonteCarloRuleSet(NucleationRuleSet):
 
     def revert_cell(self, previous_state, current_state, row, col):
         current_state[row][col].state.grain_id = previous_state[row][col].state.grain_id
+
+    def change_kt_constant(self, new_value):
+        self.probability_calculator.kt_constant = new_value
+
+    def get_kt_constant(self):
+        return self.probability_calculator.kt_constant
 
 
 class ProbabilityCalculator:

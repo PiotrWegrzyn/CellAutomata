@@ -24,9 +24,9 @@ class GameOfLifeController(Automaton2DController):
     def bind_rule_input(self):
         self.app.view.rule_input.bind(on_text_validate=partial(self.rule_input_controller))
 
-    def rule_input_controller(self, value):
+    def rule_input_controller(self, input):
         self.rule_set = GameOfLifeRuleSet(
-            rule_code=value.text,
+            rule_code=input.text,
             reverse_colors=self.rule_set.reverse_colors
         )
         self.set_cell_automaton(

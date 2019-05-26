@@ -17,7 +17,7 @@ class MonteCarloRuleSet(NucleationRuleSet):
             neighbourhood_type=neighbourhood_type,
             radius=radius
         )
-        if 0 < kt_constant < 6:
+        if 0.1 <= kt_constant <= 6:
             self.probability_calculator = ProbabilityCalculator(kt_constant)
         else:
             raise ValueError
@@ -38,7 +38,7 @@ class MonteCarloRuleSet(NucleationRuleSet):
 
             post_energy = self.calculate_energy(current_state, row, col)
 
-            energy_delta = pre_energy - post_energy
+            energy_delta = post_energy - pre_energy
 
             if self.probability_calculator.should_accept(energy_delta):
                 self.set_cell_energy(current_state, row, col, post_energy)
@@ -64,8 +64,8 @@ class MonteCarloRuleSet(NucleationRuleSet):
         return coords
 
     def set_cell_to_random_neighbour_id(self, previous_state, current_state, row, col):
-        neighbour_ids = self.get_neighbour_states(previous_state, row, col)
-        chosen_id = random.choice(neighbour_ids)
+        neighbour_states = self.get_neighbour_states(previous_state, row, col)
+        chosen_id = random.choice(neighbour_states).grain_id
         current_state[row][col].state.grain_id = chosen_id
 
     def revert_cell(self, previous_state, current_state, row, col):
@@ -78,6 +78,8 @@ class ProbabilityCalculator:
 
     def should_accept(self, energy_delta):
         probability = self.get_probability(energy_delta)
+        if probability is 1:
+            return True
         probability_percent = probability * 100
         if self.attempt(percent=probability_percent, accuracy=2):
             return True

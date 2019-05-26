@@ -31,6 +31,7 @@ class NucleationView(GameOfLifeView):
         self.create_mode_radio_elements()
         self.create_neighbourhood_elements()
         self.create_radius_elements()
+        self.create_monte_carlo_elements()
 
     def show_menu(self):
         super(DrawingView, self).show_menu()
@@ -46,6 +47,7 @@ class NucleationView(GameOfLifeView):
         self.add_periodic_checkbox()
         self.add_mode_radio_elements()
         self.add_radius_elements()
+        self.add_monte_carlo_button()
 
     def create_load_file_buttons(self):
         self.file_buttons = []
@@ -160,4 +162,12 @@ class NucleationView(GameOfLifeView):
         self.menu.add_widget(self.radius_label)
         self.menu.add_widget(self.change_radius_btns_containter)
 
+    def create_monte_carlo_elements(self):
+        self.monte_carlo_button = kb.Button(
+            text="Monte Carlo",
+            size_hint=(1, 0.1),
+        )
+
+    def add_monte_carlo_button(self):
+        self.menu.add_widget(self.monte_carlo_button)
 

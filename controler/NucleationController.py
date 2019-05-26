@@ -32,6 +32,7 @@ class NucleationController(Automaton2DController):
         self.bind_mode_checkboxes()
         self.bind_add_radius()
         self.bind_sub_radius()
+        self.bind_monte_carlo_button()
 
     def bind_recrystallize_button(self):
         self.app.view.recrystallize_button.bind(on_press=partial(self.recrystallize_button_controller))
@@ -44,6 +45,9 @@ class NucleationController(Automaton2DController):
 
     def bind_sub_radius(self):
         self.app.view.sub_radius.bind(on_press=partial(self.sub_radius_controller))
+
+    def bind_monte_carlo_button(self):
+        self.app.view.monte_carlo_button.bind(on_press=partial(self.start_monte_carlo_controller))
 
     def bind_mode_checkboxes(self):
         self.app.view.random_mode.bind(active=partial(self.random_mode_controller))
@@ -169,9 +173,11 @@ class NucleationController(Automaton2DController):
         self.app.view.radius_label.text = "Radius: " + self.rule_set.radius.__str__()
 
     def get_kt_constant(self):
-        if self.rule_set.kt_constant:
+        try:
             return self.rule_set.kt_constant
-        else:
+        except AttributeError:
             return 1
 
+    def start_monte_carlo_controller(self, instance):
+        self.change_rule_set_to_monte_carlo()
 

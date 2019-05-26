@@ -51,9 +51,9 @@ class NucleationView(GameOfLifeView):
         self.add_columns_elements_to_menu()
         self.add_row_elements_to_menu()
         self.add_alive_cells_elements_to_menu()
-        self.add_periodic_checkbox()
-        self.add_show_energy_items()
         self.add_total_energy()
+        self.add_periodic_elements()
+        self.add_show_energy_items()
         self.add_mode_radio_elements()
         self.add_radius_elements()
         self.add_nucleation_elements()
@@ -81,16 +81,21 @@ class NucleationView(GameOfLifeView):
         self.menu.add_widget(self.recrystallize_button)
 
     def create_periodic_checkbox(self):
+        self.periodic_continer = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
         self.periodic_label = Label(
             text="Periodic:",
-            size_hint=(1, 0.1),
+            size_hint=(0.7, 1),
             color=[1, 0, 0, 1]
         )
-        self.periodic_checkbox = CheckBox(color=[1, 0, 0, 1], size_hint=[1, 0.1], active=True)
+        self.periodic_checkbox = CheckBox(color=[1, 0, 0, 1], size_hint=[0.3, 1], active=True)
+        self.periodic_continer.add_widget(self.periodic_label)
+        self.periodic_continer.add_widget(self.periodic_checkbox)
 
-    def add_periodic_checkbox(self):
-        self.menu.add_widget(self.periodic_label)
-        self.menu.add_widget(self.periodic_checkbox)
+    def add_periodic_elements(self):
+        self.menu.add_widget(self.periodic_continer)
 
     def create_mode_radio_elements(self):
         self.random_mode_continer = BoxLayout(
@@ -192,16 +197,21 @@ class NucleationView(GameOfLifeView):
         self.menu.add_widget(self.monte_carlo_button)
 
     def create_show_energy_items(self):
-        self.show_energy_label = Label(
-            text="Show Energy: ",
+        self.energy_container = BoxLayout(
             size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.show_energy_label = Label(
+            text="Show energy: ",
+            size_hint=(0.7, 1),
             color=[1, 0, 0, 1]
         )
-        self.show_energy_checkbox = CheckBox(color=[1, 0, 0, 1], size_hint=[1, 0.1])
+        self.show_energy_checkbox = CheckBox(color=[1, 0, 0, 1], size_hint=[0.3, 1])
+        self.energy_container.add_widget(self.show_energy_label)
+        self.energy_container.add_widget(self.show_energy_checkbox)
 
     def add_show_energy_items(self):
-        self.menu.add_widget(self.show_energy_label)
-        self.menu.add_widget(self.show_energy_checkbox)
+        self.menu.add_widget(self.energy_container)
 
     def create_kt_input(self):
         self.kt_label = Label(

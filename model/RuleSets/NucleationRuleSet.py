@@ -26,7 +26,7 @@ class NucleationRuleSet(RuleSet):
     def apply(self, previous_state, current_state, cell_row, cell_column):
         judged_cell = previous_state[cell_row][cell_column]
         if judged_cell.is_dead():
-            previous_neighbours_states = self.get_previous_neighbours_values(previous_state, cell_row, cell_column)
+            previous_neighbours_states = self.get_neighbour_states(previous_state, cell_row, cell_column)
             previous_neighbours_grain_ids = [state.grain_id for state in previous_neighbours_states]
             previous_grains_type_count = self.get_grain_type_count(previous_neighbours_grain_ids)
             try:
@@ -35,9 +35,9 @@ class NucleationRuleSet(RuleSet):
             except ValueError:
                 self.no_grains_surrounding()
 
-    def get_previous_neighbours_values(self, previous_state, cell_row, cell_column):
+    def get_neighbour_states(self, state, cell_row, cell_column):
 
-        neighbourhood = self.get_neighbourhood(previous_state, cell_row, cell_column)
+        neighbourhood = self.get_neighbourhood(state, cell_row, cell_column)
         prev_neighbours_states = neighbourhood.get_prev_neighbours_states()
         return prev_neighbours_states
 

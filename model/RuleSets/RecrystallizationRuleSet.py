@@ -41,7 +41,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         cell_in_prev_iteration = previous_state[cell_row][cell_column]
         cell_in_current_iteration = current_state[cell_row][cell_column]
 
-        prev_neighbours_states = self.get_previous_neighbours_values(previous_state, cell_row, cell_column)
+        prev_neighbours_states = self.get_neighbour_states(previous_state, cell_row, cell_column)
         if cell_in_prev_iteration.is_recrystallized() is not True:
             is_border = self.check_is_border(cell_in_prev_iteration,prev_neighbours_states)
             self.add_energy_to_cell(cell_in_current_iteration, cell_in_prev_iteration, is_border)

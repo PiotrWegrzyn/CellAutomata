@@ -2,6 +2,8 @@ from model.Cells.CellFactory import CellFactory
 from model.RuleSets.RuleSet import RuleSet
 import copy
 
+from time_measure.timeit_decorator import timeit
+
 
 def generate_empty_2d_list_of_list(size):
     return [[] for i in range(0, size)]
@@ -26,12 +28,14 @@ class CellAutomaton1D:
             self.initial_state = self.create_random_initial_state()
         self.set_to_initial_state()
 
+    @timeit
     def calculate_next_iteration(self):
         self._copy_current_state_to_previous_state()
         self.apply_pre_iteration()
         self._set_cells()
         self.apply_post_iteration()
 
+    @timeit
     def _copy_current_state_to_previous_state(self):
         for col in range(0, self.columns):
             self.previous_state[col].state = copy.deepcopy(self.current_state[col].state)

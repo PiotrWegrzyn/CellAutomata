@@ -109,7 +109,6 @@ class GameOfLifeView(DrawingView):
     def create_alive_cells_elements(self):
         self.alive_cells_label = Label(
             text="Alive cells:",
-            # +"{:.1f}%".format(self.controller.get_alive_cell_percentage()*100)
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
         )

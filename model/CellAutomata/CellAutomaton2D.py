@@ -24,6 +24,7 @@ class CellAutomaton2D(CellAutomaton1D):
             raise ValueError
         self.rows = rows
 
+    @timeit
     def _copy_current_state_to_previous_state(self):
         for row in range(0, self.rows):
             for col in range(0, self.columns):

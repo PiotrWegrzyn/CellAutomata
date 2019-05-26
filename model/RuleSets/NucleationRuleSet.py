@@ -1,4 +1,6 @@
 import random
+import threading
+from concurrent.futures.thread import ThreadPoolExecutor
 
 from model.Cells.CrystalGrainCell import CrystalGrainCell
 from model.Neighbourhoods.Moore import Moore
@@ -9,6 +11,7 @@ from model.Neighbourhoods.HexagoanlRight import HexagonalRight
 from model.Neighbourhoods.HexagonalLeft import HexagonalLeft
 from model.Neighbourhoods.HexagonalRandom import HexagonalRandom
 from model.RuleSets.RuleSet import RuleSet
+from time_measure.timeit_decorator import timeit
 
 
 class NucleationRuleSet(RuleSet):
@@ -37,10 +40,18 @@ class NucleationRuleSet(RuleSet):
             except ValueError:
                 self.no_grains_surrounding()
 
+    @timeit
     def apply_post_iteration(self, previous_state, current_state):
         self.total_energy = 0
-        for row in range(0,len(current_state)):
-            for col in range(len(current_state[0])):
+        columns_count = len(current_state[0])
+        with ThreadPoolExecutor(max_workers=7) as executor:
+            for row in range(0, len(current_state),10):
+                executor.submit(self.calculate_energy_in_column, row, columns_count,current_state)
+
+    @timeit
+    def calculate_energy_in_column(self, row, columns_count,current_state):
+        for r in range(row, row+10):
+            for col in range(columns_count):
                 cell_energy = self.calculate_energy(current_state, row, col)
                 current_state[row][col].state.energy = cell_energy
                 self.total_energy += cell_energy

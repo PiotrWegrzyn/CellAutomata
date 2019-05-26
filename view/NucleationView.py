@@ -260,7 +260,7 @@ class NucleationView(GameOfLifeView):
             size_hint=(1, 0.1),
             color=[1, 0, 0, 1]
         )
-        self.iterations_input = TextInput(text="100", size_hint=[1, 0.1], multiline=False)
+        self.iterations_input = TextInput(text="10", size_hint=[1, 0.1], multiline=False)
 
     def add_iterations_elements(self):
         self.menu.add_widget(self.iterations_label)

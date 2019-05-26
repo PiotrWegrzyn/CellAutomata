@@ -5,6 +5,7 @@ from controler.Automaton2DController import Automaton2DController
 from model.RuleSets.MonteCarloRuleSet import MonteCarloRuleSet
 from model.RuleSets.NucleationRuleSet import NucleationRuleSet
 from model.RuleSets.RecrystallizationRuleSet import RecrystallizationRuleSet
+from time_measure.timeit_decorator import timeit
 from view.NucleationView import NucleationView
 
 
@@ -69,7 +70,9 @@ class NucleationController(Automaton2DController):
             [[cell.get_color_representation(self.rule_set.color_indicator) for cell in new_state[row]] for row in
              range(0, self.cell_automaton.get_rows())]
 
+    @timeit
     def draw_next_iteration(self):
+        print("__new__iteration__")
         if isinstance(self.rule_set, MonteCarloRuleSet):
             if self.iterations <= 0:
                 self.stop_iterations()

@@ -23,8 +23,8 @@ class CellAutomatonApp(App):
     def __init__(self):
         super(CellAutomatonApp, self).__init__()
         Window.clearcolor = (0.2, 0.2, 0.2, 1)
-        Window.size = (1150, 750)
-        Window.top = 50
+        Window.size = (1150, 700)
+        Window.top = 75
         Window.left = 200
 
     def build(self):

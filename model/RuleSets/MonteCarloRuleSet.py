@@ -4,6 +4,7 @@ import math
 from model.Cells.CrystalGrainCell import CrystalGrainCell
 from model.Neighbourhoods.Moore import Moore
 from model.RuleSets.NucleationRuleSet import NucleationRuleSet
+from time_measure.timeit_decorator import timeit
 
 
 class MonteCarloRuleSet(NucleationRuleSet):
@@ -44,6 +45,7 @@ class MonteCarloRuleSet(NucleationRuleSet):
             if not self.probability_calculator.should_accept(energy_delta):
                 self.revert_cell(previous_state, current_state, row, col)
 
+    @timeit
     def get_shuffled_list_of_all_cell_cords(self, state):
         coords = [(x, y) for x in range(len(state)) for y in range(len(state[0]))]
         random.shuffle(coords)
@@ -68,6 +70,7 @@ class ProbabilityCalculator:
     def __init__(self, kt_constant):
         self.kt_constant = kt_constant
 
+    @timeit
     def should_accept(self, energy_delta):
         probability = self.get_probability(energy_delta)
         if probability is 1:

@@ -13,6 +13,7 @@ from model.Neighbourhoods.HexagoanlRight import HexagonalRight
 from model.Neighbourhoods.HexagonalLeft import HexagonalLeft
 from model.Neighbourhoods.HexagonalRandom import HexagonalRandom
 from model.Neighbourhoods.Radius import Radius
+from time_measure.timeit_decorator import timeit
 
 
 class Automaton2DController(AutomatonController):
@@ -72,6 +73,7 @@ class Automaton2DController(AutomatonController):
             self.update_rows_label()
             self.draw_current_state()
 
+    @timeit
     def yield_next_data_frame(self):
         self.cell_automaton.calculate_next_iteration()
         self.fetch_current_state()
@@ -79,6 +81,7 @@ class Automaton2DController(AutomatonController):
     def fetch_current_data_frame(self):
         self.fetch_current_state()
 
+    @timeit
     def fetch_current_state(self):
         if self.rule_set.reverse_colors is False:
             self.set_data_frame_to_current_colors()

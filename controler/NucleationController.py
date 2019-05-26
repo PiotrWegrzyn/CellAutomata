@@ -40,6 +40,8 @@ class NucleationController(Automaton2DController):
         self.bind_kt_input()
         self.bind_iteration_input()
         self.bind_nucleation_button()
+        self.bind_initialize_button()
+        self.bind_initialize_back_button_button()
 
     def bind_recrystallize_button(self):
         self.app.view.recrystallize_button.bind(on_press=partial(self.recrystallize_button_controller))
@@ -274,4 +276,20 @@ class NucleationController(Automaton2DController):
     def update_iterations_label(self):
         self.app.view.iterations_label.text = "Iterations: " + self.iterations.__str__()
 
+    def bind_initialize_button(self):
+        self.app.view.initialize_button.bind(on_press=partial(self.initialize_button_controller))
+
+    def initialize_button_controller(self, instance):
+        self.app.view.show_initialize_menu()
+
+    def bind_initialize_back_button_button(self):
+        self.app.view.initialize_back_button.bind(on_press=partial(self.initialize_back_button_controller))
+
+    def initialize_back_button_controller(self, instance):
+        if isinstance(self.rule_set, NucleationRuleSet):
+            self.app.view.show_nucleation_menu()
+        if isinstance(self.rule_set, MonteCarloRuleSet):
+            self.app.view.show_monte_carlo_menu()
+        if isinstance(self.rule_set, RecrystallizationRuleSet):
+            self.app.view.show_recristallization_menu()
 

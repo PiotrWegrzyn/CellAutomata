@@ -40,21 +40,19 @@ class NucleationView(GameOfLifeView):
         self.create_kt_input()
         self.create_iterations_elements()
         self.create_nucleation_elements()
+        self.create_initialize_button()
+        self.create_initialize_back_button()
 
     def show_menu(self):
         super(DrawingView, self).show_menu()
+        self.add_initialize_button()
+        self.add_clear_button()
         self.add_draw_button()
         self.add_start_stop_btns_to_menu()
-        self.add_clear_button()
-        self.add_neighbourhood_elements()
         self.add_speed_elements_to_menu()
-        self.add_columns_elements_to_menu()
-        self.add_row_elements_to_menu()
-        self.add_alive_cells_elements_to_menu()
-        self.add_total_energy()
-        self.add_periodic_elements()
+        self.add_neighbourhood_elements()
         self.add_show_energy_items()
-        self.add_mode_radio_elements()
+        self.add_total_energy()
         self.add_radius_elements()
         self.add_nucleation_elements()
         self.add_monte_carlo_button()
@@ -268,3 +266,30 @@ class NucleationView(GameOfLifeView):
         self.menu.add_widget(self.iterations_label)
         self.menu.add_widget(self.iterations_input)
 
+    def create_initialize_button(self):
+        self.initialize_button = kb.Button(
+            text="Initialize",
+            size_hint=(1, 0.1),
+        )
+
+    def add_initialize_button(self):
+        self.menu.add_widget(self.initialize_button)
+
+    def create_initialize_back_button(self):
+        self.initialize_back_button = kb.Button(
+            text="Back",
+            size_hint=(1, 0.1),
+        )
+
+    def add_back_button(self):
+        self.menu.add_widget(self.initialize_back_button)
+
+    def show_initialize_menu(self):
+        self.menu.clear_widgets()
+        self.add_back_button()
+        self.add_columns_elements_to_menu()
+        self.add_row_elements_to_menu()
+        self.add_alive_cells_elements_to_menu()
+        self.add_periodic_elements()
+        self.add_mode_radio_elements()
+        self.add_radius_elements()

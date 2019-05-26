@@ -61,6 +61,7 @@ class Automaton2DController(AutomatonController):
             self.cell_automaton.change_rows(current_value + delta)
             self.set_empty_data_frame()
             self.update_rows_label()
+            self.draw_current_state()
 
     def add_rows_controller(self, button_instance):
         delta = 10
@@ -69,6 +70,7 @@ class Automaton2DController(AutomatonController):
             self.cell_automaton.change_rows(current_value + delta)
             self.set_empty_data_frame()
             self.update_rows_label()
+            self.draw_current_state()
 
     def yield_next_data_frame(self):
         self.cell_automaton.calculate_next_iteration()

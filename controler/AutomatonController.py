@@ -96,9 +96,11 @@ class AutomatonController(BaseController):
 
     def sub_columns_controller(self, button_instance):
         self.change_columns(delta=-10)
+        self.draw_current_state()
 
     def add_columns_controller(self, button_instance):
         self.change_columns(delta=10)
+        self.draw_current_state()
 
     def change_columns(self, delta):
         current_value = self.cell_automaton.get_columns()

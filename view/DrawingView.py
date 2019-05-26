@@ -2,6 +2,7 @@ from kivy.core.window import Window
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
 
+from time_measure.timeit_decorator import timeit
 from view.BaseView import BaseView
 
 
@@ -22,6 +23,7 @@ class DrawingView(BaseView):
     def update_cell_offset(self, size):
         self.cell_offset = size
 
+    @timeit
     def draw_data_frame(self, data_frame):
         self.data_frame = data_frame
         # threads = int(len(data_frame)+1)

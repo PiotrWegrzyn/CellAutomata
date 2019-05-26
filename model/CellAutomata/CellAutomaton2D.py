@@ -1,4 +1,5 @@
 from model.CellAutomata.CellAutomaton1D import CellAutomaton1D
+from time_measure.timeit_decorator import timeit
 
 
 def generate_empty_2d_list_of_list(size):
@@ -55,6 +56,7 @@ class CellAutomaton2D(CellAutomaton1D):
                + "Columns: " + self.columns.__str__()\
                + "Rows: " + self.rows.__str__()
 
+    @timeit
     def _set_cells(self):
         for cell_row in range(0, self.rows):
             self.set_cells_in_row(cell_row)

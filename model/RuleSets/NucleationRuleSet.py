@@ -1,6 +1,8 @@
+import concurrent
+import multiprocessing
 import random
 import threading
-from concurrent.futures.thread import ThreadPoolExecutor
+from concurrent.futures.process import ProcessPoolExecutor
 
 from model.Cells.CrystalGrainCell import CrystalGrainCell
 from model.Neighbourhoods.Moore import Moore
@@ -44,17 +46,17 @@ class NucleationRuleSet(RuleSet):
     def apply_post_iteration(self, previous_state, current_state):
         self.total_energy = 0
         columns_count = len(current_state[0])
-        with ThreadPoolExecutor(max_workers=7) as executor:
-            for row in range(0, len(current_state),10):
-                executor.submit(self.calculate_energy_in_column, row, columns_count,current_state)
+        for row in range(0, len(current_state)):
+            self.calculate_energy_in_column([row, columns_count,current_state])
 
-    @timeit
-    def calculate_energy_in_column(self, row, columns_count,current_state):
-        for r in range(row, row+10):
-            for col in range(columns_count):
-                cell_energy = self.calculate_energy(current_state, row, col)
-                current_state[row][col].state.energy = cell_energy
-                self.total_energy += cell_energy
+    def calculate_energy_in_column(self, args):
+        row = args[0]
+        columns_count= args[1]
+        current_state = args[2]
+        for col in range(columns_count):
+            cell_energy = self.calculate_energy(current_state, row, col)
+            current_state[row][col].state.energy = cell_energy
+            self.total_energy += cell_energy
 
     def get_neighbour_states(self, state, cell_row, cell_column):
 

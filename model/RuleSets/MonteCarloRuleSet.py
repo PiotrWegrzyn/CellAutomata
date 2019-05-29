@@ -27,6 +27,7 @@ class MonteCarloRuleSet(NucleationRuleSet):
     def apply(self, previous_state, current_state, cell_row, cell_column):
         pass
 
+    @timeit
     def apply_pre_iteration(self, previous_state, current_state):
 
         coords = self.get_shuffled_list_of_all_cell_cords(previous_state)

@@ -29,10 +29,13 @@ class MonteCarloRuleSet(NucleationRuleSet):
 
     @timeit
     def apply_pre_iteration(self, previous_state, current_state):
+        # This is the core method that applies the rule.
+        # Unlike other RuleSets it cannot utilize method apply for that manner
+        # because we iterate trough cells in random order.
 
-        coords = self.get_shuffled_list_of_all_cell_cords(previous_state)
+        cell_coords = self.get_shuffled_list_of_all_cell_cords(previous_state)
 
-        for coord in coords:
+        for coord in cell_coords:
             row = coord[0]
             col = coord[1]
             pre_energy = self.calculate_energy(current_state, row, col)

@@ -1,8 +1,6 @@
 
 class CellFactory:
     def __init__(self, cell_type):
-        if not isinstance(cell_type, type):
-            raise ValueError
         self.cell_type = cell_type
 
     def change_cell_type(self, new_cell_type):

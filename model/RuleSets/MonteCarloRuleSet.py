@@ -35,7 +35,7 @@ class MonteCarloRuleSet(NucleationRuleSet):
         for coord in coords:
             row = coord[0]
             col = coord[1]
-            pre_energy = self.calculate_energy(previous_state, row, col)
+            pre_energy = self.calculate_energy(current_state, row, col)
 
             self.set_cell_to_random_neighbour_id(previous_state, current_state, row, col)
 
@@ -43,8 +43,13 @@ class MonteCarloRuleSet(NucleationRuleSet):
 
             energy_delta = post_energy - pre_energy
 
-            if not self.probability_calculator.should_accept(energy_delta):
+            if self.probability_calculator.should_accept(energy_delta):
+                current_state[row][col].state.energy = post_energy
+            else:
                 self.revert_cell(previous_state, current_state, row, col)
+
+    def apply_post_iteration(self, previous_state, current_state):
+        self.calculate_total_energy(current_state)
 
     @timeit
     def get_shuffled_list_of_all_cell_cords(self, state):

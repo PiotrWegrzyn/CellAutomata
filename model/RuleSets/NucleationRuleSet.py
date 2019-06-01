@@ -44,22 +44,33 @@ class NucleationRuleSet(RuleSet):
 
     @timeit
     def apply_post_iteration(self, previous_state, current_state):
-        self.total_energy = 0
-        columns_count = len(current_state[0])
-        for row in range(0, len(current_state)):
-            self.calculate_energy_in_column([row, columns_count,current_state])
+        self.update_energy_in_cells(current_state)
+        self.calculate_total_energy(current_state)
 
-    def calculate_energy_in_column(self, args):
-        row = args[0]
-        columns_count= args[1]
-        current_state = args[2]
-        for col in range(columns_count):
-            cell_energy = self.calculate_energy(current_state, row, col)
-            current_state[row][col].state.energy = cell_energy
-            self.total_energy += cell_energy
+    def update_energy_in_cells(self, state):
+        for row_id in range(0, len(state)):
+            self.update_energy_in_row(row_id, state)
+
+    def update_energy_in_row(self, row_id, state):
+        columns_count = len(state[0])
+        for col_id in range(columns_count):
+            state[row_id][col_id].state.energy = self.calculate_energy(state, row_id, col_id)
+
+    def calculate_energy(self, state, row, column):
+        energy = 0
+        neighbour_states = self.get_neighbour_states(state, row, column)
+        self_grain_id = state[row][column].state.grain_id
+        for state in neighbour_states:
+            if state.grain_id is not self_grain_id:
+                energy += 1
+        return energy
+
+    def calculate_total_energy(self, state):
+        self.total_energy = 0
+        for row_id in range(len(state)):
+            self.total_energy += sum([cell.state.energy for cell in state[row_id]])
 
     def get_neighbour_states(self, state, cell_row, cell_column):
-
         neighbourhood = self.get_neighbourhood(state, cell_row, cell_column)
         prev_neighbours_states = neighbourhood.get_prev_neighbours_states()
         return prev_neighbours_states
@@ -168,14 +179,8 @@ class NucleationRuleSet(RuleSet):
         else:
             return NeighbourhoodClass(previous_state, cell_row, cell_column, self.is_periodic)
 
-    def calculate_energy(self, state, row, column):
-        energy = 0
-        neighbour_states = self.get_neighbour_states(state, row, column)
-        self_grain_id = state[row][column].state.grain_id
-        for state in neighbour_states:
-            if state.grain_id is not self_grain_id:
-                energy += 1
-        return energy
+
 
     def get_total_energy(self):
         return self.total_energy
+

@@ -72,7 +72,6 @@ class NucleationController(Automaton2DController):
 
     @timeit
     def draw_next_iteration(self):
-        print("__new__iteration__")
         if isinstance(self.rule_set, MonteCarloRuleSet):
             if self.iterations <= 0:
                 self.stop_iterations()

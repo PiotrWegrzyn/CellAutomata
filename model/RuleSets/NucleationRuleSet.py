@@ -72,7 +72,7 @@ class NucleationRuleSet(RuleSet):
 
     def get_neighbour_states(self, state, cell_row, cell_column):
         neighbourhood = self.get_neighbourhood(state, cell_row, cell_column)
-        prev_neighbours_states = neighbourhood.get_prev_neighbours_states()
+        prev_neighbours_states = neighbourhood.get_neighbours_states()
         return prev_neighbours_states
 
     @staticmethod
@@ -151,7 +151,7 @@ class NucleationRuleSet(RuleSet):
         if number_of_alive_cells > rows*columns:
             number_of_alive_cells = rows*columns
         failed_count = 0
-        for cell in range(0, number_of_alive_cells):
+        for cell in range(number_of_alive_cells):
             if failed_count < 10:
                 for i in range(retries):
                     x = random.randrange(0, rows)
@@ -163,7 +163,7 @@ class NucleationRuleSet(RuleSet):
             failed_count += 1
 
     def _no_alive_cells_in_radius(self, state, row, column):
-        neighbours = Radius(state, row, column, self.is_periodic, self.radius).get_prev_neighbours()
+        neighbours = Radius(state, row, column, self.is_periodic, self.radius).get_neighbours()
         for cell in neighbours:
             if cell.is_alive():
                 return False
@@ -178,8 +178,6 @@ class NucleationRuleSet(RuleSet):
             return NeighbourhoodClass(previous_state, cell_row, cell_column, self.is_periodic, radius=self.radius)
         else:
             return NeighbourhoodClass(previous_state, cell_row, cell_column, self.is_periodic)
-
-
 
     def get_total_energy(self):
         return self.total_energy

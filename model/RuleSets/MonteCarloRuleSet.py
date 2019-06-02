@@ -20,7 +20,7 @@ class MonteCarloRuleSet(NucleationRuleSet):
             color_indicator=color_indicator
         )
         if 0.1 <= kt_constant <= 6:
-            self.probability_calculator = ProbabilityCalculator(kt_constant)
+            self.probability_calculator = MonteCarloProbabilityCalculator(kt_constant)
         else:
             raise ValueError
 
@@ -75,11 +75,10 @@ class MonteCarloRuleSet(NucleationRuleSet):
         return self.probability_calculator.kt_constant
 
 
-class ProbabilityCalculator:
+class MonteCarloProbabilityCalculator:
     def __init__(self, kt_constant):
         self.kt_constant = kt_constant
 
-    @timeit
     def should_accept(self, energy_delta):
         probability = self.get_probability(energy_delta)
         if probability is 1:

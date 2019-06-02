@@ -6,7 +6,7 @@ class Radius(NeighbourhoodBase):
         self.radius = radius
         super().__init__(state, row, column, is_periodic)
 
-    def _set_prev_neighbours(self):
+    def _set_neighbours(self):
         for row_offset in range(-self.radius, self.radius+1):
             for column_offset in range(-self.radius, self.radius + 1):
                 if self.is_in_radius(row_offset, column_offset):

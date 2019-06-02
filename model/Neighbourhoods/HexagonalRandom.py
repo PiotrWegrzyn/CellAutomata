@@ -5,7 +5,7 @@ from model.Neighbourhoods.NeighbourhoodBase import NeighbourhoodBase
 
 class HexagonalRandom(NeighbourhoodBase):
 
-    def _set_prev_neighbours(self):
+    def _set_neighbours(self):
         random.choice([self.left, self.right])()
 
     def right(self):

@@ -8,22 +8,22 @@ class NeighbourhoodBase:
         self.is_periodic = is_periodic
         self.row_count = len(self.state)
         self.column_count = len(self.state[0])
-        self.prev_neighbours = []
-        self.prev_neighbour_states = []
+        self.neighbours = []
+        self.neighbour_states = []
 
-        self._set_prev_neighbours()
-        self._set_prev_neighbour_states()
+        self._set_neighbours()
+        self._set_neighbour_states()
 
-    def get_prev_neighbours_states(self):
-        return self.prev_neighbour_states
+    def get_neighbours_states(self):
+        return self.neighbour_states
 
-    def get_prev_neighbours(self):
-        return self.prev_neighbours
+    def get_neighbours(self):
+        return self.neighbours
 
-    def _set_prev_neighbour_states(self):
-        self.prev_neighbour_states = [cell.get_state() for cell in self.prev_neighbours]
+    def _set_neighbour_states(self):
+        self.neighbour_states = [cell.get_state() for cell in self.neighbours]
 
-    def _set_prev_neighbours(self):
+    def _set_neighbours(self):
         self._append_in_rect_area()
 
     def _append_in_rect_area(self, row_start=-1, row_end=1, column_start=-1, column_end=1):
@@ -34,9 +34,9 @@ class NeighbourhoodBase:
                 self._append_neighbour(row_offset, column_offset)
 
     def _append_neighbour(self, row_offset, column_offset):
-        state = self.get_neighbour(row_offset, column_offset)
-        if state:
-            self.prev_neighbours.append(state)
+        neighbour = self.get_neighbour(row_offset, column_offset)
+        if neighbour:
+            self.neighbours.append(neighbour)
 
     def get_neighbour(self, row_offset, col_offset):
         row = self.row + row_offset

@@ -3,15 +3,14 @@ import random
 from model.Cells.Cell import Cell
 
 
-def id_generator(start=1):
-    id = start
+def id_generator():
+    id = 1
     while True:
         yield id
         id += 1
 
 
 class CrystalGrainCell(Cell):
-    last_generated_id = 1
     id_generator = id_generator()
     dead_grain_id = 0
     dead_state = dead_grain_id
@@ -49,7 +48,6 @@ class CrystalGrainCell(Cell):
     @staticmethod
     def get_new_grain_id():
         new_grain_id = CrystalGrainCell.id_generator.__next__()
-        CrystalGrainCell.last_generated_id += new_grain_id
         CrystalGrainCell.alive_states.append(CrystalGrainCell.State(grain_id=new_grain_id))
         return new_grain_id
 
@@ -73,6 +71,9 @@ class CrystalGrainCell(Cell):
             self.state = CrystalGrainCell.State(self.get_new_grain_id())
         else:
             self.state = self.get_dead_state()
+
+    def add_dislocation_density(self, dislocation_package):
+        self.state.add_dislocation_packet(dislocation_package)
 
     class State:
         def __init__(self, grain_id, energy=0, is_recrystallized=False, dislocation_density=0):

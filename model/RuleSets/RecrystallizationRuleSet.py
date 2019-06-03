@@ -18,18 +18,20 @@ class RecrystallizationRuleSet(NucleationRuleSet):
             radius=radius,
             color_indicator=color_indicator
         )
+
+        self.amount_of_cells = len(current_state) * len(current_state[0])
         self.iteration = iteration
         self.time_step = 0.001
         self.const_a = 86710969050178.5
         self.const_b = 9.41268203527779
         self.a_over_b = self.const_a/self.const_b
         self.rho = self.calculate_rho()
+        self.rho_critical = self.calculate_rho(65)/self.amount_of_cells
         # constants
         self.border_dislocation_density_change_rate = 2.5
         self.critical_dislocation_density_level = 5
 
         # calculated at the start of each iteration
-        self.amount_of_cells = len(current_state) * len(current_state[0])
         self.dislocation_density_pool = 0
         self._calculate_dislocation_density_pool()
         self.average_dislocation_package = self.calculate_average_dislocation_package()
@@ -44,9 +46,11 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         self.dislocation_density_pool = new_rho - self.rho
         self.rho = new_rho
 
-    def calculate_rho(self):
+    def calculate_rho(self, iteration = None):
         # ro = A/b + (1- (A/B))e ^ (-Bt)
-        return self.a_over_b + (1-self.a_over_b) + math.exp(-self.const_b*self.iteration*self.time_step)
+        if iteration is None:
+            iteration = self.iteration
+        return self.a_over_b + (1-self.a_over_b) * math.exp(-self.const_b*self.time_step*iteration)
 
     def calculate_average_dislocation_package(self):
         return self.dislocation_density_pool / self.amount_of_cells
@@ -64,9 +68,9 @@ class RecrystallizationRuleSet(NucleationRuleSet):
     def add_dislocation_density_to_cell(self, cell, dislocation_package):
         if self.dislocation_density_pool - dislocation_package >= 0:
             self.dislocation_density_pool -= dislocation_package
-            cell.add_density(dislocation_package)
-            if cell.state.dislocation_density > self.rho_critical and self.check_is_border(cell):
-                cell.state.recrystallize()
+            cell.add_dislocation_density(dislocation_package)
+            if cell.state.dislocation_density > self.rho_critical:
+                cell.recrystallize()
 
     def distribute_remaining_pool(self, state, percent_of_dislocation_package):
         border_cells = []
@@ -80,9 +84,14 @@ class RecrystallizationRuleSet(NucleationRuleSet):
 
         dislocation_package = percent_of_dislocation_package*self.average_dislocation_package
 
-        while self.dislocation_density_pool > 0:
+        while self.dislocation_density_pool - dislocation_package > 0:
+            print("adding")
             if self.where_to_add() == "border_cell":
-                cell_to_add = random.choice(border_cells)
+                try:
+                    cell_to_add = random.choice(border_cells)
+                except IndexError:
+                    # handle no border cells
+                    cell_to_add = random.choice(inside_cells)
             else:
                 cell_to_add = random.choice(inside_cells)
             self.add_dislocation_density_to_cell(cell_to_add, dislocation_package)
@@ -90,11 +99,18 @@ class RecrystallizationRuleSet(NucleationRuleSet):
     def where_to_add(self):
         return random.choice(["border_cell"]*4+["inside_cell"])
 
-    def apply(self, previous_state, current_state, cell_row, cell_column):
-        cell_in_prev_iteration = previous_state[cell_row][cell_column]
-        cell_in_current_iteration = current_state[cell_row][cell_column]
+    def handle_no_border_cells(self):
+        pass
 
-        prev_neighbours_states = self.get_neighbour_states(previous_state, cell_row, cell_column)
+    def apply(self, previous_state, current_state, cell_row, cell_column):
+        cell_in_current_iteration = current_state[cell_row][cell_column]
+        if not cell_in_current_iteration.state.is_recrystallized:
+            current_neighbours_states = self.get_neighbour_states(current_state, cell_row, cell_column)
+            for state in current_neighbours_states:
+                if state.is_recrystallized:
+                    if self.try_recrystallize(cell_in_current_iteration, current_neighbours_states):
+                        cell_in_current_iteration.recrystallize()
+                    break
 
     def check_for_critical_dislocation_density(self, judged_cell):
         return judged_cell.state.dislocation_density > self.critical_dislocation_density_level
@@ -121,6 +137,12 @@ class RecrystallizationRuleSet(NucleationRuleSet):
     def apply_post_iteration(self, previous_state, current_state):
         self.calculate_total_energy(current_state)
         self.iteration += 1
+
+    def try_recrystallize(self, cell, neighbour_states):
+        neighbour_states_dislocation_energies = [state.dislocation_density for state in neighbour_states]
+        return cell.state.dislocation_density > max(neighbour_states_dislocation_energies)
+
+
 
 
 

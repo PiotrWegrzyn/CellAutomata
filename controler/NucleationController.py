@@ -88,9 +88,12 @@ class NucleationController(Automaton2DController):
     def handle_no_change_in_data_frame(self):
         if self.cell_automaton.get_percent_of_alive_cells() > 0:
             if isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
+                pass
+
+            elif isinstance(self.cell_automaton.rule_set, RecrystallizationRuleSet):
                 self.stop_iterations()
 
-            if isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
+            elif isinstance(self.cell_automaton.rule_set, NucleationRuleSet):
                 self.change_rule_set_to_monte_carlo()
 
     def bind_nucleation_button(self):
@@ -145,7 +148,6 @@ class NucleationController(Automaton2DController):
             initial_state=self.cell_automaton.get_current_state()
         )
         self.app.view.show_nucleation_menu()
-
 
     def clear_state_controller(self, instance):
         super(NucleationController, self).clear_state_controller(instance)

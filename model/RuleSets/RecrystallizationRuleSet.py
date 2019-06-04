@@ -138,7 +138,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         return False
 
     def apply_post_iteration(self, previous_state, current_state):
-        self.calculate_total_energy(current_state)
+        super().apply_post_iteration(previous_state, current_state)
         self.iteration += 1
 
 

@@ -14,6 +14,7 @@ class CrystalGrainCell(Cell):
     id_generator = id_generator()
     dead_grain_id = 0
     dead_state = dead_grain_id
+    max_dislocation = 1
 
     def __init__(self, state):
         super().__init__(state)
@@ -29,6 +30,14 @@ class CrystalGrainCell(Cell):
             if self.is_dead() or self.state.energy is 0:
                 return [0.2, 0.2, 0.2]
             return [0.125 * self.state.energy, 0, 0]
+        elif color_indicator == 'dislocation':
+            if self.is_dead() or self.state.dislocation_density is 0:
+                return [0.2, 0.2, 0.2]
+            try:
+                return [0, 0, self.state.dislocation_density/self.max_dislocation]
+            except ZeroDivisionError:
+                return [0, 0, self.state.dislocation_density]
+
 
     @staticmethod
     def get_dead_state():

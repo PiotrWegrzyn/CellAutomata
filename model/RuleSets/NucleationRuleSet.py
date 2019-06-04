@@ -22,7 +22,7 @@ class NucleationRuleSet(RuleSet):
     initial_alive_cells = 0.01
     initial_iteration_speed = 2
 
-    def __init__(self, initial_mode="random",is_periodic=True, neighbourhood_type=Moore, radius=4, color_indicator='grain_id'):
+    def __init__(self, initial_mode="random",is_periodic=True, neighbourhood_type=Moore, radius=4, color_indicator='dislocation'):
         super(NucleationRuleSet, self).__init__(radius)
         self.color_indicator = color_indicator
         self.is_periodic = is_periodic
@@ -46,6 +46,7 @@ class NucleationRuleSet(RuleSet):
     def apply_post_iteration(self, previous_state, current_state):
         self.update_energy_in_cells(current_state)
         self.calculate_total_energy(current_state)
+        self.cell_type.max_dislocation = max(set(cell.state.dislocation_density for row in current_state for cell in row))
 
     def update_energy_in_cells(self, state):
         for row_id in range(0, len(state)):

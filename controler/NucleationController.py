@@ -43,6 +43,7 @@ class NucleationController(Automaton2DController):
         self.bind_nucleation_button()
         self.bind_initialize_button()
         self.bind_initialize_back_button_button()
+        self.bind_show_dislocation_checkbox()
 
     def bind_recrystallize_button(self):
         self.app.view.recrystallize_button.bind(on_press=partial(self.recrystallize_button_controller))
@@ -245,6 +246,15 @@ class NucleationController(Automaton2DController):
         else:
             self.set_show_grain_mode()
 
+    def bind_show_dislocation_checkbox(self):
+        self.app.view.show_dislocation_checkbox.bind(active=partial(self.show_dislocation_controller))
+
+    def show_dislocation_controller(self, checkbox, value):
+        if value:
+            self.set_show_dislocation_mode()
+        else:
+            self.set_show_grain_mode()
+
     def set_show_energy_mode(self):
         self.rule_set.color_indicator = 'energy'
         self.set_cell_automaton(
@@ -255,6 +265,14 @@ class NucleationController(Automaton2DController):
 
     def set_show_grain_mode(self):
         self.rule_set.color_indicator = 'grain_id'
+        self.set_cell_automaton(
+            rule_set=self.rule_set,
+            initial_state=self.cell_automaton.get_current_state()
+        )
+        self.draw_current_state()
+
+    def set_show_dislocation_mode(self):
+        self.rule_set.color_indicator = 'dislocation'
         self.set_cell_automaton(
             rule_set=self.rule_set,
             initial_state=self.cell_automaton.get_current_state()

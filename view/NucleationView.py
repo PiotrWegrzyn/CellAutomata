@@ -36,6 +36,7 @@ class NucleationView(GameOfLifeView):
         self.create_radius_elements()
         self.create_monte_carlo_elements()
         self.create_show_energy_items()
+        self.create_show_dislocation_items()
         self.create_total_energy_label()
         self.create_kt_input()
         self.create_iterations_elements()
@@ -52,6 +53,7 @@ class NucleationView(GameOfLifeView):
         self.add_speed_elements_to_menu()
         self.add_neighbourhood_elements()
         self.add_show_energy_items()
+        self.add_show_dislocation_items()
         self.add_total_energy()
         self.add_radius_elements()
         self.add_nucleation_elements()
@@ -210,6 +212,23 @@ class NucleationView(GameOfLifeView):
 
     def add_show_energy_items(self):
         self.menu.add_widget(self.energy_container)
+
+    def create_show_dislocation_items(self):
+        self.dislocation_container = BoxLayout(
+            size_hint=(1, 0.1),
+            orientation='horizontal'
+        )
+        self.show_dislocation_label = Label(
+            text="Show dislocation: ",
+            size_hint=(0.7, 1),
+            color=[1, 0, 0, 1]
+        )
+        self.show_dislocation_checkbox = CheckBox(color=[1, 0, 0, 1], size_hint=[0.3, 1])
+        self.dislocation_container.add_widget(self.show_dislocation_label)
+        self.dislocation_container.add_widget(self.show_dislocation_checkbox)
+
+    def add_show_dislocation_items(self):
+        self.menu.add_widget(self.dislocation_container)
 
     def create_kt_input(self):
         self.kt_label = Label(

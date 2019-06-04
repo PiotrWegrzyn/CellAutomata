@@ -31,8 +31,10 @@ class CrystalGrainCell(Cell):
                 return [0.2, 0.2, 0.2]
             return [0.125 * self.state.energy, 0, 0]
         elif color_indicator == 'dislocation':
-            if self.is_dead() or self.state.dislocation_density is 0:
+            if self.is_dead() or (self.state.dislocation_density == 0 and not self.is_recrystallized()):
                 return [0.2, 0.2, 0.2]
+            elif self.is_recrystallized() and self.state.dislocation_density == 0:
+                return [1, 0, 0]
             try:
                 return [0, 0, self.state.dislocation_density/self.max_dislocation]
             except ZeroDivisionError:

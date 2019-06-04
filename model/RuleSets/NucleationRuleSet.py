@@ -22,7 +22,7 @@ class NucleationRuleSet(RuleSet):
     initial_alive_cells = 0.01
     initial_iteration_speed = 2
 
-    def __init__(self, initial_mode="random",is_periodic=True, neighbourhood_type=Moore, radius=4, color_indicator='dislocation'):
+    def __init__(self, initial_mode="random",is_periodic=True, neighbourhood_type=Moore, radius=4, color_indicator='grain_id'):
         super(NucleationRuleSet, self).__init__(radius)
         self.color_indicator = color_indicator
         self.is_periodic = is_periodic

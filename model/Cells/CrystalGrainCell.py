@@ -51,6 +51,9 @@ class CrystalGrainCell(Cell):
         CrystalGrainCell.alive_states.append(CrystalGrainCell.State(grain_id=new_grain_id))
         return new_grain_id
 
+    def set_new_grain_id(self):
+        self.state.grain_id = self.get_new_grain_id()
+
     def recrystallize(self):
         self.state.recrystallize()
 
@@ -76,11 +79,12 @@ class CrystalGrainCell(Cell):
         self.state.add_dislocation_packet(dislocation_package)
 
     class State:
-        def __init__(self, grain_id, energy=0, is_recrystallized=False, dislocation_density=0):
+        def __init__(self, grain_id, energy=0, is_recrystallized=False, dislocation_density=0, recrystallize_iteration=None):
             self.grain_id = grain_id
             self.energy = energy
             self.is_recrystallized = is_recrystallized
             self.dislocation_density = dislocation_density
+            self.recrystallize_iteration = recrystallize_iteration
 
         def recrystallize(self):
             self.is_recrystallized = True
@@ -88,3 +92,8 @@ class CrystalGrainCell(Cell):
 
         def add_dislocation_packet(self, dislocation):
             self.dislocation_density += dislocation
+
+        def recrystallized_in_prev(self, current_iteration):
+            return self.recrystallize_iteration == current_iteration - 1
+
+

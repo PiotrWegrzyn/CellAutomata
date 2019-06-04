@@ -27,7 +27,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         self.a_over_b = self.const_a/self.const_b
         self.rho = self.calculate_rho()
         self.rho_critical = self.calculate_rho(65)/self.amount_of_cells
-        # constants
+        self.max_iteration_time = self.time_step*65
         self.border_dislocation_density_change_rate = 2.5
         self.critical_dislocation_density_level = 5
 

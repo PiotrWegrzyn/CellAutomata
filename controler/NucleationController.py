@@ -77,9 +77,13 @@ class NucleationController(Automaton2DController):
                 self.stop_iterations()
                 return
         previous_data_frame = copy.deepcopy(self.data_frame)
+        if isinstance(self.rule_set, RecrystallizationRuleSet):
+            if self.rule_set.iteration*self.rule_set.time_step>= self.rule_set.max_iteration_time:
+                self.stop_iterations()
+                self.change_rule_set_to_nucleation()
         super().draw_next_iteration()
         if isinstance(self.rule_set, MonteCarloRuleSet):
-            self.iterations -=1
+            self.iterations -= 1
             self.update_iterations_label()
         if previous_data_frame == self.data_frame:
             self.handle_no_change_in_data_frame()

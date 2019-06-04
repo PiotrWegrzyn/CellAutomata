@@ -27,7 +27,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         self.a_over_b = self.const_a/self.const_b
         self.rho = self.calculate_rho()
         self.rho_critical = self.calculate_rho(65)/self.amount_of_cells
-        self.max_iteration_time = self.time_step*65
+        self.max_iteration_time = self.time_step*200
 
         self.dislocation_density_pool = 0
         self._calculate_dislocation_density_pool()
@@ -71,7 +71,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
 
     def nucleate_recrystallized_grain(self, cell):
         cell.set_new_grain_id()
-        cell.recrystallize()
+        cell.recrystallize(self.iteration)
 
     def distribute_remaining_pool(self, state, percent_of_dislocation_package):
         border_cells = []
@@ -88,7 +88,11 @@ class RecrystallizationRuleSet(NucleationRuleSet):
                     self.handle_no_border_cells()
                     continue
             else:
-                cell_to_add = random.choice(inside_cells)
+                try:
+                    cell_to_add = random.choice(inside_cells)
+                except IndexError:
+                    self.handle_no_inside_cells()
+                    continue
             self.add_dislocation_density_to_cell(cell_to_add, dislocation_package)
 
     def split_cells_by_border(self, state, border_cells, inside_cells):
@@ -108,6 +112,9 @@ class RecrystallizationRuleSet(NucleationRuleSet):
     def handle_no_border_cells(self):
         pass
 
+    def handle_no_inside_cells(self):
+        pass
+
     def apply(self, previous_state, current_state, cell_row, cell_column):
         cell = current_state[cell_row][cell_column]
         if not cell.state.is_recrystallized:
@@ -115,7 +122,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
             for neighbour_state in neighbour_states:
                 if neighbour_state.recrystallized_in_prev(self.iteration) and self.has_highest_dislocation_density(cell, neighbour_states):
                     cell.state.grain_id = neighbour_state.grain_id
-                    cell.recrystallize()
+                    cell.recrystallize(self.iteration)
                     break
 
     def has_highest_dislocation_density(self, cell, prev_neighbours_states):

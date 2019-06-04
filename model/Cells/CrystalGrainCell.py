@@ -24,10 +24,7 @@ class CrystalGrainCell(Cell):
         if color_indicator == "grain_id":
             if self.is_dead():
                 return [0.2, 0.2, 0.2]
-            elif self.is_recrystallized():
-                return [0, 0, 0]
-            else:
-                return self.grain_id_to_color()
+            return self.grain_id_to_color()
         elif color_indicator == 'energy':
             if self.is_dead() or self.state.energy is 0:
                 return [0.2, 0.2, 0.2]
@@ -54,15 +51,18 @@ class CrystalGrainCell(Cell):
     def set_new_grain_id(self):
         self.state.grain_id = self.get_new_grain_id()
 
-    def recrystallize(self):
-        self.state.recrystallize()
+    def recrystallize(self, iteration):
+        self.state.recrystallize(iteration)
 
     def is_recrystallized(self):
         return self.state.is_recrystallized
 
     def grain_id_to_color(self):
-        float_s = self.state.grain_id * 1.0
-        return [float_s % 8/8, (float_s % 8 + float_s) % 13/13, (float_s + float_s % 13) % 21/21]
+        id = self.state.grain_id
+        if not self.is_recrystallized():
+            return [0, (id % 8 + id) % 13/13, (id + id % 13) % 21/21]
+        else:
+            return [(id % 8 + id % 13) % 21/21, 0, 0]
 
     def is_dead(self):
         if self.state.grain_id == self.dead_state:
@@ -86,9 +86,10 @@ class CrystalGrainCell(Cell):
             self.dislocation_density = dislocation_density
             self.recrystallize_iteration = recrystallize_iteration
 
-        def recrystallize(self):
+        def recrystallize(self, iteration):
             self.is_recrystallized = True
             self.dislocation_density = 0
+            self.recrystallize_iteration = iteration
 
         def add_dislocation_packet(self, dislocation):
             self.dislocation_density += dislocation

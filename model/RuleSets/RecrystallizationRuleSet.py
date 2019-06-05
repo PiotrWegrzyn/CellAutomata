@@ -32,6 +32,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         self.dislocation_density_pool = 0
         self._calculate_dislocation_density_pool()
         self.average_dislocation_package = self.calculate_average_dislocation_package()
+        self.dislocation_density_sums = []
 
     def apply_pre_iteration(self, previous_state, current_state):
         self._calculate_dislocation_density_pool()
@@ -139,7 +140,14 @@ class RecrystallizationRuleSet(NucleationRuleSet):
 
     def apply_post_iteration(self, previous_state, current_state):
         super().apply_post_iteration(previous_state, current_state)
+        dislocation_densities_in_cells = [cell.state.dislocation_density for row in current_state for cell in row]
+        self.dislocation_density_sums.append(sum(dislocation_densities_in_cells))
+        self.cell_type.max_dislocation = max(dislocation_densities_in_cells)
         self.iteration += 1
+
+    def __str__(self):
+        return "Recrystallization"
+
 
 
 

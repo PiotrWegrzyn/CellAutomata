@@ -46,7 +46,6 @@ class NucleationRuleSet(RuleSet):
     def apply_post_iteration(self, previous_state, current_state):
         self.update_energy_in_cells(current_state)
         self.calculate_total_energy(current_state)
-        self.cell_type.max_dislocation = max(set(cell.state.dislocation_density for row in current_state for cell in row))
 
     def update_energy_in_cells(self, state):
         for row_id in range(0, len(state)):

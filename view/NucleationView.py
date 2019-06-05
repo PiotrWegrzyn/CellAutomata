@@ -26,6 +26,7 @@ class NucleationView(GameOfLifeView):
         self.create_alive_cells_elements()
         self.create_load_file_buttons()
         self.create_load_save_elements()
+        self.create_export_btn()
         self.create_speed_elements()
         self.create_start_stop_elements()
         self.create_clear_button()
@@ -63,7 +64,7 @@ class NucleationView(GameOfLifeView):
     def create_load_file_buttons(self):
         self.file_buttons = []
         import os
-        for file in os.listdir("patterns\\Nucleation"):
+        for file in os.listdir("patterns\\Recrystallization"):
             if file.endswith(".txt"):
                 file_button = kb.Button(
                     text=file.__str__(),
@@ -74,6 +75,12 @@ class NucleationView(GameOfLifeView):
     def create_recrystallize_button(self):
         self.recrystallize_button= kb.Button(
             text="Recrystallize",
+            size_hint=(1, 0.1),
+        )
+
+    def create_export_btn(self):
+        self.export_btn = kb.Button(
+            text="Export",
             size_hint=(1, 0.1),
         )
 
@@ -186,7 +193,7 @@ class NucleationView(GameOfLifeView):
 
     def create_nucleation_elements(self):
         self.nucleation_button = kb.Button(
-            text="Nucleation",
+            text="Recrystallization",
             size_hint=(1, 0.1),
         )
 
@@ -256,6 +263,9 @@ class NucleationView(GameOfLifeView):
         self.reset_menu()
         self.menu.remove_widget(self.nucleation_button)
 
+    def show_export_button(self):
+        self.menu.add_widget(self.export_btn)
+
     def show_monte_carlo_menu(self):
         self.reset_menu()
         try:
@@ -268,6 +278,7 @@ class NucleationView(GameOfLifeView):
     def show_recristallization_menu(self):
         self.reset_menu()
         self.menu.remove_widget(self.recrystallize_button)
+        self.show_export_button()
 
     def reset_menu(self):
         self.menu.clear_widgets()

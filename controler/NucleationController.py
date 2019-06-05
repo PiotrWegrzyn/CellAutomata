@@ -1,4 +1,5 @@
 import copy
+import datetime
 from functools import partial
 
 from controler.Automaton2DController import Automaton2DController
@@ -16,7 +17,7 @@ class NucleationController(Automaton2DController):
     def __init__(self, app, cell_size=9, cell_offset=1):
         self.iterations = 0
         super().__init__(app, cell_size, cell_offset)
-        self.pattern_folder = "./patterns/Nucleation/"
+        self.pattern_folder = "./patterns/Recrystallization/"
         self.app.view.sub_alive_cells.text = "-1%"
         self.app.view.add_alive_cells.text = "+1%"
 
@@ -36,6 +37,7 @@ class NucleationController(Automaton2DController):
         self.bind_mode_checkboxes()
         self.bind_add_radius()
         self.bind_sub_radius()
+        self.bind_export_btn()
         self.bind_monte_carlo_button()
         self.bind_show_energy_checkbox()
         self.bind_kt_input()
@@ -318,4 +320,22 @@ class NucleationController(Automaton2DController):
             self.app.view.show_monte_carlo_menu()
         if isinstance(self.rule_set, RecrystallizationRuleSet):
             self.app.view.show_recristallization_menu()
+
+    def bind_export_btn(self):
+        self.app.view.export_btn.bind(on_press=partial(self.export_btn_controller))
+
+    def export_btn_controller(self, btn_instance):
+        self.export_dislocation_density_sum_file()
+
+    def export_dislocation_density_sum_file(self):
+        file = open(self.generate_file_name(), "w+")
+        for dd_sum in self.rule_set.dislocation_density_sums:
+            file.write(dd_sum.__str__() + "\n")
+
+    def generate_file_name(self):
+        dt_now = datetime.datetime.now()
+        filename = self.pattern_folder \
+                   + self.cell_automaton.get_rule_set().__str__() \
+                   + "-" + dt_now.strftime('%y-%m-%d_%H-%M-%S-%f') + ".txt"
+        return filename
 

@@ -67,7 +67,7 @@ class RecrystallizationRuleSet(NucleationRuleSet):
         if self.dislocation_density_pool - dislocation_package >= 0:
             self.dislocation_density_pool -= dislocation_package
             cell.add_dislocation_density(dislocation_package)
-            if cell.state.dislocation_density > self.rho_critical and not cell.state.is_recrystallized:
+            if cell.state.dislocation_density > self.rho_critical and self.check_is_border(cell) and not cell.state.is_recrystallized:
                 self.nucleate_recrystallized_grain(cell)
 
     def nucleate_recrystallized_grain(self, cell):

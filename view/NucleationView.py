@@ -196,7 +196,7 @@ class NucleationView(GameOfLifeView):
 
     def create_nucleation_elements(self):
         self.nucleation_button = kb.Button(
-            text="Recrystallization",
+            text="Nucleation",
             size_hint=(1, 0.1),
         )
 

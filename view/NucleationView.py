@@ -44,6 +44,9 @@ class NucleationView(GameOfLifeView):
         self.create_nucleation_elements()
         self.create_initialize_button()
         self.create_initialize_back_button()
+        self.create_a_const_elements()
+        self.create_b_const_elements()
+        self.create_time_step_const_elements()
 
     def show_menu(self):
         super(DrawingView, self).show_menu()
@@ -279,6 +282,9 @@ class NucleationView(GameOfLifeView):
         self.reset_menu()
         self.menu.remove_widget(self.recrystallize_button)
         self.show_export_button()
+        self.add_a_const_elements()
+        self.add_b_const_elements()
+        self.add_time_step_const_elements()
 
     def reset_menu(self):
         self.menu.clear_widgets()
@@ -323,3 +329,40 @@ class NucleationView(GameOfLifeView):
         self.add_periodic_elements()
         self.add_mode_radio_elements()
         self.add_radius_elements()
+
+    def create_a_const_elements(self):
+        self.a_label = Label(
+            text="A constant: ",
+            size_hint=(1, 0.1),
+            color=[1, 0, 0, 1]
+        )
+        self.a_input = TextInput(text="86710969050178", size_hint=[1, 0.1], multiline=False)
+
+    def add_a_const_elements(self):
+        self.menu.add_widget(self.a_label)
+        self.menu.add_widget(self.a_input)
+
+    def create_b_const_elements(self):
+        self.b_label = Label(
+            text="B constant: ",
+            size_hint=(1, 0.1),
+            color=[1, 0, 0, 1]
+        )
+        self.b_input = TextInput(text="9.41268203527779", size_hint=[1, 0.1], multiline=False)
+
+    def add_b_const_elements(self):
+        self.menu.add_widget(self.b_label)
+        self.menu.add_widget(self.b_input)
+
+    def create_time_step_const_elements(self):
+        self.time_step_label = Label(
+            text="Time step: ",
+            size_hint=(1, 0.1),
+            color=[1, 0, 0, 1]
+        )
+        self.time_step_input = TextInput(text="0.001", size_hint=[1, 0.1], multiline=False)
+
+    def add_time_step_const_elements(self):
+        self.menu.add_widget(self.time_step_label)
+        self.menu.add_widget(self.time_step_input)
+

@@ -1,4 +1,5 @@
 from model.Cells.Cell import Cell
+from settings import BACKGROUND_COLOR
 
 
 class BinaryCell(Cell):
@@ -13,7 +14,7 @@ class BinaryCell(Cell):
 
     def get_color_representation(self):
         if self.state is 0:
-            return [0.2, 0.2, 0.2]
+            return BACKGROUND_COLOR
         else:
             return [1, 0, 0]
 
@@ -21,7 +22,7 @@ class BinaryCell(Cell):
         if self.state is 0:
             return [1, 0, 0]
         else:
-            return [1, 1, 1]
+            return BACKGROUND_COLOR
 
     @staticmethod
     def get_dead_state():

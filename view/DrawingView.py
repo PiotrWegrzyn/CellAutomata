@@ -1,7 +1,9 @@
 from kivy.core.window import Window
 from kivy.graphics import Color
 from kivy.graphics import Rectangle
+from kivy.graphics.instructions import InstructionGroup
 
+from settings import BACKGROUND_COLOR
 from time_measure.timeit_decorator import timeit
 from view.BaseView import BaseView
 
@@ -16,6 +18,7 @@ class DrawingView(BaseView):
         self.cell_offset = cell_offset
         self.cell_size = cell_size
         self.cell_box_size = cell_offset+cell_size
+        self.data_frame = [[]]
 
     def update_cell_size(self, size):
         self.cell_size = size
@@ -36,7 +39,7 @@ class DrawingView(BaseView):
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):
             cell_color = self.data_frame[row][column]
-            if not cell_color == [0.2, 0.2, 0.2]:     # [1,1,1] is white
+            if not cell_color == BACKGROUND_COLOR:
                 self._draw_cell(row, column, cell_color)
 
     def _draw_cell(self, row, column, cell_color):

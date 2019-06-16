@@ -1,6 +1,6 @@
 import random
-
 from model.Cells.Cell import Cell
+from settings import BACKGROUND_COLOR
 
 
 def id_generator():
@@ -24,15 +24,15 @@ class CrystalGrainCell(Cell):
     def get_color_representation(self, color_indicator="grain_id"):
         if color_indicator == "grain_id":
             if self.is_dead():
-                return [0.2, 0.2, 0.2]
+                return BACKGROUND_COLOR
             return self.grain_id_to_color()
         elif color_indicator == 'energy':
             if self.is_dead() or self.state.energy is 0:
-                return [0.2, 0.2, 0.2]
+                return BACKGROUND_COLOR
             return [0.125 * self.state.energy, 0, 0]
         elif color_indicator == 'dislocation':
             if self.is_dead() or (self.state.dislocation_density == 0 and not self.is_recrystallized()):
-                return [0.2, 0.2, 0.2]
+                return BACKGROUND_COLOR
             elif self.is_recrystallized() and self.state.dislocation_density == 0:
                 return [1, 0, 0]
             try:

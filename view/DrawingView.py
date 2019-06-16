@@ -19,6 +19,7 @@ class DrawingView(BaseView):
         self.cell_size = cell_size
         self.cell_box_size = cell_offset+cell_size
         self.data_frame = [[]]
+        self.initial = True
 
     def update_cell_size(self, size):
         self.cell_size = size
@@ -29,12 +30,39 @@ class DrawingView(BaseView):
     @timeit
     def draw_data_frame(self, data_frame):
         self.data_frame = data_frame
-        # threads = int(len(data_frame)+1)
-        # with closing(ThreadPool(threads)) as pool:
-        #     parameters_list = [cell_row for cell_row in range(0, len(data_frame))]
-        #     pool.map(self._draw_graphic_columns, parameters_list)
+        if self.initial:
+            self.create_cell_grid(data_frame)
+            self.initial = False
+        else:
+            for cell_row in range(0, len(data_frame)):
+                for cell_col in range(len(data_frame[0])):
+                    # if self.data_frame != data_frame[cell_row][cell_col]:
+                    self.grid.canvas.children[cell_row][cell_col].insert(0,create_color(data_frame[cell_row][cell_col]))
+
+    # self.data_frame = data_frame
+        # for cell_row in range(0, len(data_frame)):
+        #     self._draw_graphic_columns(cell_row)
+
+    def create_cell_grid(self,data_frame):
         for cell_row in range(0, len(data_frame)):
-            self._draw_graphic_columns(cell_row)
+            row_instructions = InstructionGroup()
+            for cell_col in range(len(data_frame[0])):
+                cell_instructions = InstructionGroup()
+                cell_instructions.add(create_color(data_frame[cell_row][cell_col]))
+                rectangle = Rectangle(
+                    pos=(
+                        self._get_graphic_cell_x_pos(cell_col),
+                        self._get_graphic_cell_y_pos(cell_row)
+                    ),
+
+                    size=(
+                        self.cell_size,
+                        self.cell_size
+                    )
+                )
+                cell_instructions.add(rectangle)
+                row_instructions.insert(cell_col,cell_instructions)
+            self.grid.canvas.insert(cell_row,row_instructions)
 
     def _draw_graphic_columns(self, row):
         for column in range(0, len(self.data_frame[row])):

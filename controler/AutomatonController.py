@@ -160,7 +160,6 @@ class AutomatonController(BaseController):
         return 0 <= cell_index < self.cell_automaton.get_columns() and 0 <= cell_row < self.get_y_dimension_size()
 
     def draw_current_state(self):
-        self.clear_canvas()
         self.fetch_current_data_frame()
         self.app.view.draw_data_frame(self.data_frame)
         self.update_alive_cells_label()

@@ -189,7 +189,6 @@ class Automaton2DController(AutomatonController):
 
     def draw_next_iteration(self):
         self.yield_next_data_frame()
-        self.clear_canvas()
         self.app.view.draw_data_frame(self.data_frame)
         self.update_alive_cells_label()
 

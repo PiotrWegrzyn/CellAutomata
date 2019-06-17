@@ -27,72 +27,70 @@ class DrawingView(BaseView):
     def update_cell_offset(self, size):
         self.cell_offset = size
 
-    @timeit
-    def draw_data_frame(self, data_frame):
-        self.data_frame = data_frame
-        if self.initial:
-            self.create_cell_grid(data_frame)
-            self.initial = False
-        else:
-            for cell_row in range(0, len(data_frame)):
-                for cell_col in range(len(data_frame[0])):
-                    # if self.data_frame != data_frame[cell_row][cell_col]:
-                    self.grid.canvas.children[cell_row][cell_col].insert(0,create_color(data_frame[cell_row][cell_col]))
-
-    # self.data_frame = data_frame
-        # for cell_row in range(0, len(data_frame)):
-        #     self._draw_graphic_columns(cell_row)
-
-    def create_cell_grid(self,data_frame):
+    def create_cell_grid(self, data_frame):
         for cell_row in range(0, len(data_frame)):
             row_instructions = InstructionGroup()
-            for cell_col in range(len(data_frame[0])):
-                cell_instructions = InstructionGroup()
-                cell_instructions.add(create_color(data_frame[cell_row][cell_col]))
-                rectangle = Rectangle(
-                    pos=(
-                        self._get_graphic_cell_x_pos(cell_col),
-                        self._get_graphic_cell_y_pos(cell_row)
-                    ),
+            for cell_col in range(len(data_frame[cell_row])):
+                color = create_color(data_frame[cell_row][cell_col])
+                cell_instructions = self._create_cell(cell_row, cell_col, color)
+                row_instructions.insert(cell_col, cell_instructions)
 
-                    size=(
-                        self.cell_size,
-                        self.cell_size
-                    )
-                )
-                cell_instructions.add(rectangle)
-                row_instructions.insert(cell_col,cell_instructions)
-            self.grid.canvas.insert(cell_row,row_instructions)
+            self.grid.canvas.insert(cell_row, row_instructions)
 
-    def _draw_graphic_columns(self, row):
-        for column in range(0, len(self.data_frame[row])):
-            cell_color = self.data_frame[row][column]
-            if not cell_color == BACKGROUND_COLOR:
-                self._draw_cell(row, column, cell_color)
+    def _create_cell(self, cell_row, cell_col, cell_color):
+        cell_instructions = InstructionGroup()
+        cell_instructions.add(cell_color)
+        rectangle = self._create_cell_graphic(cell_row, cell_col)
+        cell_instructions.add(rectangle)
+        return cell_instructions
 
-    def _draw_cell(self, row, column, cell_color):
-        color = create_color(cell_color)
-        self.grid.canvas.add(color)
-        rectangle = Rectangle(
+    @timeit
+    def draw_data_frame(self, new_data_frame):
+        if self.initial or self.has_size_changed(new_data_frame):
+            self.grid.canvas.clear()
+            self.create_cell_grid(new_data_frame)
+            self.initial = False
+        else:
+            for cell_row in range(len(new_data_frame)):
+                for cell_col in range(len(new_data_frame[cell_row])):
+                    color = create_color(new_data_frame[cell_row][cell_col])
+                    if self.data_frame[cell_row][cell_col] != new_data_frame[cell_row][cell_col]:
+                        self._update_cell_color(cell_row,cell_col,color)
+        self.data_frame = new_data_frame
+
+    def has_size_changed(self, new_data_frame):
+        if len(new_data_frame) is not len(self.data_frame):
+            return True
+        else:
+            for i,column in enumerate(new_data_frame):
+                if len(column) is not len(self.data_frame[i]):
+                    return True
+        return False
+
+    def _update_cell_color(self, cell_row, cell_col, cell_color):
+        self.grid.canvas.children[cell_row].children[cell_col].children[0] = cell_color
+
+    def update_cell(self, row, column, color=None):
+        color = create_color(color)
+        self._update_cell_color(row, column, color)
+        self.grid.canvas.ask_update()
+
+    def _create_cell_graphic(self, cell_row, cell_col):
+        return Rectangle(
             pos=(
-                self._get_graphic_cell_x_pos(column),
-                self._get_graphic_cell_y_pos(row)
+                self._column_to_coord(cell_col),
+                self._row_to_coord(cell_row)
             ),
-
             size=(
                 self.cell_size,
                 self.cell_size
             )
         )
-        self.grid.canvas.add(rectangle)
 
-    def update_cell(self, row, column, color=None):
-        self._draw_cell(row, column, color)
-
-    def _get_graphic_cell_y_pos(self, row):
+    def _row_to_coord(self, row):
         return Window.size[1] - ((row + 1) * self.cell_box_size)
 
-    def _get_graphic_cell_x_pos(self, column):
+    def _column_to_coord(self, column):
         return self.menu_width+(column * self.cell_box_size)
 
     def _get_graphic_cell_column_from_pos(self, pos_y):

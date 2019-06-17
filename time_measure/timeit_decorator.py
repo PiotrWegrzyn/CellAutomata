@@ -5,7 +5,7 @@ def timeit(method):
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
-        if True:
+        if False:
             watched_functions = {"update_energy_in_row", "draw_data_frame"}
             te = time.time()
             if 'log_time' in kw:

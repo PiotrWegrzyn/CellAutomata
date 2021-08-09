@@ -14,6 +14,6 @@ kivy.deps.sdl2==0.1.18
 lxml==4.3.3
 Pygments==2.3.1
 pypiwin32==223
-pywin32==224
+pywin32==301
 requests==2.21.0
 urllib3==1.24.2
